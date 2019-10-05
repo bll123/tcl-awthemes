@@ -13,7 +13,7 @@
    height="17.066668"
    id="svg4152"
    version="1.1"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    viewBox="0 0 74.999996 64"
    sodipodi:docname="cb-sn-pad.svg">
   <defs
@@ -78,17 +78,15 @@
        x="1.8717725"
        y="1.8241789"
        ry="10.698651" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014;"
-       x="-0.44444251"
-       y="59.980743"
-       id="text9056"
-       transform="scale(0.96762071,1.0334628)"><tspan
-         sodipodi:role="line"
-         id="tspan9054"
-         x="-0.44444251"
-         y="59.980743"
-         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014;">✔</tspan></text>
+    <g
+       aria-label="✔"
+       transform="scale(0.96762071,1.0334628)"
+       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       id="text9056">
+      <path
+         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
+         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014"
+         id="path5780" />
+    </g>
   </g>
 </svg>
