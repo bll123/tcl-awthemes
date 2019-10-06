@@ -16,6 +16,8 @@ if { [file exists $fn] } {
   close $fh
   tk scaling -displayof . $scale
 }
+set calcdpi [expr {round([tk scaling]*72.0)}]
+set scalefactor [expr {$calcdpi/100.0}]
 
 # replace this block with your method of loading the theme
 if { 0 } {
@@ -28,8 +30,12 @@ if { 0 } {
   themeloader::loadTheme $theme
 } ; # if 0
 
-if { [file exists $theme.tcl] } {
-  source $theme.tcl
+set ttheme $theme
+if { $theme eq "awdark" || $theme eq "awlight" } {
+  set ttheme awthemes
+}
+if { [file exists $ttheme.tcl] } {
+  source $ttheme.tcl
 }
 
 ttk::style theme use $theme
@@ -41,18 +47,26 @@ set on 1
 
 . configure -background [ttk::style lookup TFrame -background]
 
-menu .mb
+# Tk defaults to pixels.  Sigh.
+# Use points so that the fonts scale.
+font configure TkDefaultFont -size 11
+font create TextFont
+font configure TextFont -size 10
+font create MenuFont
+font configure MenuFont -size 9
+
+menu .mb -font MenuFont
 . configure -menu .mb
 
-menu .mb.example -tearoff 0 -font TkDefaultFont
+menu .mb.example -tearoff 0 -font MenuFont
 .mb.example add command -label Menu-1
 .mb.example add command -label Menu-2
 .mb add cascade -label Example -menu .mb.example
 
-menu .mb.b -tearoff 0
+menu .mb.b -tearoff 0 -font MenuFont
 .mb add cascade -label {not in use} -menu .mb.b
 
-menu .mb.widgets -tearoff 0
+menu .mb.widgets -tearoff 0 -font MenuFont
 .mb.widgets add checkbutton -label checkA
 .mb.widgets add checkbutton -label checkB
 .mb.widgets add radiobutton -label radioA
@@ -120,7 +134,12 @@ foreach {k} {n d} {
 
   ttk::combobox .combo$k -values \
       [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
-      -textvariable valb -width 15 -state $s -height 5
+      -textvariable valb \
+      -width 15 \
+      -state $s \
+      -height 5 \
+      -font TkDefaultFont
+  option add *TCombobox*Listbox.font TkDefaultFont
 
   ttk::frame .cbf$k
   ttk::checkbutton .cboff$k -text off -variable off -state $s
@@ -139,21 +158,40 @@ foreach {k} {n d} {
   pack configure .sep$k -fill x -expand true
 
   ttk::frame .hf$k
-  ttk::scale .sc$k -from 0 -to 100 -variable val
+  ttk::scale .sc$k \
+      -from 0 \
+      -to 100 \
+      -variable val \
+      -length [expr {round(100*$scalefactor)}]
   .sc$k state $s
-  ttk::progressbar .pb$k -mode determinate -length 100 -variable val
+  ttk::progressbar .pb$k \
+      -mode determinate \
+      -variable val \
+      -length [expr {round(100*$scalefactor)}]
   .pb$k state $s
-  ttk::entry .ent$k -textvariable valb -width 15 -state $k
-  ttk::spinbox .sbox$k -textvariable val -width 5 \
-      -from 1 -to 100 -increment 0.1 -state $k
+  ttk::entry .ent$k -textvariable valb \
+      -width 15 \
+      -state $k \
+      -font TkDefaultFont
+  ttk::spinbox .sbox$k -textvariable val \
+      -width 5 \
+      -from 1 -to 100 -increment 0.1 \
+      -state $k \
+      -font TkDefaultFont
   pack .sc$k .pb$k .ent$k .sbox$k \
       -in .hf$k -side top -anchor w -padx 3p -pady 3p
 
   ttk::frame .vf$k
-  ttk::scale .scv$k -orient vertical -from 0 -to 100 -variable val
+  ttk::scale .scv$k \
+      -orient vertical \
+      -from 0 -to 100 \
+      -variable val \
+      -length [expr {round(100*$scalefactor)}]
   .scv$k state $s
   ttk::progressbar .pbv$k -orient vertical \
-      -mode determinate -length 100 -variable val
+      -mode determinate \
+      -variable val \
+      -length [expr {round(100*$scalefactor)}]
   .pbv$k state $s
   pack .scv$k .pbv$k -in .vf$k -side right -padx 3p -pady 3p
 
@@ -185,9 +223,16 @@ if { $theme eq "aqua" } {
 }
 pack .sbv -in .two -side right -fill y -expand false
 pack .sbh -in .two -side bottom -fill x -expand false
-text .text -xscrollcommand [list .sbh set] -yscrollcommand [list .sbv set] \
-    -wrap none -relief flat -borderwidth 0 -height 10 -width 50 \
-    -highlightthickness 0
+text .text \
+    -xscrollcommand [list .sbh set] \
+    -yscrollcommand [list .sbv set] \
+    -wrap none \
+    -relief flat \
+    -borderwidth 0 \
+    -height 10 \
+    -width 50 \
+    -highlightthickness 0 \
+    -font TextFont
 if { [info commands ::ttk::theme::${theme}::setTextColors] ne {} } {
   ::ttk::theme::${theme}::setTextColors .text
 }
@@ -205,7 +250,6 @@ Phasellus non ultricies mi. Aliquam erat volutpat. Ut sed mollis felis, nec impe
 Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit amet ligula vel, varius mattis ipsum. Praesent erat nisl, vulputate ut ultricies quis, accumsan sit amet diam. Nulla tempor, nunc in malesuada venenatis, purus erat blandit lectus, sit amet pretium arcu arcu id erat. Donec ante eros, sagittis nec tellus eget, porta faucibus nisl. Integer a ex sed felis varius finibus. In hac habitasse platea dictumst. Proin et nisl orci. Fusce mauris nulla, feugiat sit amet commodo viverra, posuere sit amet augue. Vestibulum congue ligula nec dolor dapibus scelerisque. Proin enim sem, congue et nibh nec, suscipit cursus ligula.
 }
 
-
 ttk::panedwindow .pw -orient horizontal
 pack .pw -in .three -fill both -expand true
 ttk::frame .p1
@@ -217,23 +261,26 @@ ttk::label .pl2 -text {Pane 2}
 pack .pl1 -in .p1 -anchor nw
 pack .pl2 -in .p2 -anchor se
 
+ttk::style configure Treeview \
+    -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}]
 ttk::treeview .tv -columns {a b c}
-.tv column #0 -width 10
-.tv column a -width 4
-.tv column b -width 4
-.tv column c -width 4
 pack .tv -in .four -fill both -expand true
+.tv heading #0 -text #0
 .tv heading a -text AAA
 .tv heading b -text BBB
 .tv heading c -text CCC
-set id [.tv insert {} 0 -values {a b c}]
-.tv insert $id 0 -values {aa bb cc}
-.tv insert $id 1 -values {dd ee ff}
-.tv insert $id 2 -values {gg hh ii}
-set id [.tv insert {} 1 -values {j k l}]
-.tv insert $id 0 -values {mm nn oo}
-.tv insert $id 1 -values {pp qq rr}
-.tv insert $id 2 -values {ss tt uu}
+set id [.tv insert {} 0 -text {item 0} -values {a b c}]
+.tv insert $id 0 -text {subitem 0-1} -values {aa bb cc}
+.tv insert $id 1 -text {subitem 0-2} -values {dd ee ff}
+.tv insert $id 2 -text {subitem 0-3} -values {gg hh ii}
+set id [.tv insert {} 1 -text {item 1} -values {j k l}]
+.tv insert $id 0 -text {subitem 1-1} -values {mm nn oo}
+.tv insert $id 1 -text {subitem 1-2} -values {pp qq rr}
+.tv insert $id 2 -text {subitem 1-3} -values {ss tt uu}
+set id [.tv insert {} 2 -text {item 2} -values {v w x}]
+.tv insert $id 0 -text {subitem 2-1} -values {y y y}
+.tv insert $id 1 -text {subitem 2-2} -values {z z z}
+.tv insert $id 2 -text {subitem 2-3} -values {& & &}
 
 ttk::frame .menubar -borderwidth 0 -takefocus 0
 pack .menubar -in .five -side top -fill x
@@ -245,14 +292,14 @@ ttk::menubutton .menubar.edit -text Edit \
 ttk::menubutton .menubar.dis -text Disabled \
     -underline 0 -menu .menubar.dis.m -state disabled
 
-menu .menubar.file.m -tearoff 0
+menu .menubar.file.m -tearoff 0  -font MenuFont
 .menubar.file.m add command -label "Exit" \
     -underline 1 -command exit
 if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
   ::ttk::theme::${theme}::setMenuColors .menubar.file.m
 }
 
-menu .menubar.edit.m -tearoff 0
+menu .menubar.edit.m -tearoff 0  -font MenuFont
 .menubar.edit.m add command -label "Cut" \
     -underline 2 \
     -command {event generate [focus] <<Cut>>}
@@ -265,7 +312,7 @@ if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
   ::ttk::theme::${theme}::setMenuColors .menubar.edit.m
 }
 
-menu .menubar.dis.m -tearoff 0
+menu .menubar.dis.m -tearoff 0 -font MenuFont
 .menubar.dis.m add command -label "xyzzy"
 .menubar.dis.m add command -label "plugh"
 if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
@@ -280,8 +327,12 @@ if { $theme eq "aqua" } {
   ttk::scrollbar .sblbox -command [list .lbox yview] -style Vertical.TScrollbar
 }
 set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
-listbox .lbox -listvariable ::lbox -yscrollcommand [list .sblbox set] \
-    -highlightthickness 0
+listbox .lbox \
+    -listvariable ::lbox \
+    -yscrollcommand [list .sblbox set] \
+    -highlightthickness 0 \
+    -font TextFont
+
 if { [info commands ::ttk::theme::${theme}::setListboxColors] ne {} } {
   ::ttk::theme::${theme}::setListboxColors .lbox
 }
