@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
+   width="17.066668"
    height="17.066668"
    id="svg4152"
    version="1.1"
    inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-sn-pad.svg">
+   viewBox="0 0 64 64"
+   sodipodi:docname="cb-ud.svg">
   <defs
      id="defs4154" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
+     inkscape:zoom="26.101883"
+     inkscape:cx="8.535154"
+     inkscape:cy="8.5090836"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -45,12 +45,12 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
+           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -71,24 +71,12 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#2d3234;fill-opacity:1;stroke:#202425;stroke-width:3.49421477;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7f7f5;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       x="-0.44444251"
-       y="59.980743"
-       id="text9056"
-       transform="scale(0.96762071,1.0334628)"><tspan
-         sodipodi:role="line"
-         id="tspan9054"
-         x="-0.44444251"
-         y="59.980743"
-         style="fill:#f7f7f5;fill-opacity:1;stroke-width:2.01222014">✔</tspan></text>
+       width="60.581619"
+       height="60.471951"
+       x="1.7160162"
+       y="1.8549629"
+       ry="10.672273" />
   </g>
 </svg>

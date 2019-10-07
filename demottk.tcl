@@ -20,7 +20,7 @@ set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]
 
 # replace this block with your method of loading the theme
-if { 0 } {
+if { 1 } {
   set ap [file normalize [file join [file dirname [info script]] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap

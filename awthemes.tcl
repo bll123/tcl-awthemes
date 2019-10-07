@@ -188,6 +188,7 @@ proc awinit { } {
               base.lighter    #525c5f
               base.lightest   #ffffff
               highlight.selectbg   #215d9c
+              highlight.selectdisabledbg   #224162
               highlight.darkhighlight #1a497c
               highlight.selectfg   #ffffff
               }
@@ -214,6 +215,7 @@ proc awinit { } {
               base.lighter    #f0f0f0
               base.lightest   #ffffff
               highlight.selectbg   #1a497c
+              highlight.selectdisabledbg   #f0f0f0
               highlight.darkhighlight #1a497c
               highlight.selectfg   #ffffff
               }
@@ -233,13 +235,13 @@ proc awinit { } {
         variable vars
         variable imgdata
         variable imgtype
+        variable colors
 
-        if { $vars(theme.name) eq "awdark" } {
-          if { $vars(have.tksvg) } {
-            #B == awdark ==
-            # arrow-bg-down-d
-            set imgtype(arrow-bg-down-d) svg
-            set imgdata(arrow-bg-down-d) {
+        if { $vars(have.tksvg) } {
+          #B == svgdata ==
+          # arrow-bg-down-d
+          set imgtype(arrow-bg-down-d) svg
+          set imgdata(arrow-bg-down-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -304,7 +306,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(131.69759,-128.45547)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
        width="3.7281528"
        height="3.7438293"
@@ -313,20 +315,20 @@ proc awinit { } {
     <g
        aria-label="⏷"
        transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.07255063"
+       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07255063"
        id="text817">
       <path
          d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.07255063"
+         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
          id="path4706"
          inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
 }
-            # arrow-bg-down-n
-            set imgtype(arrow-bg-down-n) svg
-            set imgdata(arrow-bg-down-n) {
+          # arrow-bg-down-n
+          set imgtype(arrow-bg-down-n) svg
+          set imgdata(arrow-bg-down-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -391,7 +393,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(131.69759,-128.45547)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
        width="3.7281528"
        height="3.7438293"
@@ -411,9 +413,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # arrow-bg-left-d
-            set imgtype(arrow-bg-left-d) svg
-            set imgdata(arrow-bg-left-d) {
+          # arrow-bg-left-d
+          set imgtype(arrow-bg-left-d) svg
+          set imgdata(arrow-bg-left-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -475,7 +477,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(131.69759,-128.34964)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.08632814;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202423;stroke-width:0.08632814;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
        width="4.1308079"
        height="4.1348972"
@@ -484,20 +486,20 @@ proc awinit { } {
     <g
        aria-label="⏷"
        transform="matrix(0,1.1182676,-1.1691104,0,19.060577,-18.835003)"
-       style="font-style:normal;font-weight:normal;font-size:3.28602195px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.08215055"
+       style="font-style:normal;font-weight:normal;font-size:3.28602195px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.08215055"
        id="text817">
       <path
          d="m 134.63134,126.01448 q 0.0631,0 0.0631,0.0491 0,0.007 -0.007,0.021 l -1.13565,2.1381 q -0.021,0.0421 -0.0421,0.0421 -0.021,0 -0.0421,-0.0421 L 132.332,126.0916 q 0,-0.014 0,-0.028 0,-0.0491 0.0701,-0.0491 z"
-         style="font-size:7.01018047px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.08215055"
+         style="font-size:7.01018047px;fill:#919282;fill-opacity:1;stroke-width:0.08215055"
          id="path815"
          inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
 }
-            # arrow-bg-left-n
-            set imgtype(arrow-bg-left-n) svg
-            set imgdata(arrow-bg-left-n) {
+          # arrow-bg-left-n
+          set imgtype(arrow-bg-left-n) svg
+          set imgdata(arrow-bg-left-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -567,7 +569,7 @@ proc awinit { } {
          height="3.6205368"
          width="3.6084898"
          id="rect819"
-         style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0.07550083;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.07550083;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <g
          id="text817"
          style="font-style:normal;font-weight:normal;font-size:3.28602195px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.08215055"
@@ -583,9 +585,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # arrow-bg-right-d
-            set imgtype(arrow-bg-right-d) svg
-            set imgdata(arrow-bg-right-d) {
+          # arrow-bg-right-d
+          set imgtype(arrow-bg-right-d) svg
+          set imgdata(arrow-bg-right-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -647,7 +649,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(131.69759,-128.34964)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.08690879;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.08690879;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
        width="4.1476083"
        height="4.1737323"
@@ -656,20 +658,20 @@ proc awinit { } {
     <g
        aria-label="⏷"
        transform="matrix(0,1.1213995,1.1661998,0,18.655533,-19.294116)"
-       style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.08269052"
+       style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.08269052"
        id="text817">
       <path
          inkscape:connector-curvature="0"
          d="m 134.6679,-128.24434 q 0.0635,0 0.0635,0.0494 0,0.007 -0.007,0.0212 l -1.14312,2.15216 q -0.0212,0.0423 -0.0423,0.0423 -0.0212,0 -0.0423,-0.0423 l -1.14312,-2.1451 q 0,-0.0141 0,-0.0282 0,-0.0494 0.0706,-0.0494 z"
-         style="font-size:7.0562582px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.08269052"
+         style="font-size:7.0562582px;fill:#919282;fill-opacity:1;stroke-width:0.08269052"
          id="path815" />
     </g>
   </g>
 </svg>
 }
-            # arrow-bg-right-n
-            set imgtype(arrow-bg-right-n) svg
-            set imgdata(arrow-bg-right-n) {
+          # arrow-bg-right-n
+          set imgtype(arrow-bg-right-n) svg
+          set imgdata(arrow-bg-right-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -739,7 +741,7 @@ proc awinit { } {
          height="3.6435373"
          width="3.6330032"
          id="rect819"
-         style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0.0759971;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.0759971;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <g
          id="text817"
          style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.08269052"
@@ -755,9 +757,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # arrow-bg-up-d
-            set imgtype(arrow-bg-up-d) svg
-            set imgdata(arrow-bg-up-d) {
+          # arrow-bg-up-d
+          set imgtype(arrow-bg-up-d) svg
+          set imgdata(arrow-bg-up-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -821,7 +823,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(131.69759,-128.56132)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.06932501;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.06932501;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
        width="3.3318834"
        height="3.3058643"
@@ -830,20 +832,20 @@ proc awinit { } {
     <g
        aria-label="⏷"
        transform="matrix(1.1691651,0,0,-1.1169925,18.701881,-19.425222)"
-       style="font-style:normal;font-weight:normal;font-size:2.81951427px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.07048785"
+       style="font-style:normal;font-weight:normal;font-size:2.81951427px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07048785"
        id="text817">
       <path
          d="m -126.22887,-134.96964 q 0.0541,0 0.0541,0.0421 0,0.006 -0.006,0.018 l -0.97443,1.83456 q -0.018,0.0361 -0.0361,0.0361 -0.018,0 -0.0361,-0.0361 l -0.97442,-1.82855 q 0,-0.012 0,-0.0241 0,-0.0421 0.0602,-0.0421 z"
-         style="font-size:6.01496363px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.07048785"
+         style="font-size:6.01496363px;fill:#919282;fill-opacity:1;stroke-width:0.07048785"
          id="path4712"
          inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
 }
-            # arrow-bg-up-n
-            set imgtype(arrow-bg-up-n) svg
-            set imgdata(arrow-bg-up-n) {
+          # arrow-bg-up-n
+          set imgtype(arrow-bg-up-n) svg
+          set imgdata(arrow-bg-up-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -915,7 +917,7 @@ proc awinit { } {
          height="2.8943756"
          width="2.9140289"
          id="rect819"
-         style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0.06066342;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.06066342;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <g
          id="text817"
          style="font-style:normal;font-weight:normal;font-size:2.81951427px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07048785"
@@ -931,9 +933,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # arrow-down-d
-            set imgtype(arrow-down-d) svg
-            set imgdata(arrow-down-d) {
+          # arrow-down-d
+          set imgtype(arrow-down-d) svg
+          set imgdata(arrow-down-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1000,20 +1002,20 @@ proc awinit { } {
     <g
        aria-label="⏷"
        transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.07255063"
+       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9192b2;fill-opacity:1;stroke:none;stroke-width:0.07255063"
        id="text817">
       <path
          d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.07255063"
+         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
          id="path4706"
          inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
 }
-            # arrow-down-n
-            set imgtype(arrow-down-n) svg
-            set imgdata(arrow-down-n) {
+          # arrow-down-n
+          set imgtype(arrow-down-n) svg
+          set imgdata(arrow-down-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1091,9 +1093,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # arrow-right-n
-            set imgtype(arrow-right-n) svg
-            set imgdata(arrow-right-n) {
+          # arrow-right-n
+          set imgtype(arrow-right-n) svg
+          set imgdata(arrow-right-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1169,9 +1171,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-sa
-            set imgtype(cb-sa) svg
-            set imgdata(cb-sa) {
+          # cb-sa
+          set imgtype(cb-sa) svg
+          set imgdata(cb-sa) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1255,19 +1257,19 @@ proc awinit { } {
     <g
        aria-label="✔"
        transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7f7f5;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
        id="text9056">
       <path
          d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#f7f7f5;fill-opacity:1;stroke-width:2.01222014"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
          id="path5786" />
     </g>
   </g>
 </svg>
 }
-            # cb-sd
-            set imgtype(cb-sd) svg
-            set imgdata(cb-sd) {
+          # cb-sd
+          set imgtype(cb-sd) svg
+          set imgdata(cb-sd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1361,9 +1363,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-sn-pad
-            set imgtype(menu-cb-sn-pad) svg
-            set imgdata(menu-cb-sn-pad) {
+          # cb-sn-pad
+          set imgtype(menu-cb-sn-pad) svg
+          set imgdata(menu-cb-sn-pad) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1437,7 +1439,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1447,19 +1449,19 @@ proc awinit { } {
     <g
        aria-label="✔"
        transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7f7f5;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
        id="text9056">
       <path
          d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#f7f7f5;fill-opacity:1;stroke-width:2.01222014"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
          id="path5780" />
     </g>
   </g>
 </svg>
 }
-            # cb-sn-small
-            set imgtype(cb-sn-small) svg
-            set imgdata(cb-sn-small) {
+          # cb-sn-small
+          set imgtype(cb-sn-small) svg
+          set imgdata(cb-sn-small) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1533,7 +1535,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1543,19 +1545,19 @@ proc awinit { } {
     <g
        aria-label="✔"
        transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7f7f5;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
        id="text9056">
       <path
          d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#f7f7f5;fill-opacity:1;stroke-width:2.01222014"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
          id="path5777" />
     </g>
   </g>
 </svg>
 }
-            # cb-sn
-            set imgtype(cb-sn) svg
-            set imgdata(cb-sn) {
+          # cb-sn
+          set imgtype(cb-sn) svg
+          set imgdata(cb-sn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1629,7 +1631,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1639,19 +1641,19 @@ proc awinit { } {
     <g
        aria-label="✔"
        transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7f7f5;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
        id="text9056">
       <path
          d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#f7f7f5;fill-opacity:1;stroke-width:2.01222014"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
          id="path5774" />
     </g>
   </g>
 </svg>
 }
-            # cb-ua
-            set imgtype(cb-ua) svg
-            set imgdata(cb-ua) {
+          # cb-ua
+          set imgtype(cb-ua) svg
+          set imgdata(cb-ua) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1725,7 +1727,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#424a4d;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1735,9 +1737,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-ud
-            set imgtype(cb-ud) svg
-            set imgdata(cb-ud) {
+          # cb-ud
+          set imgtype(cb-ud) svg
+          set imgdata(cb-ud) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1821,9 +1823,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-un-pad
-            set imgtype(menu-cb-un-pad) svg
-            set imgdata(menu-cb-un-pad) {
+          # cb-un-pad
+          set imgtype(menu-cb-un-pad) svg
+          set imgdata(menu-cb-un-pad) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1897,7 +1899,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1907,9 +1909,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-un-small
-            set imgtype(cb-un-small) svg
-            set imgdata(cb-un-small) {
+          # cb-un-small
+          set imgtype(cb-un-small) svg
+          set imgdata(cb-un-small) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -1983,7 +1985,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -1993,9 +1995,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # cb-un
-            set imgtype(cb-un) svg
-            set imgdata(cb-un) {
+          # cb-un
+          set imgtype(cb-un) svg
+          set imgdata(cb-un) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2069,7 +2071,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="60.577419"
        height="60.621414"
@@ -2079,9 +2081,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # combo-arrow-down-d
-            set imgtype(combo-arrow-down-d) svg
-            set imgdata(combo-arrow-down-d) {
+          # combo-arrow-down-d
+          set imgtype(combo-arrow-down-d) svg
+          set imgdata(combo-arrow-down-d) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2094,8 +2096,8 @@ proc awinit { } {
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
-   height="22"
-   viewBox="0 0 3.81 5.23875"
+   height="27"
+   viewBox="0 0 4.2333333 7.14375"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -2109,9 +2111,9 @@ proc awinit { } {
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="9.7707698"
-     inkscape:cx="7.9786802"
-     inkscape:cy="12.030532"
+     inkscape:zoom="8.7407407"
+     inkscape:cx="8"
+     inkscape:cy="13.5"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2144,31 +2146,31 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(131.69759,-127.02672)">
+     transform="translate(131.69759,-125.7038)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.09164097;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#000000;stroke-width:0.11329506;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
-       width="3.7281528"
-       height="5.1627464"
-       x="-131.66174"
-       y="127.06579" />
+       width="4.1873693"
+       height="7.025476"
+       x="-131.68114"
+       y="125.755" />
     <g
        aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.017415,-20.118684)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9b9b9b;fill-opacity:1;stroke:none;stroke-width:0.07255063"
+       transform="matrix(1.1362206,0,0,1.1516568,19.229082,-20.489104)"
+       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07255063"
        id="text817">
       <path
          d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#9b9b9b;fill-opacity:1;stroke-width:0.07255063"
+         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
          id="path4706"
          inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>
 }
-            # combo-arrow-down-n
-            set imgtype(combo-arrow-down-n) svg
-            set imgdata(combo-arrow-down-n) {
+          # combo-arrow-down-n
+          set imgtype(combo-arrow-down-n) svg
+          set imgdata(combo-arrow-down-n) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2181,8 +2183,8 @@ proc awinit { } {
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
-   height="22"
-   viewBox="0 0 3.81 5.23875"
+   height="27"
+   viewBox="0 0 4.2333333 7.14375"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -2196,9 +2198,9 @@ proc awinit { } {
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="9.8248564"
-     inkscape:cx="7.9786802"
-     inkscape:cy="11.964582"
+     inkscape:zoom="8.7407407"
+     inkscape:cx="8"
+     inkscape:cy="13.5"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2231,17 +2233,17 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(131.69759,-127.02672)">
+     transform="translate(131.69759,-125.78318)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0.09183098;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.11302858;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
-       width="3.7281528"
-       height="5.184175"
-       x="-131.66174"
-       y="127.04437" />
+       width="4.1379242"
+       height="7.0760179"
+       x="-131.65642"
+       y="125.79185" />
     <g
        aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.017415,-20.118684)"
+       transform="matrix(1.1362206,0,0,1.1516568,19.229082,-20.409724)"
        style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07255063"
        id="text817">
       <path
@@ -2253,9 +2255,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-sa
-            set imgtype(rb-sa) svg
-            set imgdata(rb-sa) {
+          # rb-sa
+          set imgtype(rb-sa) svg
+          set imgdata(rb-sa) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2329,7 +2331,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#424a4d;fill-opacity:1;stroke:#020202;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -2343,9 +2345,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-sd
-            set imgtype(rb-sd) svg
-            set imgdata(rb-sd) {
+          # rb-sd
+          set imgtype(rb-sd) svg
+          set imgdata(rb-sd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2425,7 +2427,7 @@ proc awinit { } {
        cy="32.295544"
        r="30.200102" />
     <circle
-       style="fill:#394c5f;fill-opacity:1;stroke:#394c5f;stroke-width:2.80124985;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#224162;fill-opacity:1;stroke:#224162;stroke-width:2.80124985;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4500"
        cx="32.013382"
        cy="32.295544"
@@ -2433,9 +2435,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-sn-pad
-            set imgtype(menu-rb-sn-pad) svg
-            set imgdata(menu-rb-sn-pad) {
+          # rb-sn-pad
+          set imgtype(menu-rb-sn-pad) svg
+          set imgdata(menu-rb-sn-pad) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2509,7 +2511,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#020202;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -2523,9 +2525,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-sn-small
-            set imgtype(rb-sn-small) svg
-            set imgdata(rb-sn-small) {
+          # rb-sn-small
+          set imgtype(rb-sn-small) svg
+          set imgdata(rb-sn-small) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2599,7 +2601,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#020202;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="31.874998"
        cy="32"
@@ -2613,9 +2615,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-sn
-            set imgtype(rb-sn) svg
-            set imgdata(rb-sn) {
+          # rb-sn
+          set imgtype(rb-sn) svg
+          set imgdata(rb-sn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2689,7 +2691,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#020202;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -2703,9 +2705,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-ua
-            set imgtype(rb-ua) svg
-            set imgdata(rb-ua) {
+          # rb-ua
+          set imgtype(rb-ua) svg
+          set imgdata(rb-ua) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2779,7 +2781,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#424a4d;fill-opacity:1;stroke:#020202;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -2787,9 +2789,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-ud
-            set imgtype(rb-ud) svg
-            set imgdata(rb-ud) {
+          # rb-ud
+          set imgtype(rb-ud) svg
+          set imgdata(rb-ud) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2871,9 +2873,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-un-pad
-            set imgtype(menu-rb-un-pad) svg
-            set imgdata(menu-rb-un-pad) {
+          # rb-un-pad
+          set imgtype(menu-rb-un-pad) svg
+          set imgdata(menu-rb-un-pad) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -2947,7 +2949,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#010101;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -2955,9 +2957,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-un-small
-            set imgtype(rb-un-small) svg
-            set imgdata(rb-un-small) {
+          # rb-un-small
+          set imgtype(rb-un-small) svg
+          set imgdata(rb-un-small) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3031,7 +3033,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#010101;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="31.874998"
        cy="32"
@@ -3039,9 +3041,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # rb-un
-            set imgtype(rb-un) svg
-            set imgdata(rb-un) {
+          # rb-un
+          set imgtype(rb-un) svg
+          set imgdata(rb-un) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3115,7 +3117,7 @@ proc awinit { } {
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#010101;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="32.322948"
        cy="31.867752"
@@ -3123,9 +3125,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # scale-hd
-            set imgtype(scale-hd) svg
-            set imgdata(scale-hd) {
+          # scale-hd
+          set imgtype(scale-hd) svg
+          set imgdata(scale-hd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3188,7 +3190,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-97.353814,-139.48844)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4278965"
        height="7.1305251"
@@ -3207,7 +3209,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3216,7 +3218,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3225,7 +3227,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3234,7 +3236,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3243,14 +3245,14 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
 }
-            # scale-hn
-            set imgtype(scale-hn) svg
-            set imgdata(scale-hn) {
+          # scale-hn
+          set imgtype(scale-hn) svg
+          set imgdata(scale-hn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3313,7 +3315,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-97.353814,-139.48844)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#000102;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4380579"
        height="7.1025405"
@@ -3332,7 +3334,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3341,7 +3343,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3350,7 +3352,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3359,7 +3361,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3368,14 +3370,14 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
 }
-            # scale-vd
-            set imgtype(scale-vd) svg
-            set imgdata(scale-vd) {
+          # scale-vd
+          set imgtype(scale-vd) svg
+          set imgdata(scale-vd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3437,7 +3439,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-99.488592,-137.94053)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4021287"
        height="7.1350117"
@@ -3456,7 +3458,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3465,7 +3467,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3474,7 +3476,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3483,7 +3485,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3492,14 +3494,14 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
 }
-            # scale-vn
-            set imgtype(scale-vn) svg
-            set imgdata(scale-vn) {
+          # scale-vn
+          set imgtype(scale-vn) svg
+          set imgdata(scale-vn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3562,7 +3564,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-99.48979,-137.92546)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#000102;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="4.7264309"
        height="9.8160715"
@@ -3581,7 +3583,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3590,7 +3592,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3599,7 +3601,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3608,7 +3610,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -3617,14 +3619,14 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
 }
-            # sizegrip
-            set imgtype(sizegrip) svg
-            set imgdata(sizegrip) {
+          # sizegrip
+          set imgtype(sizegrip) svg
+          set imgdata(sizegrip) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3692,7 +3694,7 @@ proc awinit { } {
       <g
          id="g950">
         <circle
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79"
            cx="14.324424"
            cy="282.63419"
@@ -3914,9 +3916,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # slider-hd
-            set imgtype(slider-hd) svg
-            set imgdata(slider-hd) {
+          # slider-hd
+          set imgtype(slider-hd) svg
+          set imgdata(slider-hd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -3979,7 +3981,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-97.353814,-139.48844)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4278965"
        height="7.1305251"
@@ -3990,9 +3992,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # slider-h-grip
-            set imgtype(slider-h-grip) svg
-            set imgdata(slider-h-grip) {
+          # slider-h-grip
+          set imgtype(slider-h-grip) svg
+          set imgdata(slider-h-grip) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -4056,7 +4058,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-99.605399,-140.46056)">
     <rect
-       style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1368"
        width="2.0756626"
        height="0.269997"
@@ -4065,7 +4067,7 @@ proc awinit { } {
        ry="0.1349985"
        transform="rotate(90)" />
     <rect
-       style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1368-3"
        width="2.0756626"
        height="0.269997"
@@ -4074,7 +4076,7 @@ proc awinit { } {
        ry="0.1349985"
        transform="rotate(90)" />
     <rect
-       style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1368-6"
        width="2.0756626"
        height="0.269997"
@@ -4083,7 +4085,7 @@ proc awinit { } {
        ry="0.1349985"
        transform="rotate(90)" />
     <rect
-       style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1368-7"
        width="2.0756626"
        height="0.269997"
@@ -4092,7 +4094,7 @@ proc awinit { } {
        ry="0.1349985"
        transform="rotate(90)" />
     <rect
-       style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1368-5"
        width="2.0756626"
        height="0.269997"
@@ -4103,9 +4105,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # slider-hn
-            set imgtype(slider-hn) svg
-            set imgdata(slider-hn) {
+          # slider-hn
+          set imgtype(slider-hn) svg
+          set imgdata(slider-hn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -4168,7 +4170,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-97.353814,-139.48844)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#000102;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4380579"
        height="7.1025405"
@@ -4179,9 +4181,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # slider-vd
-            set imgtype(slider-vd) svg
-            set imgdata(slider-vd) {
+          # slider-vd
+          set imgtype(slider-vd) svg
+          set imgdata(slider-vd) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -4243,7 +4245,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-99.488592,-137.94053)">
     <rect
-       style="opacity:1;fill:#131920;fill-opacity:1;stroke:#07090b;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="3.4021287"
        height="7.1350117"
@@ -4254,9 +4256,9 @@ proc awinit { } {
   </g>
 </svg>
 }
-            # slider-v-grip
-            set imgtype(slider-v-grip) svg
-            set imgdata(slider-v-grip) {
+          # slider-v-grip
+          set imgtype(slider-v-grip) svg
+          set imgdata(slider-v-grip) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -4330,7 +4332,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -4339,7 +4341,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -4348,7 +4350,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -4357,7 +4359,7 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -4366,14 +4368,14 @@ proc awinit { } {
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:#000101;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>
 }
-            # slider-vn
-            set imgtype(slider-vn) svg
-            set imgdata(slider-vn) {
+          # slider-vn
+          set imgtype(slider-vn) svg
+          set imgdata(slider-vn) {
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
@@ -4436,7 +4438,7 @@ proc awinit { } {
      id="layer1"
      transform="translate(-99.48979,-137.92546)">
     <rect
-       style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#000102;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="4.7264309"
        height="9.8160715"
@@ -4447,9 +4449,10 @@ proc awinit { } {
   </g>
 </svg>
 }
-            #E == awdark ==
-          }
+          #E == svgdata ==
+        }
 
+        if { $vars(theme.name) eq "awdark" } {
           if { ! [info exists imgdata(cb-sa)] } {
             # cb-sa
             set imgdata(cb-sa) {
@@ -4777,1788 +4780,37 @@ proc awinit { } {
 
         if { $vars(theme.name) eq "awlight" } {
           if { $vars(have.tksvg) } {
-            #B == awlight ==
-            # cb-sa
-            set imgtype(cb-sa) svg
-            set imgdata(cb-sa) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
+            foreach {n} [array names ::ttk::theme::awdark::imgdata] {
+              set imgdata($n) $::ttk::theme::awdark::imgdata($n)
 
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sa.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#8b8391;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014"
-         id="path5786" />
-    </g>
-  </g>
-</svg>
-}
-            # cb-sd
-            set imgtype(cb-sd) svg
-            set imgdata(cb-sd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sd.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#cacaca;stroke-width:3.50260115;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.726891"
-       height="60.617222"
-       x="1.645276"
-       y="1.6727111"
-       ry="10.69791" />
-    <g
-       aria-label="✔"
-       transform="scale(0.9676207,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#8b8391;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.202149,28.627019 q 1.532746,0 2.318769,2.515275 1.572047,4.716141 2.240167,4.716141 0.510915,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082866 7.742331,-2.9082866 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825292 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.65065,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 -0.903927,-0.471614 -3.144093,-6.013079 -2.8296848,-6.995608 -2.8296848,-12.261965 0,-1.925758 2.7510818,-3.183395 3.772913,-1.729252 5.659369,-1.729252 z"
-         style="fill:#8b8391;fill-opacity:1;stroke-width:2.01222014"
-         id="path5783" />
-    </g>
-  </g>
-</svg>
-}
-            # cb-sn-pad
-            set imgtype(menu-cb-sn-pad) svg
-            set imgdata(menu-cb-sn-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-sn-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014"
-         id="path5780" />
-    </g>
-  </g>
-</svg>
-}
-            # cb-sn-small
-            set imgtype(cb-sn-small) svg
-            set imgdata(cb-sn-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sn-small.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.235294"
-     inkscape:cx="8.5"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014"
-         id="path5777" />
-    </g>
-  </g>
-</svg>
-}
-            # cb-sn
-            set imgtype(cb-sn) svg
-            set imgdata(cb-sn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sn.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="25.984836"
-     inkscape:cx="8.576129"
-     inkscape:cy="8.4973642"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#cacaca;fill-opacity:1;stroke:#8b8391;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#000000;fill-opacity:1;stroke-width:2.01222014"
-         id="path5774" />
-    </g>
-  </g>
-</svg>
-}
-            # cb-ua
-            set imgtype(cb-ua) svg
-            set imgdata(cb-ua) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-ua.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#8b8391;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-            # cb-ud
-            set imgtype(cb-ud) svg
-            set imgdata(cb-ud) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-ud.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#cacaca;stroke-width:3.49421477;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.581619"
-       height="60.471951"
-       x="1.7160162"
-       y="1.8549629"
-       ry="10.672273" />
-  </g>
-</svg>
-}
-            # cb-un-pad
-            set imgtype(menu-cb-un-pad) svg
-            set imgdata(menu-cb-un-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-            # cb-un-small
-            set imgtype(cb-un-small) svg
-            set imgdata(cb-un-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-            # cb-un
-            set imgtype(cb-un) svg
-            set imgdata(cb-un) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-un.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#cacaca;fill-opacity:1;stroke:#8b8391;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-            # rb-sa
-            set imgtype(rb-sa) svg
-            set imgdata(rb-sa) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sa.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#8b8391;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#1a497c;fill-opacity:1;stroke:#1a497c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-            # rb-sd
-            set imgtype(rb-sd) svg
-            set imgdata(rb-sd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sd.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.132811"
-     inkscape:cx="8.5333338"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="45"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#8b8391;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.013382"
-       cy="32.295544"
-       r="30.200102" />
-    <circle
-       style="fill:#4b5c70;fill-opacity:1;stroke:#4b5c70;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.013382"
-       cy="32.295544"
-       r="19.212624" />
-  </g>
-</svg>
-}
-            # rb-sn-pad
-            set imgtype(menu-rb-sn-pad) svg
-            set imgdata(menu-rb-sn-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="rb-sn-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#1a497c;fill-opacity:1;stroke:#1a497c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-            # rb-sn-small
-            set imgtype(rb-sn-small) svg
-            set imgdata(rb-sn-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sn-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#1a497c;fill-opacity:1;stroke:#1a497c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-            # rb-sn
-            set imgtype(rb-sn) svg
-            set imgdata(rb-sn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sn.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#cacaca;fill-opacity:1;stroke:#8b8391;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#1a497c;fill-opacity:1;stroke:#1a497c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-            # rb-ua
-            set imgtype(rb-ua) svg
-            set imgdata(rb-ua) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-ua.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#8b8391;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-            # rb-ud
-            set imgtype(rb-ud) svg
-            set imgdata(rb-ud) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-ud.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="45"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#e8e8e7;fill-opacity:1;stroke:#cacaca;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-            # rb-un-pad
-            set imgtype(menu-rb-un-pad) svg
-            set imgdata(menu-rb-un-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="rb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="29"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-            # rb-un-small
-            set imgtype(rb-un-small) svg
-            set imgdata(rb-un-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="29"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#f0f0f0;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-            # rb-un
-            set imgtype(rb-un) svg
-            set imgdata(rb-un) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-un.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="24.227283"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="55"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#cacaca;fill-opacity:1;stroke:#8b8391;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-            #E == awlight ==
+              if { [string match *arrow* $n] } {
+                set oc $::ttk::theme::awdark::colors(highlight.selectbg)
+                set nc $colors(curr.lighter)
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+              foreach {oc nc} [list \
+                  $::ttk::theme::awdark::colors(base.dark) \
+                  $colors(curr.dark) \
+                  $::ttk::theme::awdark::colors(base.disabledfg) \
+                  $colors(curr.disabledfg) \
+                  $::ttk::theme::awdark::colors(base.disabledbg) \
+                  $colors(curr.disabledbg) \
+                  $::ttk::theme::awdark::colors(base.disabledborder) \
+                  $colors(curr.disabledborder) \
+                  $::ttk::theme::awdark::colors(base.bpress) \
+                  $colors(curr.bpress) \
+                  $::ttk::theme::awdark::colors(highlight.selectbg) \
+                  $colors(curr.selectbg) \
+                  $::ttk::theme::awdark::colors(highlight.selectdisabledbg) \
+                  $colors(curr.selectdisabledbg) \
+                  $::ttk::theme::awdark::colors(base.border) \
+                  $colors(curr.border) \
+                  $::ttk::theme::awdark::colors(base.arrow) \
+                  $colors(curr.arrow) \
+                  ] {
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+            }
           }
 
           if { ! [info exists imgdata(cb-sa)] } {
@@ -6910,7 +5162,7 @@ proc awinit { } {
           set images($n) [image create photo -data $imgdata($n) \
               -format "svg -scale [expr {round($vars(scale.factor))}]"]
         }
-        if { ! [info exists imgdata($n)] } {
+        if { ! [info exists images($n)] } {
           set images($n) [image create photo -data $imgdata($n)]
         }
       }
@@ -7224,21 +5476,21 @@ proc awinit { } {
         # treeview
 
         if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
-          # Treeitem.indicator already exists in the parent clam theme,
-          # so a new name must be used and a new layout created for 'Item'.
-          ttk::style element create AW.Treeitem.indicator image \
+          # Treeitem.indicator already exists for some reason.
+          # A new name must be used and a new layout created for 'Item'.
+          ttk::style element create $vars(theme.name).Treeitem.indicator image \
               [list $images(arrow-right-n) \
               user1 $images(arrow-down-n)] \
               -sticky w
-          ttk::style layout Item {
-            Treeitem.padding -sticky nswe -children {
-              AW.Treeitem.indicator -side left -sticky {}
-              Treeitem.image -side left -sticky {}
-              Treeitem.focus -side left -sticky {} -children {
-                Treeitem.text -side left -sticky {}
-              }
-            }
-          }
+          ttk::style layout Item [list \
+            Treeitem.padding -sticky nswe -children [list \
+              $vars(theme.name).Treeitem.indicator -side left -sticky {} \
+              Treeitem.image -side left -sticky {} \
+              Treeitem.focus -side left -sticky {} -children { \
+                Treeitem.text -side left -sticky {} \
+              } \
+            ]
+          ]
         }
       }
 
