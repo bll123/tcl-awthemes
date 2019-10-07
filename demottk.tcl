@@ -2,12 +2,10 @@
 
 package require Tk
 
-if { [llength $::argv] != 1 } {
-  puts "Usage: demottk.tcl <theme>"
+if { [llength $::argv] < 1 } {
+  puts "Usage: demottk.tcl <theme> [-scale <scale-factor>]"
   exit 1
 }
-
-set theme [lindex $::argv 0]
 
 set fn data/bll-tecra/tkscale.txt
 if { [file exists $fn] } {
@@ -16,6 +14,14 @@ if { [file exists $fn] } {
   close $fh
   tk scaling -displayof . $scale
 }
+
+set theme [lindex $::argv 0]
+if { [llength $::argv] == 3 } {
+  if { [lindex $::argv 1] eq "-scale" } {
+    tk scaling [lindex $::argv 2]
+  }
+}
+
 set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]
 
