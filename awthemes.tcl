@@ -26,6 +26,19 @@
 #
 #   ::ttk::theme::awdark::setHighlight color
 #     requires the colorutils package
+#     This does not work with the scalable graphics.
+#
+#   ::themeutils::setThemeColors awdark colorname color ...
+#     Allows modification of any of the colors used by awdark and awlight.
+#     The graphical colors will be changed to match.
+#     e.g.
+#       package require colorutils
+#       package require themeutils
+#       ::themeutils::setThemeColors awdark \
+#           highlight.selectbg #007000 highlight.selectdisabledbg #222222
+#       package require awdark
+#     will change the selection and graphical colors to a green, and the
+#     the disabled selection color to a dark grey.
 #
 # Mac OS X notes for prior to 8.6.9:
 #   To style the scrollbars, use:
@@ -35,6 +48,8 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 3.1
+#   - allow user configuration of colors
 # 3.0
 #   - tksvg support
 # 2.6
@@ -113,14 +128,16 @@ try {
   }
   unset ap
   package require colorutils
+  package require themeutils
 } on error {err res} {
+  puts stderr "ERROR: colorutlis and themeutils packages are required"
 }
 
 proc awinit { } {
   global awthemename
 
   foreach awthemename {awdark awlight} {
-    package provide $awthemename 3.0
+    package provide $awthemename 3.1
 
     namespace eval ::ttk::theme::$awthemename {
       variable colors
@@ -153,17 +170,31 @@ proc awinit { } {
 
         _setThemeBaseColors
 
-        foreach {k} [array names colors base.*] {
-          regsub {^base} $k curr nk
-          set colors($nk) $colors($k)
+        # set up the curr.* named colors
+
+        foreach {k} [array names colors] {
+          if { [regexp {^user\.} $k] } { continue }
+          set colors(curr.$k) $colors($k)
         }
-        foreach {k} [array names colors text.*] {
-          regsub {^text} $k curr nk
-          set colors($nk) $colors($k)
+
+        # override colors with any user.* colors
+        # these are set by the ::themeutils package
+        # process the base colors first, then the derived colors
+
+        foreach {k} $::themeutils::vars(names.colors.base) {
+          if { [info exists colors(user.$k)] } {
+            set colors(curr.$k) $colors(user.$k)
+          }
         }
-        foreach {k} [array names colors highlight.*] {
-          regsub {^highlight} $k curr nk
-          set colors($nk) $colors($k)
+
+        # sets both the base colors and the curr.* colors
+        _setDerivedColors
+
+        # now override any derived colors with user-specified colors
+        foreach {k} $::themeutils::vars(names.colors.derived) {
+          if { [info exists colors(user.$k)] } {
+            set colors(curr.$k) $colors(user.$k)
+          }
         }
 
         _setImageData
@@ -177,30 +208,21 @@ proc awinit { } {
 
         if { $vars(theme.name) eq "awdark" } {
           array set colors {
-              base.disabledfg #919282
-              base.disabledbg #2d3234
-              base.disabledborder #202425
-              base.frame      #33393b
-              base.dark       #252a2c
-              base.darker     #1b1f20
-              base.darkest    #000000
-              base.bpress     #424a4d
-              base.lighter    #525c5f
-              base.lightest   #ffffff
-              highlight.selectbg   #215d9c
-              highlight.selectdisabledbg   #224162
-              highlight.darkhighlight #1a497c
-              highlight.selectfg   #ffffff
+              base.disabledfg       #919282
+              base.disabledbg       #2d3234
+              base.disabledborder   #202425
+              base.frame            #33393b
+              base.dark             #252a2c
+              base.darker           #1b1f20
+              base.darkest          #000000
+              base.bpress           #424a4d
+              base.lighter          #525c5f
+              base.lightest         #ffffff
+              highlight.selectbg    #215d9c
+              highlight.selectdisabledbg  #224162
+              highlight.darkhighlight     #1a497c
+              highlight.selectfg    #ffffff
               }
-          set colors(base.arrow) $colors(base.lightest)
-          set colors(base.arrow.disabled) $colors(base.lighter)
-          set colors(base.border) $colors(base.darkest)
-          set colors(base.border.light) $colors(base.darkest)
-          set colors(text.text) $colors(base.lightest)
-          set colors(base.tabborder) $colors(base.darkest)
-          set colors(base.tabinactive) $colors(base.frame)
-          set colors(base.tabhighlight) #8b9ca1
-          set colors(base.entrybg) $colors(base.darker)
         }
         if { $vars(theme.name) eq "awlight" } {
           array set colors {
@@ -219,15 +241,36 @@ proc awinit { } {
               highlight.darkhighlight #1a497c
               highlight.selectfg   #ffffff
               }
-          set colors(base.arrow) $colors(base.darkest)
-          set colors(base.arrow.disabled) $colors(base.darker)
-          set colors(base.border) $colors(base.dark)
-          set colors(base.border.light) $colors(base.dark)
-          set colors(text.text) $colors(base.darkest)
-          set colors(base.tabborder) $colors(base.frame)
-          set colors(base.tabinactive) $colors(base.darker)
-          set colors(base.tabhighlight) $colors(base.darkest)
-          set colors(base.entrybg) $colors(base.lightest)
+        }
+      }
+
+      proc _setDerivedColors { } {
+        variable vars
+        variable colors
+
+        foreach {prefix} {{} curr.} {
+          if { $vars(theme.name) eq "awdark" } {
+            set colors(${prefix}base.arrow) $colors(base.lightest)
+            set colors(${prefix}base.arrow.disabled) $colors(base.lighter)
+            set colors(${prefix}base.border) $colors(base.darkest)
+            set colors(${prefix}base.border.light) $colors(base.darkest)
+            set colors(${prefix}text.text) $colors(base.lightest)
+            set colors(${prefix}base.tabborder) $colors(base.darkest)
+            set colors(${prefix}base.tabinactive) $colors(base.frame)
+            set colors(${prefix}base.tabhighlight) #8b9ca1
+            set colors(${prefix}base.entrybg) $colors(base.darker)
+          }
+          if { $vars(theme.name) eq "awlight" } {
+            set colors(${prefix}base.arrow) $colors(base.darkest)
+            set colors(${prefix}base.arrow.disabled) $colors(base.darker)
+            set colors(${prefix}base.border) $colors(base.dark)
+            set colors(${prefix}base.border.light) $colors(base.dark)
+            set colors(${prefix}text.text) $colors(base.darkest)
+            set colors(${prefix}base.tabborder) $colors(base.frame)
+            set colors(${prefix}base.tabinactive) $colors(base.darker)
+            set colors(${prefix}base.tabhighlight) $colors(base.darkest)
+            set colors(${prefix}base.entrybg) $colors(base.lightest)
+          }
         }
       }
 
@@ -3707,49 +3750,49 @@ proc awinit { } {
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-6"
            cx="11.119109"
            cy="285.81818"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-7"
            cx="9.5164518"
            cy="287.41016"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-5"
            cx="7.913794"
            cy="289.00214"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-35"
            cx="6.3111362"
            cy="290.59412"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-62"
            cx="4.7084789"
            cy="292.18613"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-9"
            cx="3.1058214"
            cy="293.77811"
            rx="0.69321311"
            ry="0.69321305" />
         <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-1"
            cx="1.5031636"
            cy="295.37009"
@@ -3762,7 +3805,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-2.5681986"
            inkscape:transform-center-x="-1.8183937"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-3-7"
            cx="14.967299"
            cy="285.89139"
@@ -3771,7 +3814,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-1.8042036"
            inkscape:transform-center-x="-1.05441"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-6-0"
            cx="13.364642"
            cy="287.48337"
@@ -3780,7 +3823,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-1.0402233"
            inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-7-9"
            cx="11.761985"
            cy="289.07538"
@@ -3789,7 +3832,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-0.27624296"
            inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-5-3"
            cx="10.159327"
            cy="290.66736"
@@ -3798,7 +3841,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="0.48773736"
            inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-35-6"
            cx="8.5566683"
            cy="292.25934"
@@ -3807,7 +3850,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="1.2517323"
            inkscape:transform-center-x="2.0015276"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-62-0"
            cx="6.954011"
            cy="293.85135"
@@ -3816,7 +3859,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="2.0157126"
            inkscape:transform-center-x="2.7655121"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-9-6"
            cx="5.3513532"
            cy="295.44333"
@@ -3829,7 +3872,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-1.8042036"
            inkscape:transform-center-x="-1.05441"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-6-0-8"
            cx="14.689195"
            cy="289.13831"
@@ -3838,7 +3881,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-1.0402233"
            inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-7-9-7"
            cx="13.086537"
            cy="290.73032"
@@ -3847,7 +3890,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-0.27624296"
            inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-5-3-9"
            cx="11.48388"
            cy="292.3223"
@@ -3856,7 +3899,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="0.48773736"
            inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-35-6-2"
            cx="9.8812218"
            cy="293.91428"
@@ -3865,7 +3908,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="1.2517323"
            inkscape:transform-center-x="2.0015276"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-62-0-0"
            cx="8.2785645"
            cy="295.50629"
@@ -3878,7 +3921,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-1.0402233"
            inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-7-9-7-7"
            cx="5.9463682"
            cy="285.23096"
@@ -3887,7 +3930,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="-0.27624296"
            inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-5-3-9-5"
            cx="4.3437109"
            cy="286.82294"
@@ -3896,7 +3939,7 @@ proc awinit { } {
         <ellipse
            inkscape:transform-center-y="0.48773736"
            inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
            id="path841-79-35-6-2-9"
            cx="2.7410524"
            cy="288.41492"
@@ -3909,7 +3952,7 @@ proc awinit { } {
          cy="295.49088"
          cx="14.451189"
          id="path841-79-6-0-8-2"
-         style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          inkscape:transform-center-x="-1.05441"
          inkscape:transform-center-y="-1.8042036" />
     </g>
@@ -4452,6 +4495,79 @@ proc awinit { } {
           #E == svgdata ==
         }
 
+        if { $vars(theme.name) eq "awlight" } {
+          # convert all the svg colors to awlight specific colors
+          if { $vars(have.tksvg) } {
+            foreach {n} [array names ::ttk::theme::awdark::imgdata] {
+              set imgdata($n) $::ttk::theme::awdark::imgdata($n)
+              if { [string match *arrow* $n] } {
+                set oc $::ttk::theme::awdark::colors(highlight.selectbg)
+                set nc $colors(curr.base.lighter)
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+              foreach {oc nc} [list \
+                  $::ttk::theme::awdark::colors(base.dark) \
+                  $colors(base.dark) \
+                  $::ttk::theme::awdark::colors(base.disabledfg) \
+                  $colors(base.disabledfg) \
+                  $::ttk::theme::awdark::colors(base.disabledbg) \
+                  $colors(base.disabledbg) \
+                  $::ttk::theme::awdark::colors(base.disabledborder) \
+                  $colors(base.disabledborder) \
+                  $::ttk::theme::awdark::colors(base.bpress) \
+                  $colors(base.bpress) \
+                  $::ttk::theme::awdark::colors(highlight.selectbg) \
+                  $colors(highlight.selectbg) \
+                  $::ttk::theme::awdark::colors(highlight.selectdisabledbg) \
+                  $colors(highlight.selectdisabledbg) \
+                  $::ttk::theme::awdark::colors(base.border) \
+                  $colors(base.border) \
+                  $::ttk::theme::awdark::colors(base.arrow) \
+                  $colors(base.arrow) \
+                  ] {
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+            }
+          }
+        }
+
+        # convert all the svg colors to the current colors
+        if { $vars(have.tksvg) } {
+          foreach {n} [array names imgdata] {
+            if { [string match *arrow* $n] } {
+              set oc $colors(highlight.selectbg)
+              set nc $colors(curr.highlight.selectbg)
+              if { $nc ne $oc } {
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+            }
+            foreach {oc nc} [list \
+                $colors(base.dark) \
+                $colors(curr.base.dark) \
+                $colors(base.disabledfg) \
+                $colors(curr.base.disabledfg) \
+                $colors(base.disabledbg) \
+                $colors(curr.base.disabledbg) \
+                $colors(base.disabledborder) \
+                $colors(curr.base.disabledborder) \
+                $colors(base.bpress) \
+                $colors(curr.base.bpress) \
+                $colors(highlight.selectbg) \
+                $colors(curr.highlight.selectbg) \
+                $colors(highlight.selectdisabledbg) \
+                $colors(curr.highlight.selectdisabledbg) \
+                $colors(base.border) \
+                $colors(curr.base.border) \
+                $colors(base.arrow) \
+                $colors(curr.base.arrow) \
+                ] {
+              if { $nc ne $oc } {
+                regsub -all $oc $imgdata($n) $nc imgdata($n)
+              }
+            }
+          }
+        }
+
         if { $vars(theme.name) eq "awdark" } {
           if { ! [info exists imgdata(cb-sa)] } {
             # cb-sa
@@ -4779,40 +4895,6 @@ proc awinit { } {
         }
 
         if { $vars(theme.name) eq "awlight" } {
-          if { $vars(have.tksvg) } {
-            foreach {n} [array names ::ttk::theme::awdark::imgdata] {
-              set imgdata($n) $::ttk::theme::awdark::imgdata($n)
-
-              if { [string match *arrow* $n] } {
-                set oc $::ttk::theme::awdark::colors(highlight.selectbg)
-                set nc $colors(curr.lighter)
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
-              }
-              foreach {oc nc} [list \
-                  $::ttk::theme::awdark::colors(base.dark) \
-                  $colors(curr.dark) \
-                  $::ttk::theme::awdark::colors(base.disabledfg) \
-                  $colors(curr.disabledfg) \
-                  $::ttk::theme::awdark::colors(base.disabledbg) \
-                  $colors(curr.disabledbg) \
-                  $::ttk::theme::awdark::colors(base.disabledborder) \
-                  $colors(curr.disabledborder) \
-                  $::ttk::theme::awdark::colors(base.bpress) \
-                  $colors(curr.bpress) \
-                  $::ttk::theme::awdark::colors(highlight.selectbg) \
-                  $colors(curr.selectbg) \
-                  $::ttk::theme::awdark::colors(highlight.selectdisabledbg) \
-                  $colors(curr.selectdisabledbg) \
-                  $::ttk::theme::awdark::colors(base.border) \
-                  $colors(curr.border) \
-                  $::ttk::theme::awdark::colors(base.arrow) \
-                  $colors(curr.arrow) \
-                  ] {
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
-              }
-            }
-          }
-
           if { ! [info exists imgdata(cb-sa)] } {
             # cb-sa
             set imgdata(cb-sa) {
@@ -5499,11 +5581,11 @@ proc awinit { } {
         variable images
         variable vars
 
-        set tag "$colors(curr.tabhighlight)$colors(curr.tabinactive)$colors(curr.selectbg)"
+        set tag "$colors(curr.base.tabhighlight)$colors(curr.base.tabinactive)$colors(curr.highlight.selectbg)"
         foreach {k bg} [list \
-            indhover $colors(curr.tabhighlight) \
-            indnotactive $colors(curr.tabinactive) \
-            indselected $colors(curr.selectbg) \
+            indhover $colors(curr.base.tabhighlight) \
+            indnotactive $colors(curr.base.tabinactive) \
+            indselected $colors(curr.highlight.selectbg) \
             ] {
           if { ! [info exists images($k.$bg)] } {
             set images($k.$bg) [image create photo \
@@ -5550,204 +5632,204 @@ proc awinit { } {
         ttk::style theme settings $theme {
           # defaults
           ttk::style configure . \
-              -background $colors(curr.frame) \
-              -foreground $colors(curr.text) \
+              -background $colors(curr.base.frame) \
+              -foreground $colors(curr.text.text) \
               -borderwidth 1 \
-              -bordercolor $colors(curr.border) \
-              -darkcolor $colors(curr.darkest) \
-              -lightcolor $colors(curr.darkest) \
-              -troughcolor $colors(curr.entrybg) \
-              -selectbackground $colors(curr.selectbg) \
-              -selectforeground $colors(curr.selectfg) \
+              -bordercolor $colors(curr.base.border) \
+              -darkcolor $colors(curr.base.darkest) \
+              -lightcolor $colors(curr.base.darkest) \
+              -troughcolor $colors(curr.base.entrybg) \
+              -selectbackground $colors(curr.highlight.selectbg) \
+              -selectforeground $colors(curr.highlight.selectfg) \
               -selectborderwidth 0 \
-              -fieldbackground $colors(curr.entrybg) \
-              -focuscolor $colors(curr.selectbg) \
-              -insertcolor $colors(curr.lightest) \
+              -fieldbackground $colors(curr.base.entrybg) \
+              -focuscolor $colors(curr.highlight.selectbg) \
+              -insertcolor $colors(curr.base.lightest) \
               -relief none
           ttk::style map . \
-              -background [list disabled $colors(curr.frame)] \
-              -foreground [list active $colors(curr.text) \
-                  focus $colors(curr.text) \
-                  disabled $colors(curr.disabledfg)] \
-              -selectbackground [list !focus $colors(curr.darkest)] \
-              -selectforeground [list !focus $colors(curr.lightest)] \
-              -bordercolor [list disabled $colors(curr.disabledborder)]
+              -background [list disabled $colors(curr.base.frame)] \
+              -foreground [list active $colors(curr.text.text) \
+                  focus $colors(curr.text.text) \
+                  disabled $colors(curr.base.disabledfg)] \
+              -selectbackground [list !focus $colors(curr.base.darkest)] \
+              -selectforeground [list !focus $colors(curr.base.lightest)] \
+              -bordercolor [list disabled $colors(curr.base.disabledborder)]
 
           # button
 
           ttk::style configure TButton \
-              -bordercolor $colors(curr.frame) \
-              -background $colors(curr.dark) \
-              -lightcolor $colors(curr.lighter) \
-              -darkcolor $colors(curr.darker)
+              -bordercolor $colors(curr.base.frame) \
+              -background $colors(curr.base.dark) \
+              -lightcolor $colors(curr.base.lighter) \
+              -darkcolor $colors(curr.base.darker)
           ttk::style map TButton \
-              -background [list {hover !pressed !disabled} $colors(curr.bpress) \
-                  {active !pressed} $colors(curr.bpress) \
-                  {selected !disabled} $colors(curr.dark) \
-                  pressed $colors(curr.dark) \
-                  disabled $colors(curr.disabledbg)] \
-              -lightcolor [list pressed $colors(curr.darker)] \
-              -darkcolor [list pressed $colors(curr.lighter)]
+              -background [list {hover !pressed !disabled} $colors(curr.base.bpress) \
+                  {active !pressed} $colors(curr.base.bpress) \
+                  {selected !disabled} $colors(curr.base.dark) \
+                  pressed $colors(curr.base.dark) \
+                  disabled $colors(curr.base.disabledbg)] \
+              -lightcolor [list pressed $colors(curr.base.darker)] \
+              -darkcolor [list pressed $colors(curr.base.lighter)]
 
           # checkbutton
 
           ttk::style map TCheckbutton \
-              -indicatorcolor [list selected $colors(curr.lightest)] \
-              -darkcolor [list disabled $colors(curr.frame)] \
-              -lightcolor [list disabled $colors(curr.frame)]
+              -indicatorcolor [list selected $colors(curr.base.lightest)] \
+              -darkcolor [list disabled $colors(curr.base.frame)] \
+              -lightcolor [list disabled $colors(curr.base.frame)]
 
           # combobox
 
           ttk::style configure TCombobox \
-              -bordercolor $colors(curr.border) \
-              -lightcolor $colors(curr.dark) \
-              -darkcolor $colors(curr.dark) \
-              -arrowcolor $colors(curr.arrow)
+              -bordercolor $colors(curr.base.border) \
+              -lightcolor $colors(curr.base.dark) \
+              -darkcolor $colors(curr.base.dark) \
+              -arrowcolor $colors(curr.base.arrow)
           ttk::style map TCombobox \
-              -lightcolor [list active $colors(curr.selectbg) \
-                  focus $colors(curr.selectbg)] \
-              -darkcolor [list active $colors(curr.selectbg) \
-                  focus $colors(curr.selectbg)] \
-              -arrowcolor [list disabled $colors(curr.arrow.disabled)] \
-              -fieldbackground [list disabled $colors(curr.disabledbg)]
+              -lightcolor [list active $colors(curr.highlight.selectbg) \
+                  focus $colors(curr.highlight.selectbg)] \
+              -darkcolor [list active $colors(curr.highlight.selectbg) \
+                  focus $colors(curr.highlight.selectbg)] \
+              -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
+              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TCombobox \
-                -background $colors(curr.dark)
+                -background $colors(curr.base.dark)
             ttk::style map TCombobox \
-                -background [list disabled $colors(curr.disabledbg)]
+                -background [list disabled $colors(curr.base.disabledbg)]
           }
 
           # entry
 
           ttk::style configure TEntry \
-              -background $colors(curr.dark) \
-              -bordercolor $colors(curr.border) \
-              -lightcolor $colors(curr.dark)
+              -background $colors(curr.base.dark) \
+              -bordercolor $colors(curr.base.border) \
+              -lightcolor $colors(curr.base.dark)
           ttk::style map TEntry \
-              -lightcolor [list active $colors(curr.selectbg) \
-                  focus $colors(curr.selectbg)] \
-              -fieldbackground [list disabled $colors(curr.disabledbg)]
+              -lightcolor [list active $colors(curr.highlight.selectbg) \
+                  focus $colors(curr.highlight.selectbg)] \
+              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TEntry \
-                -background $colors(curr.dark)
+                -background $colors(curr.base.dark)
             ttk::style map TEntry \
-                -background [list disabled $colors(curr.disabledbg)]
+                -background [list disabled $colors(curr.base.disabledbg)]
           }
 
           # frame
 
           ttk::style configure TFrame \
-              -bordercolor $colors(curr.frame) \
-              -lightcolor $colors(curr.lighter) \
-              -darkcolor $colors(curr.darker)
+              -bordercolor $colors(curr.base.frame) \
+              -lightcolor $colors(curr.base.lighter) \
+              -darkcolor $colors(curr.base.darker)
 
           # labelframe
 
           ttk::style configure TLabelframe \
-              -bordercolor $colors(curr.frame) \
-              -lightcolor $colors(curr.frame) \
-              -darkcolor $colors(curr.frame)
+              -bordercolor $colors(curr.base.frame) \
+              -lightcolor $colors(curr.base.frame) \
+              -darkcolor $colors(curr.base.frame)
 
           # menubutton
 
           ttk::style configure TMenubutton \
-              -arrowcolor $colors(curr.arrow)
+              -arrowcolor $colors(curr.base.arrow)
           ttk::style map TMenubutton \
-              -background [list {active !disabled} $colors(curr.selectbg)] \
-              -foreground [list {active !disabled} $colors(curr.selectfg) \
-                  disabled $colors(curr.disabledfg)] \
-              -arrowcolor [list disabled $colors(curr.arrow.disabled)]
+              -background [list {active !disabled} $colors(curr.highlight.selectbg)] \
+              -foreground [list {active !disabled} $colors(curr.highlight.selectfg) \
+                  disabled $colors(curr.base.disabledfg)] \
+              -arrowcolor [list disabled $colors(curr.base.arrow.disabled)]
 
           # notebook
 
           ttk::style configure TNotebook \
-              -bordercolor $colors(curr.frame) \
-              -lightcolor $colors(curr.lighter) \
-              -darkcolor $colors(curr.darker)
+              -bordercolor $colors(curr.base.frame) \
+              -lightcolor $colors(curr.base.lighter) \
+              -darkcolor $colors(curr.base.darker)
           ttk::style configure TNotebook.Tab \
-              -lightcolor $colors(curr.frame) \
-              -darkcolor $colors(curr.frame) \
-              -bordercolor $colors(curr.tabborder) \
-              -background $colors(curr.dark)
+              -lightcolor $colors(curr.base.frame) \
+              -darkcolor $colors(curr.base.frame) \
+              -bordercolor $colors(curr.base.tabborder) \
+              -background $colors(curr.base.dark)
 
           # panedwindow
 
           ttk::style configure TPanedwindow \
-              -background $colors(curr.dark)
+              -background $colors(curr.base.dark)
           ttk::style configure Sash \
-              -lightcolor $colors(curr.darkhighlight) \
-              -darkcolor $colors(curr.darkest) \
+              -lightcolor $colors(curr.highlight.darkhighlight) \
+              -darkcolor $colors(curr.base.darkest) \
               -sashthickness [expr {round(10*$vars(scale.factor))}]
 
           # progressbar
 
           ttk::style configure TProgressbar \
-              -background $colors(curr.darkhighlight) \
-              -bordercolor $colors(curr.border.light) \
-              -lightcolor $colors(curr.darkhighlight) \
-              -darkcolor $colors(curr.darkhighlight)
+              -background $colors(curr.highlight.darkhighlight) \
+              -bordercolor $colors(curr.base.border.light) \
+              -lightcolor $colors(curr.highlight.darkhighlight) \
+              -darkcolor $colors(curr.highlight.darkhighlight)
           ttk::style map TProgressbar \
-              -troughcolor [list disabled $colors(curr.dark)] \
-              -darkcolor [list disabled $colors(curr.disabledbg)] \
-              -lightcolor [list disabled $colors(curr.disabledbg)]
+              -troughcolor [list disabled $colors(curr.base.dark)] \
+              -darkcolor [list disabled $colors(curr.base.disabledbg)] \
+              -lightcolor [list disabled $colors(curr.base.disabledbg)]
 
           # scale
 
           # background is used both for the background and
           # for the grip colors
           ttk::style configure TScale \
-              -background $colors(curr.darkhighlight) \
-              -bordercolor $colors(curr.border.light) \
-              -lightcolor $colors(curr.darkhighlight) \
-              -darkcolor $colors(curr.darkhighlight)
+              -background $colors(curr.highlight.darkhighlight) \
+              -bordercolor $colors(curr.base.border.light) \
+              -lightcolor $colors(curr.highlight.darkhighlight) \
+              -darkcolor $colors(curr.highlight.darkhighlight)
           ttk::style map TScale \
-              -troughcolor [list disabled $colors(curr.dark)] \
-              -darkcolor [list disabled $colors(curr.disabledbg)] \
-              -lightcolor [list disabled $colors(curr.disabledbg)]
+              -troughcolor [list disabled $colors(curr.base.dark)] \
+              -darkcolor [list disabled $colors(curr.base.disabledbg)] \
+              -lightcolor [list disabled $colors(curr.base.disabledbg)]
 
           # scrollbar
 
           ttk::style configure TScrollbar \
-              -background $colors(curr.selectbg) \
-              -bordercolor $colors(curr.border.light) \
-              -lightcolor $colors(curr.selectbg) \
-              -darkcolor $colors(curr.selectbg) \
-              -arrowcolor $colors(curr.lightest)
+              -background $colors(curr.highlight.selectbg) \
+              -bordercolor $colors(curr.base.border.light) \
+              -lightcolor $colors(curr.highlight.selectbg) \
+              -darkcolor $colors(curr.highlight.selectbg) \
+              -arrowcolor $colors(curr.base.lightest)
           ttk::style map TScrollbar \
-              -arrowcolor [list disabled $colors(curr.arrow.disabled)] \
-              -darkcolor [list disabled $colors(curr.frame)] \
-              -lightcolor [list disabled $colors(curr.frame)]
+              -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
+              -darkcolor [list disabled $colors(curr.base.frame)] \
+              -lightcolor [list disabled $colors(curr.base.frame)]
 
           # spinbox
 
           ttk::style configure TSpinbox \
-              -bordercolor $colors(curr.border) \
-              -lightcolor $colors(curr.dark) \
-              -arrowcolor $colors(curr.arrow)
+              -bordercolor $colors(curr.base.border) \
+              -lightcolor $colors(curr.base.dark) \
+              -arrowcolor $colors(curr.base.arrow)
           ttk::style map TSpinbox \
-              -lightcolor [list active $colors(curr.selectbg) \
-                  focus $colors(curr.selectbg)] \
-              -darkcolor [list active $colors(curr.selectbg) \
-                  focus $colors(curr.selectbg)] \
-              -arrowcolor [list disabled $colors(curr.arrow.disabled)] \
-              -fieldbackground [list disabled $colors(curr.disabledbg)]
+              -lightcolor [list active $colors(curr.highlight.selectbg) \
+                  focus $colors(curr.highlight.selectbg)] \
+              -darkcolor [list active $colors(curr.highlight.selectbg) \
+                  focus $colors(curr.highlight.selectbg)] \
+              -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
+              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TSpinbox \
-                -background $colors(curr.dark)
+                -background $colors(curr.base.dark)
             ttk::style map TSpinbox \
-                -background [list disabled $colors(curr.disabledbg)]
+                -background [list disabled $colors(curr.base.disabledbg)]
           }
 
           # treeview
 
           ttk::style configure Treeview \
-              -fieldbackground $colors(curr.frame)
+              -fieldbackground $colors(curr.base.frame)
           ttk::style map Treeview \
-              -background [list selected $colors(curr.selectbg)] \
-              -foreground [list selected $colors(curr.selectfg)]
+              -background [list selected $colors(curr.highlight.selectbg)] \
+              -foreground [list selected $colors(curr.highlight.selectfg)]
         }
       }
 
@@ -5817,12 +5899,12 @@ proc awinit { } {
           dict set vars(cache.menu) $w 1
         }
 
-        $w configure -background $colors(curr.frame)
-        $w configure -foreground $colors(curr.text)
-        $w configure -activebackground $colors(curr.selectbg)
-        $w configure -activeforeground $colors(curr.selectfg)
-        $w configure -disabledforeground $colors(curr.disabledfg)
-        $w configure -selectcolor $colors(curr.selectbg)
+        $w configure -background $colors(curr.base.frame)
+        $w configure -foreground $colors(curr.text.text)
+        $w configure -activebackground $colors(curr.highlight.selectbg)
+        $w configure -activeforeground $colors(curr.highlight.selectfg)
+        $w configure -disabledforeground $colors(curr.base.disabledfg)
+        $w configure -selectcolor $colors(curr.highlight.selectbg)
 
         set max [$w index end]
         if { $max eq "none" } {
@@ -5862,11 +5944,11 @@ proc awinit { } {
           dict set vars(cache.listbox) $w 1
         }
 
-        $w configure -background $colors(curr.frame)
-        $w configure -foreground $colors(curr.text)
-        $w configure -disabledforeground $colors(curr.disabledfg)
-        $w configure -selectbackground $colors(curr.selectbg)
-        $w configure -selectforeground $colors(curr.selectfg)
+        $w configure -background $colors(curr.base.frame)
+        $w configure -foreground $colors(curr.text.text)
+        $w configure -disabledforeground $colors(curr.base.disabledfg)
+        $w configure -selectbackground $colors(curr.highlight.selectbg)
+        $w configure -selectforeground $colors(curr.highlight.selectfg)
         $w configure -borderwidth 1p
         $w configure -relief solid
       }
@@ -5881,16 +5963,16 @@ proc awinit { } {
         }
 
         if { $useflag eq "-entry" } {
-          $w configure -background $colors(curr.entrybg)
+          $w configure -background $colors(curr.base.entrybg)
         } elseif { $useflag eq "-dark" } {
-          $w configure -background $colors(curr.dark)
+          $w configure -background $colors(curr.base.dark)
         } else {
-          $w configure -background $colors(curr.frame)
+          $w configure -background $colors(curr.base.frame)
         }
-        $w configure -foreground $colors(curr.text)
-        $w configure -selectforeground $colors(curr.selectfg)
-        $w configure -selectbackground $colors(curr.selectbg)
-        $w configure -inactiveselectbackground $colors(curr.darkest)
+        $w configure -foreground $colors(curr.text.text)
+        $w configure -selectforeground $colors(curr.highlight.selectfg)
+        $w configure -selectbackground $colors(curr.highlight.selectbg)
+        $w configure -inactiveselectbackground $colors(curr.base.darkest)
         $w configure -borderwidth 1p
       }
 
@@ -5899,7 +5981,7 @@ proc awinit { } {
         variable colors
 
         set theme [ttk::style theme use]
-        if { [info exists colors(curr.entrybg)] &&
+        if { [info exists colors(curr.base.entrybg)] &&
             $theme eq $vars(theme.name) &&
             ! [dict exists $vars(cache.listbox) $w] } {
           ::ttk::theme::${vars(theme.name)}::setListboxColors $w

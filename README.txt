@@ -1,7 +1,14 @@
 
-Only the 'awthemes.tcl', 'colorutils.tcl' and 'pkgIndex.tcl' files
-are necessary.  The other files are infrastructure files and only
-needed for development.
+Only the 'awthemes.tcl', 'colorutils.tcl', 'themeutils.tcl'
+and 'pkgIndex.tcl' files are necessary.  The other files are
+infrastructure files and only needed for development.
+
+awthemes 3.1
+  - Added themeutils.tcl.
+      ::themeutils::setThemeColors awdark color-name color ...
+    allows the colors to be set.  The graphical colors will be
+    changed when tksvg is in use.  See themeutils.tcl for a list
+    of color names.
 
 awthemes 3.0
   - Breaking change: The package name has been renamed so
