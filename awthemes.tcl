@@ -1,6 +1,7 @@
 #!/usr/bin/tclsh
 #
-# awdark/awlight.tcl
+# awdark and awlight themes
+#
 #
 # Copyright 2018 Brad Lanam Walnut Creek, CA
 # Copyright 2019 Brad Lanam Pleasant Hill, CA
@@ -28,14 +29,15 @@
 #     requires the colorutils package
 #     This does not work with the scalable graphics.
 #
-#   ::themeutils::setThemeColors awdark colorname color ...
+#   ::themeutils::setThemeColors {awdark|awlight} colorname color ...
 #     Allows modification of any of the colors used by awdark and awlight.
 #     The graphical colors will be changed to match.
 #     e.g.
 #       package require colorutils
 #       package require themeutils
 #       ::themeutils::setThemeColors awdark \
-#           highlight.selectbg #007000 highlight.selectdisabledbg #222222
+#           graphics.color #007000 \
+#           graphics.color.disabled #222222
 #       package require awdark
 #     will change the selection and graphical colors to a green, and the
 #     the disabled selection color to a dark grey.
@@ -48,6 +50,14 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 4.0
+#   - add support for other clam based themes.
+#   - breaking change: the .svg files are now loaded from the filesystem
+#       in order to support multiple themes.
+#   - breaking change: All of the various colors and derived colors have
+#       been renamed.
+#   - awdark/awlight: Fixed empty treeview indicator.
+#   - added scalable 'black' theme.
 # 3.1
 #   - allow user configuration of colors
 # 3.0
@@ -135,11 +145,30 @@ try {
 
 proc awinit { } {
   global awthemename
+  global tawthemename
 
-  foreach awthemename {awdark awlight} {
-    package provide $awthemename 3.1
+  if { $::awthemename eq {} } {
+    for {set f [info frame]} {$f >= 0} {incr f -1} {
+      set data [info frame $f]
+      set cmd [split [dict get $data cmd]]
+      if { [string match {package require*} $cmd] } {
+        set awthemename [lindex $cmd 2]
+        break
+      }
+    }
+  }
 
-    namespace eval ::ttk::theme::$awthemename {
+  # the awdark base colors are always needed so that the .svg files can
+  # be converted.
+  set themelist [list awdark]
+  if { $awthemename ni $themelist } {
+    lappend themelist $awthemename
+  }
+
+  foreach {themenm} $themelist {
+    set ::tawthemename $themenm
+
+    namespace eval ::ttk::theme::$themenm {
       variable colors
       variable images
       variable imgdata
@@ -156,7 +185,14 @@ proc awinit { } {
         }
         set calcdpi [expr {round($tkscale*72.0)}]
         set vars(scale.factor) [expr {$calcdpi/100.0}]
-        set vars(theme.name) $::awthemename
+        set vars(theme.name) $::tawthemename
+        set d [file dirname [info script]]
+        set vars(image.dir.generic) [file join $d i generic]
+        set tdir $vars(theme.name)
+        if { $vars(theme.name) eq "awdark" || $vars(theme.name) eq "awlight" } {
+          set tdir awthemes
+        }
+        set vars(image.dir) [file join $d i $tdir]
         set vars(cache.menu) [dict create]
         set vars(cache.text) [dict create]
         set vars(cache.listbox) [dict create]
@@ -166,6 +202,37 @@ proc awinit { } {
         set vars(have.tksvg) false
         if { ! [catch {package present tksvg}] } {
           set vars(have.tksvg) true
+        }
+
+        # make sure the -small images are processed after the standard
+        # sizes and before the -pad images.
+        # make sure the -pad images are processed last.
+        set vars(fallback.images) {
+          arrow-bg-down-d     arrow-bg-down-n
+          arrow-bg-left-d     arrow-bg-left-n
+          arrow-bg-right-d    arrow-bg-right-n
+          arrow-bg-up-d     arrow-bg-up-n
+          cb-sa     cb-sn
+          cb-sd     cb-sn
+          cb-ua     cb-un
+          cb-ud     cb-un
+          combo-arrow-down-d    combo-arrow-down-n
+          rb-sa     rb-sn
+          rb-sd     rb-sn
+          rb-ua     rb-un
+          rb-ud     rb-un
+          scale-hd    scale-hn
+          scale-vd    scale-vn
+          slider-hd     slider-hn
+          slider-vd     slider-vn
+          cb-sn-small     cb-sn
+          cb-un-small     cb-un
+          rb-sn-small     rb-sn
+          rb-un-small     rb-un
+          menu-cb-sn-pad    cb-sn-small
+          menu-cb-un-pad    cb-un-small
+          menu-rb-sn-pad    rb-sn-small
+          menu-rb-un-pad    rb-un-small
         }
 
         _setThemeBaseColors
@@ -187,7 +254,6 @@ proc awinit { } {
           }
         }
 
-        # sets both the base colors and the curr.* colors
         _setDerivedColors
 
         # now override any derived colors with user-specified colors
@@ -197,9 +263,13 @@ proc awinit { } {
           }
         }
 
-        _setImageData
-        _createTheme
-        _setStyledColors
+        # only need to do this for the requested theme
+        if { $::tawthemename eq $::awthemename } {
+          _setImageData
+          _createTheme
+          _setStyledColors
+          package provide $::awthemename 4.0
+        }
       }
 
       proc _setThemeBaseColors { } {
@@ -208,38 +278,110 @@ proc awinit { } {
 
         if { $vars(theme.name) eq "awdark" } {
           array set colors {
-              base.disabledfg       #919282
-              base.disabledbg       #2d3234
-              base.disabledborder   #202425
-              base.frame            #33393b
+              anchor.button         {}
+              base.bg               #33393b
+              base.bg.disabled      #2d3234
               base.dark             #252a2c
               base.darker           #1b1f20
               base.darkest          #000000
-              base.bpress           #424a4d
+              base.fg.disabled      #919282
+              base.fg               #ffffff
+              base.focus            #215d9c
               base.lighter          #525c5f
               base.lightest         #ffffff
-              highlight.selectbg    #215d9c
-              highlight.selectdisabledbg  #224162
-              highlight.darkhighlight     #1a497c
-              highlight.selectfg    #ffffff
+              focusthickness.checkbutton  4
+              focusthickness.notebooktab  5
+              graphics.border          #252a2c
+              graphics.color        #215d9c
+              graphics.color.b.disabled #919282
+              graphics.color.b      #ffffff
+              graphics.color.disabled   #224162
+              graphics.grip           #000000
+              graphics.sizegrip           #215d9c
+              height.arrow          16
+              height.combobox       27
+              highlight.active.bg   #215d9c
+              highlight.active.fg   #ffffff
+              highlight.darkhighlight   #1a497c
+              padding.button        {5 4}
+              padding.checkbutton   {5 1 1 1}
+              padding.entry         {5 2}
+              padding.menubutton    {5 2}
+              padding.notebooktab   {1 0 1 0}
+              text.select.bg        #215d9c
+              text.select.fg        #ffffff
               }
         }
         if { $vars(theme.name) eq "awlight" } {
           array set colors {
-              base.frame      #e8e8e7
-              base.disabledfg #8e8e8f
-              base.disabledbg #cacaca
-              base.disabledborder #c0c0bd
-              base.dark       #cacaca
-              base.darker     #8b8391
-              base.darkest    #000000
-              base.bpress     #e8e8e7
-              base.lighter    #f0f0f0
-              base.lightest   #ffffff
-              highlight.selectbg   #1a497c
-              highlight.selectdisabledbg   #f0f0f0
-              highlight.darkhighlight #1a497c
-              highlight.selectfg   #ffffff
+              anchor.button         {}
+              base.bg.disabled      #cacaca
+              base.bg               #e8e8e7
+              base.dark             #cacaca
+              base.darker           #8b8391
+              base.darkest          #000000
+              base.fg               #000000
+              base.fg.disabled      #8e8e8f
+              base.focus            #1a497c
+              base.lighter          #f0f0f0
+              base.lightest         #ffffff
+              focusthickness.checkbutton  4
+              focusthickness.notebooktab  5
+              graphics.border          #222222
+              graphics.color        #1a497c
+              graphics.color.b      #000000
+              graphics.color.b.disabled #8e8e8f
+              graphics.color.disabled   #65707c
+              graphics.grip           #ffffff
+              graphics.sizegrip           #1a497c
+              height.arrow          16
+              height.combobox       27
+              highlight.active.bg   #1a497c
+              highlight.active.fg   #ffffff
+              highlight.darkhighlight   #1a497c
+              padding.button        {5 4}
+              padding.checkbutton   {5 1 1 1}
+              padding.entry         {5 2}
+              padding.menubutton    {5 2}
+              padding.notebooktab   {1 0 1 0}
+              text.select.bg        #1a497c
+              text.select.fg        #ffffff
+              }
+        }
+        if { $vars(theme.name) eq "black" } {
+          array set colors {
+              anchor.button         w
+              base.bg               #424242
+              base.bg.disabled      #424242
+              base.dark             #222222
+              base.darker           #121212
+              base.darkest          #000000
+              base.fg.disabled      #a9a9a9
+              base.fg               #ffffff
+              base.focus            #000000
+              base.lighter          #626262
+              base.lightest         #ffffff
+              focusthickness.checkbutton  1
+              focusthickness.notebooktab  1
+              graphics.border       #626262
+              graphics.color        #424242
+              graphics.color.b      #000000
+              graphics.color.b.disabled   #000000
+              graphics.color.disabled     #424242
+              graphics.grip         #000000
+              graphics.sizegrip     #000000
+              height.arrow          14
+              height.combobox       24
+              highlight.active.bg   #4a6984
+              highlight.active.fg   #ffffff
+              highlight.darkhighlight     #424242
+              padding.button        {5 1}
+              padding.checkbutton   {4 1 1 1}
+              padding.entry         {2 0}
+              padding.menubutton    {5 1}
+              padding.notebooktab   {4 2 4 2}
+              text.select.bg        #c3c3c3
+              text.select.fg        #000000
               }
         }
       }
@@ -249,29 +391,96 @@ proc awinit { } {
         variable colors
 
         foreach {prefix} {{} curr.} {
+          # common defaults
+          set colors(${prefix}base.arrow) $colors(base.darkest)
+          set colors(${prefix}base.arrow.disabled) $colors(base.lighter)
+          set colors(${prefix}base.button.active) $colors(base.lighter)
+          set colors(${prefix}base.button.bg) $colors(base.bg)
+          set colors(${prefix}base.button.border) $colors(base.bg)
+          set colors(${prefix}base.button.pressed) $colors(base.dark)
+          set colors(${prefix}base.entry.box) $colors(base.lighter)
+          set colors(${prefix}base.hover) $colors(base.bg)
+          set colors(${prefix}focusthickness.radiobutton) $colors(focusthickness.checkbutton)
+          set colors(${prefix}padding.combobox) $colors(padding.entry)
+          set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
+          set colors(${prefix}padding.spinbox) $colors(padding.entry)
+          set colors(${prefix}tab.bg) $colors(base.bg)
+          set colors(${prefix}tab.bg.disabled) $colors(base.bg)
+          set colors(${prefix}tab.border) $colors(base.darkest)
+          set colors(${prefix}tab.box) $colors(base.lighter)
+          set colors(${prefix}tab.highlight) {}
+          set colors(${prefix}tab.highlight.inactive) $colors(base.bg)
+          set colors(${prefix}text.bg) $colors(base.bg)
+          set colors(${prefix}text.fg) $colors(base.fg)
+          set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
+
           if { $vars(theme.name) eq "awdark" } {
             set colors(${prefix}base.arrow) $colors(base.lightest)
-            set colors(${prefix}base.arrow.disabled) $colors(base.lighter)
             set colors(${prefix}base.border) $colors(base.darkest)
-            set colors(${prefix}base.border.light) $colors(base.darkest)
-            set colors(${prefix}text.text) $colors(base.lightest)
-            set colors(${prefix}base.tabborder) $colors(base.darkest)
-            set colors(${prefix}base.tabinactive) $colors(base.frame)
-            set colors(${prefix}base.tabhighlight) #8b9ca1
-            set colors(${prefix}base.entrybg) $colors(base.darker)
+            set colors(${prefix}base.border.dark) $colors(base.darker)
+            set colors(${prefix}base.border.disabled) #202425
+            set colors(${prefix}base.button.bg) $colors(base.dark)
+            set colors(${prefix}base.entry.bg) $colors(base.darker)
+            set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
+            set colors(${prefix}base.entry.box) $colors(base.dark)
+            set colors(${prefix}tab.bg) $colors(base.dark)
+            set colors(${prefix}tab.border) $colors(base.bg)
+            set colors(${prefix}tab.box) $colors(base.bg)
+            set colors(${prefix}tab.highlight) #8b9ca1
+            set colors(${prefix}tab.highlight.inactive) $colors(base.darker)
+            set colors(${prefix}text.fg) $colors(base.lightest)
+            set colors(${prefix}text.select.bg.inactive) $colors(base.darkest)
+            #
+            set colors(${prefix}base.entry.fg) $colors(text.fg)
+            #
+            set colors(${prefix}base.trough) $colors(base.entry.bg)
           }
           if { $vars(theme.name) eq "awlight" } {
-            set colors(${prefix}base.arrow) $colors(base.darkest)
             set colors(${prefix}base.arrow.disabled) $colors(base.darker)
             set colors(${prefix}base.border) $colors(base.dark)
-            set colors(${prefix}base.border.light) $colors(base.dark)
-            set colors(${prefix}text.text) $colors(base.darkest)
-            set colors(${prefix}base.tabborder) $colors(base.frame)
-            set colors(${prefix}base.tabinactive) $colors(base.darker)
-            set colors(${prefix}base.tabhighlight) $colors(base.darkest)
-            set colors(${prefix}base.entrybg) $colors(base.lightest)
+            set colors(${prefix}base.border.dark) $colors(base.darker)
+            set colors(${prefix}base.border.disabled) #c0c0bd
+            set colors(${prefix}base.button.bg) $colors(base.dark)
+            set colors(${prefix}base.entry.bg) $colors(base.lightest)
+            set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
+            set colors(${prefix}base.entry.box) $colors(base.dark)
+            set colors(${prefix}tab.bg) $colors(base.dark)
+            set colors(${prefix}tab.border) $colors(base.bg)
+            set colors(${prefix}tab.box) $colors(base.bg)
+            set colors(${prefix}tab.highlight) $colors(base.darkest)
+            set colors(${prefix}tab.highlight.inactive) $colors(base.darker)
+            set colors(${prefix}text.fg) $colors(base.darkest)
+            set colors(${prefix}text.select.bg.inactive) $colors(base.darkest)
+            #
+            set colors(${prefix}base.entry.fg) $colors(text.fg)
+            #
+            set colors(${prefix}base.trough) $colors(base.entry.bg)
+          }
+          if { $vars(theme.name) eq "black" } {
+            set colors(${prefix}base.border) $colors(base.darkest)
+            set colors(${prefix}base.border.dark) $colors(base.darkest)
+            set colors(${prefix}base.border.disabled) $colors(base.border)
+            set colors(${prefix}base.button.border) $colors(base.darkest)
+            set colors(${prefix}base.entry.bg) $colors(base.lightest)
+            set colors(${prefix}base.hover) $colors(base.lighter)
+            set colors(${prefix}base.trough) $colors(base.darker)
+            set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
+            set colors(${prefix}text.fg) $colors(base.darkest)
+            #
+            set colors(${prefix}base.entry.bg.disabled) $colors(base.entry.bg)
+            set colors(${prefix}text.bg) $colors(base.entry.bg)
+            #
+            set colors(${prefix}base.entry.fg) $colors(text.fg)
           }
         }
+      }
+
+      proc _readFile { fn } {
+        set fh [open $fn]
+        set fs [file size $fn]
+        set data [read $fh $fs]
+        close $fh
+        return $data
       }
 
       proc _setImageData { } {
@@ -281,4293 +490,76 @@ proc awinit { } {
         variable colors
 
         if { $vars(have.tksvg) } {
-          #B == svgdata ==
-          # arrow-bg-down-d
-          set imgtype(arrow-bg-down-d) svg
-          set imgdata(arrow-bg-down-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.81 3.81"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-down-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.28307"
-     inkscape:cx="7.978663"
-     inkscape:cy="8.0161236"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.45547)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="3.7281528"
-       height="3.7438293"
-       x="-131.66174"
-       y="128.48471" />
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-down-n
-          set imgtype(arrow-bg-down-n) svg
-          set imgdata(arrow-bg-down-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.81 3.81"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-down-n.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.28307"
-     inkscape:cx="7.978663"
-     inkscape:cy="8.0161236"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.45547)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.07803822;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="3.7281528"
-       height="3.7438293"
-       x="-131.66174"
-       y="128.48471" />
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#ffffff;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-left-d
-          set imgtype(arrow-bg-left-d) svg
-          set imgdata(arrow-bg-left-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 4.2333333 4.2333333"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-left-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.34964)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202423;stroke-width:0.08632814;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="4.1308079"
-       height="4.1348972"
-       x="-131.63921"
-       y="128.39941" />
-    <g
-       aria-label="⏷"
-       transform="matrix(0,1.1182676,-1.1691104,0,19.060577,-18.835003)"
-       style="font-style:normal;font-weight:normal;font-size:3.28602195px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.08215055"
-       id="text817">
-      <path
-         d="m 134.63134,126.01448 q 0.0631,0 0.0631,0.0491 0,0.007 -0.007,0.021 l -1.13565,2.1381 q -0.021,0.0421 -0.0421,0.0421 -0.021,0 -0.0421,-0.0421 L 132.332,126.0916 q 0,-0.014 0,-0.028 0,-0.0491 0.0701,-0.0491 z"
-         style="font-size:7.01018047px;fill:#919282;fill-opacity:1;stroke-width:0.08215055"
-         id="path815"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-left-n
-          set imgtype(arrow-bg-left-n) svg
-          set imgdata(arrow-bg-left-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 4.2333333 4.2333333"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-left.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.34964)">
-    <g
-       id="g4690"
-       transform="matrix(1.144747,0,0,1.1420675,19.060577,-18.835003)">
-      <rect
-         y="128.91919"
-         x="-131.64462"
-         height="3.6205368"
-         width="3.6084898"
-         id="rect819"
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.07550083;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <g
-         id="text817"
-         style="font-style:normal;font-weight:normal;font-size:3.28602195px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.08215055"
-         transform="matrix(0,0.97916072,-1.0212828,0,0,0)"
-         aria-label="⏷">
-        <path
-           inkscape:connector-curvature="0"
-           id="path815"
-           style="font-size:7.01018047px;fill:#ffffff;fill-opacity:1;stroke-width:0.08215055"
-           d="m 134.63134,126.01448 q 0.0631,0 0.0631,0.0491 0,0.007 -0.007,0.021 l -1.13565,2.1381 q -0.021,0.0421 -0.0421,0.0421 -0.021,0 -0.0421,-0.0421 L 132.332,126.0916 q 0,-0.014 0,-0.028 0,-0.0491 0.0701,-0.0491 z" />
-      </g>
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-right-d
-          set imgtype(arrow-bg-right-d) svg
-          set imgdata(arrow-bg-right-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 4.2333333 4.2333333"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-right-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.34964)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.08690879;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="4.1476083"
-       height="4.1737323"
-       x="-131.66147"
-       y="128.37518" />
-    <g
-       aria-label="⏷"
-       transform="matrix(0,1.1213995,1.1661998,0,18.655533,-19.294116)"
-       style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.08269052"
-       id="text817">
-      <path
-         inkscape:connector-curvature="0"
-         d="m 134.6679,-128.24434 q 0.0635,0 0.0635,0.0494 0,0.007 -0.007,0.0212 l -1.14312,2.15216 q -0.0212,0.0423 -0.0423,0.0423 -0.0212,0 -0.0423,-0.0423 l -1.14312,-2.1451 q 0,-0.0141 0,-0.0282 0,-0.0494 0.0706,-0.0494 z"
-         style="font-size:7.0562582px;fill:#919282;fill-opacity:1;stroke-width:0.08269052"
-         id="path815" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-right-n
-          set imgtype(arrow-bg-right-n) svg
-          set imgdata(arrow-bg-right-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 4.2333333 4.2333333"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-right.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.34964)">
-    <g
-       id="g4700"
-       transform="matrix(1.1416473,0,0,1.1455166,18.655533,-19.294116)">
-      <rect
-         y="128.91066"
-         x="-131.66676"
-         height="3.6435373"
-         width="3.6330032"
-         id="rect819"
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.0759971;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <g
-         id="text817"
-         style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.08269052"
-         transform="matrix(0,0.97894657,1.0215062,0,0,0)"
-         aria-label="⏷">
-        <path
-           id="path815"
-           style="font-size:7.0562582px;fill:#ffffff;fill-opacity:1;stroke-width:0.08269052"
-           d="m 134.6679,-128.24434 q 0.0635,0 0.0635,0.0494 0,0.007 -0.007,0.0212 l -1.14312,2.15216 q -0.0212,0.0423 -0.0423,0.0423 -0.0212,0 -0.0423,-0.0423 l -1.14312,-2.1451 q 0,-0.0141 0,-0.0282 0,-0.0494 0.0706,-0.0494 z"
-           inkscape:connector-curvature="0" />
-      </g>
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-up-d
-          set imgtype(arrow-bg-up-d) svg
-          set imgdata(arrow-bg-up-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.3866666 3.3866666"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-up-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.56132)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.06932501;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="3.3318834"
-       height="3.3058643"
-       x="-131.6716"
-       y="128.60089" />
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1691651,0,0,-1.1169925,18.701881,-19.425222)"
-       style="font-style:normal;font-weight:normal;font-size:2.81951427px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07048785"
-       id="text817">
-      <path
-         d="m -126.22887,-134.96964 q 0.0541,0 0.0541,0.0421 0,0.006 -0.006,0.018 l -0.97443,1.83456 q -0.018,0.0361 -0.0361,0.0361 -0.018,0 -0.0361,-0.0361 l -0.97442,-1.82855 q 0,-0.012 0,-0.0241 0,-0.0421 0.0602,-0.0421 z"
-         style="font-size:6.01496363px;fill:#919282;fill-opacity:1;stroke-width:0.07048785"
-         id="path4712"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-bg-up-n
-          set imgtype(arrow-bg-up-n) svg
-          set imgdata(arrow-bg-up-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.3866666 3.3866666"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-up.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.25"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.56132)">
-    <g
-       id="g4710"
-       transform="matrix(1.1433941,0,0,1.1421684,18.885889,-18.75792)">
-      <rect
-         y="129.01671"
-         x="-131.67593"
-         height="2.8943756"
-         width="2.9140289"
-         id="rect819"
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.06066342;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <g
-         id="text817"
-         style="font-style:normal;font-weight:normal;font-size:2.81951427px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07048785"
-         transform="matrix(1.022539,0,0,-0.97795782,-0.16093137,-0.58424134)"
-         aria-label="⏷">
-        <path
-           inkscape:connector-curvature="0"
-           id="path4712"
-           style="font-size:6.01496363px;fill:#ffffff;fill-opacity:1;stroke-width:0.07048785"
-           d="m -126.22887,-134.96964 q 0.0541,0 0.0541,0.0421 0,0.006 -0.006,0.018 l -0.97443,1.83456 q -0.018,0.0361 -0.0361,0.0361 -0.018,0 -0.0361,-0.0361 l -0.97442,-1.82855 q 0,-0.012 0,-0.0241 0,-0.0421 0.0602,-0.0421 z" />
-      </g>
-    </g>
-  </g>
-</svg>
-}
-          # arrow-down-d
-          set imgtype(arrow-down-d) svg
-          set imgdata(arrow-down-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.81 3.81"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="tree-arrow-down-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="14.75"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1031"
-     inkscape:window-height="414"
-     inkscape:window-x="78"
-     inkscape:window-y="194"
-     inkscape:window-maximized="0"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.45547)">
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9192b2;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-down-n
-          set imgtype(arrow-down-n) svg
-          set imgdata(arrow-down-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 3.81 3.81"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-down-n.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="14.75"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1031"
-     inkscape:window-height="414"
-     inkscape:window-x="41"
-     inkscape:window-y="157"
-     inkscape:window-maximized="0"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.45547)">
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.020195,-19.405805)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#ffffff;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # arrow-right-n
-          set imgtype(arrow-right-n) svg
-          set imgdata(arrow-right-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 4.2333333 4.2333333"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="tree-arrow-right-n.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="33.125"
-     inkscape:cx="8"
-     inkscape:cy="8"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-128.34964)">
-    <g
-       aria-label="⏷"
-       transform="matrix(0,1.1213995,1.1661998,0,18.655533,-19.294116)"
-       style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.08269052"
-       id="text817">
-      <path
-         inkscape:connector-curvature="0"
-         d="m 134.6679,-128.24434 q 0.0635,0 0.0635,0.0494 0,0.007 -0.007,0.0212 l -1.14312,2.15216 q -0.0212,0.0423 -0.0423,0.0423 -0.0212,0 -0.0423,-0.0423 l -1.14312,-2.1451 q 0,-0.0141 0,-0.0282 0,-0.0494 0.0706,-0.0494 z"
-         style="font-size:7.0562582px;fill:#ffffff;fill-opacity:1;stroke-width:0.08269052"
-         id="path815" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-sa
-          set imgtype(cb-sa) svg
-          set imgdata(cb-sa) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sa.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.101885"
-     inkscape:cx="8.576129"
-     inkscape:cy="8.4973642"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#424a4d;fill-opacity:1;stroke:#0e0e0e;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
-         id="path5786" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-sd
-          set imgtype(cb-sd) svg
-          set imgdata(cb-sd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sd.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.039439"
-     inkscape:cx="8.5356594"
-     inkscape:cy="8.5383146"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#2d3234;fill-opacity:1;stroke:#202425;stroke-width:3.50260115;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.726891"
-       height="60.617222"
-       x="1.645276"
-       y="1.6727111"
-       ry="10.69791" />
-    <g
-       aria-label="✔"
-       transform="scale(0.9676207,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.202149,28.627019 q 1.532746,0 2.318769,2.515275 1.572047,4.716141 2.240167,4.716141 0.510915,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082866 7.742331,-2.9082866 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825292 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.65065,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 -0.903927,-0.471614 -3.144093,-6.013079 -2.8296848,-6.995608 -2.8296848,-12.261965 0,-1.925758 2.7510818,-3.183395 3.772913,-1.729252 5.659369,-1.729252 z"
-         style="fill:#919282;fill-opacity:1;stroke-width:2.01222014"
-         id="path5783" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-sn-pad
-          set imgtype(menu-cb-sn-pad) svg
-          set imgdata(menu-cb-sn-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-sn-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
-         id="path5780" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-sn-small
-          set imgtype(cb-sn-small) svg
-          set imgdata(cb-sn-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 63.749997 64"
-   sodipodi:docname="cb-sn-small.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
-         id="path5777" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-sn
-          set imgtype(cb-sn) svg
-          set imgdata(cb-sn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-sn.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="25.984836"
-     inkscape:cx="8.576129"
-     inkscape:cy="8.4973642"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-    <g
-       aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.01222014"
-       id="text9056">
-      <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:2.01222014"
-         id="path5774" />
-    </g>
-  </g>
-</svg>
-}
-          # cb-ua
-          set imgtype(cb-ua) svg
-          set imgdata(cb-ua) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-ua.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.101885"
-     inkscape:cx="8.576129"
-     inkscape:cy="8.4973642"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-          # cb-ud
-          set imgtype(cb-ud) svg
-          set imgdata(cb-ud) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-ud.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.101883"
-     inkscape:cx="8.535154"
-     inkscape:cy="8.5090836"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#2d3234;fill-opacity:1;stroke:#202425;stroke-width:3.49421477;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.581619"
-       height="60.471951"
-       x="1.7160162"
-       y="1.8549629"
-       ry="10.672273" />
-  </g>
-</svg>
-}
-          # cb-un-pad
-          set imgtype(menu-cb-un-pad) svg
-          set imgdata(menu-cb-un-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-          # cb-un-small
-          set imgtype(cb-un-small) svg
-          set imgdata(cb-un-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 63.749997 64"
-   sodipodi:docname="cb-un-small.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.235294"
-     inkscape:cx="8.5"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-          # cb-un
-          set imgtype(cb-un) svg
-          set imgdata(cb-un) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="cb-un.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.218934"
-     inkscape:cx="8.5379886"
-     inkscape:cy="8.4885959"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="221"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
-  </g>
-</svg>
-}
-          # combo-arrow-down-d
-          set imgtype(combo-arrow-down-d) svg
-          set imgdata(combo-arrow-down-d) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="27"
-   viewBox="0 0 4.2333333 7.14375"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="combo-arrow-down-d.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="8.7407407"
-     inkscape:cx="8"
-     inkscape:cy="13.5"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1029"
-     inkscape:window-height="414"
-     inkscape:window-x="153"
-     inkscape:window-y="69"
-     inkscape:window-maximized="0"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-125.7038)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#000000;stroke-width:0.11329506;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="4.1873693"
-       height="7.025476"
-       x="-131.68114"
-       y="125.755" />
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.229082,-20.489104)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#919282;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # combo-arrow-down-n
-          set imgtype(combo-arrow-down-n) svg
-          set imgdata(combo-arrow-down-n) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="27"
-   viewBox="0 0 4.2333333 7.14375"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="combo-arrow-down-n.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="8.7407407"
-     inkscape:cx="8"
-     inkscape:cy="13.5"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:window-width="1029"
-     inkscape:window-height="414"
-     inkscape:window-x="45"
-     inkscape:window-y="161"
-     inkscape:window-maximized="0"
-     units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(131.69759,-125.78318)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.11302858;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect819"
-       width="4.1379242"
-       height="7.0760179"
-       x="-131.65642"
-       y="125.79185" />
-    <g
-       aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.229082,-20.409724)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.07255063"
-       id="text817">
-      <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:#ffffff;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
-    </g>
-  </g>
-</svg>
-}
-          # rb-sa
-          set imgtype(rb-sa) svg
-          set imgdata(rb-sa) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sa.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#215d9c;fill-opacity:1;stroke:#215d9c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-          # rb-sd
-          set imgtype(rb-sd) svg
-          set imgdata(rb-sd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sd.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="1.0836625"
-     inkscape:cy="8.4545221"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="45"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#2d3234;fill-opacity:1;stroke:#202425;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.013382"
-       cy="32.295544"
-       r="30.200102" />
-    <circle
-       style="fill:#224162;fill-opacity:1;stroke:#224162;stroke-width:2.80124985;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.013382"
-       cy="32.295544"
-       r="19.212624" />
-  </g>
-</svg>
-}
-          # rb-sn-pad
-          set imgtype(menu-rb-sn-pad) svg
-          set imgdata(menu-rb-sn-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="rb-sn-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#215d9c;fill-opacity:1;stroke:#215d9c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-          # rb-sn-small
-          set imgtype(rb-sn-small) svg
-          set imgdata(rb-sn-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 63.749997 64"
-   sodipodi:docname="rb-sn-small.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="31.874998"
-       cy="32"
-       r="30.200102" />
-    <circle
-       style="fill:#215d9c;fill-opacity:1;stroke:#215d9c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="31.874998"
-       cy="32"
-       r="19.212624" />
-  </g>
-</svg>
-}
-          # rb-sn
-          set imgtype(rb-sn) svg
-          set imgdata(rb-sn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-sn.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-    <circle
-       style="fill:#215d9c;fill-opacity:1;stroke:#215d9c;stroke-width:2.80060267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4500"
-       cx="32.322948"
-       cy="31.867752"
-       r="19.212624" />
-  </g>
-</svg>
-}
-          # rb-ua
-          set imgtype(rb-ua) svg
-          set imgdata(rb-ua) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-ua.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="241"
-     inkscape:window-y="4"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#424a4d;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-          # rb-ud
-          set imgtype(rb-ud) svg
-          set imgdata(rb-ud) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-ud.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.163119"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="45"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#2d3234;fill-opacity:1;stroke:#202425;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-          # rb-un-pad
-          set imgtype(menu-rb-un-pad) svg
-          set imgdata(menu-rb-un-pad) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="20"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="rb-un-pad.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="29"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-          # rb-un-small
-          set imgtype(rb-un-small) svg
-          set imgdata(rb-un-small) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 63.749997 64"
-   sodipodi:docname="rb-un-small.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="26.235294"
-     inkscape:cx="8.5"
-     inkscape:cy="8.5333338"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="29"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="31.874998"
-       cy="32"
-       r="30.200102" />
-  </g>
-</svg>
-}
-          # rb-un
-          set imgtype(rb-un) svg
-          set imgdata(rb-un) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
-   id="svg4152"
-   version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
-   sodipodi:docname="rb-un.svg">
-  <defs
-     id="defs4154" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#c3c3c3"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="24.227283"
-     inkscape:cx="8.6194534"
-     inkscape:cy="8.5685999"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     inkscape:document-units="px"
-     inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
-     inkscape:window-height="708"
-     inkscape:window-x="315"
-     inkscape:window-y="55"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata4157">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-        <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
-      </cc:Work>
-      <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Reproduction" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#Distribution" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Notice" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#Attribution" />
-        <cc:permits
-           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
-        <cc:requires
-           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
-      </cc:License>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
-    <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4485"
-       cx="32.322948"
-       cy="31.867752"
-       r="30.200102" />
-  </g>
-</svg>
-}
-          # scale-hd
-          set imgtype(scale-hd) svg
-          set imgdata(scale-hd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="28"
-   height="14"
-   viewBox="0 0 7.4083338 3.7041668"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="scale-hd.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="19.035714"
-     inkscape:cx="6.4090055"
-     inkscape:cy="7"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     showguides="false" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-97.353814,-139.48844)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4278965"
-       height="7.1305251"
-       x="139.61896"
-       y="-104.60221"
-       ry="0"
-       transform="rotate(90)" />
-    <g
-       transform="matrix(1.0000127,0,0,1.0000127,0.22785452,-0.15966094)"
-       id="g3071">
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.96384"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-99.875397"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-3"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-101.50807"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-6"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-102.05229"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-7"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.41962"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-5"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-  </g>
-</svg>
-}
-          # scale-hn
-          set imgtype(scale-hn) svg
-          set imgdata(scale-hn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="28"
-   height="14"
-   viewBox="0 0 7.4083338 3.7041669"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="scale-hn.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="19.035714"
-     inkscape:cx="6.4090055"
-     inkscape:cy="7"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     showguides="false" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-97.353814,-139.48844)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4380579"
-       height="7.1025405"
-       x="139.6192"
-       y="-104.59727"
-       ry="0"
-       transform="rotate(90)" />
-    <g
-       transform="matrix(1.0000127,0,0,1.0000127,0.22785457,-0.15966092)"
-       id="g3071">
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.96384"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-99.875397"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-3"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-101.50807"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-6"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-102.05229"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-7"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.41962"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-5"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-  </g>
-</svg>
-}
-          # scale-vd
-          set imgtype(scale-vd) svg
-          set imgdata(scale-vd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
-   height="28"
-   viewBox="0 0 3.7041666 7.4083333"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="scale-vd.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="15.678571"
-     inkscape:cx="-2.2164012"
-     inkscape:cy="14"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.488592,-137.94053)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4021287"
-       height="7.1350117"
-       x="-103.0423"
-       y="-145.23125"
-       ry="0"
-       transform="scale(-1)" />
-    <g
-       id="g3071"
-       transform="matrix(0,1.0000126,-1.0000126,0,242.84085,40.81458)">
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.96384"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-99.875397"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-3"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-101.50807"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-6"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-102.05229"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-7"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.41962"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-5"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-  </g>
-</svg>
-}
-          # scale-vn
-          set imgtype(scale-vn) svg
-          set imgdata(scale-vn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
-   height="28"
-   viewBox="0 0 5.10412 10.20824"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="scale-vn.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="15.657207"
-     inkscape:cx="6.8912706"
-     inkscape:cy="13.984623"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="44"
-     inkscape:window-y="37"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     scale-x="0.26458" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.48979,-137.92546)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="4.7264309"
-       height="9.8160715"
-       x="-104.38871"
-       y="-147.94322"
-       ry="0"
-       transform="scale(-1)" />
-    <g
-       id="g3071"
-       transform="matrix(0,1.3779575,-1.6359752,0,333.5297,4.0917157)">
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.96384"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-99.875397"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-3"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-101.50807"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-6"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-102.05229"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-7"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.41962"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-5"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-  </g>
-</svg>
-}
-          # sizegrip
-          set imgtype(sizegrip) svg
-          set imgdata(sizegrip) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24"
-   height="24"
-   viewBox="0 0 6.9850001 6.9849998"
-   version="1.1"
-   id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="sizegrip.svg">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="14.75"
-     inkscape:cx="11.932203"
-     inkscape:cy="12"
-     inkscape:document-units="mm"
-     inkscape:current-layer="g894"
-     showgrid="true"
-     inkscape:window-width="1214"
-     inkscape:window-height="532"
-     inkscape:window-x="96"
-     inkscape:window-y="14"
-     inkscape:window-maximized="0"
-     scale-x="1.1"
-     units="px">
-    <inkscape:grid
-       type="xygrid"
-       id="grid843" />
-  </sodipodi:namedview>
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-291.615)">
-    <g
-       id="g894"
-       transform="matrix(0.47669842,0,0,0.47989316,-0.27326329,156.43376)">
-      <g
-         id="g950">
-        <circle
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79"
-           cx="14.324424"
-           cy="282.63419"
-           r="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9b;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-3"
-           cx="12.721766"
-           cy="284.22617"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-6"
-           cx="11.119109"
-           cy="285.81818"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-7"
-           cx="9.5164518"
-           cy="287.41016"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-5"
-           cx="7.913794"
-           cy="289.00214"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-35"
-           cx="6.3111362"
-           cy="290.59412"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-62"
-           cx="4.7084789"
-           cy="292.18613"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-9"
-           cx="3.1058214"
-           cy="293.77811"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-1"
-           cx="1.5031636"
-           cy="295.37009"
-           rx="0.69321311"
-           ry="0.69321305" />
-      </g>
-      <g
-         id="g959"
-         transform="translate(-0.53809974,-0.04111673)">
-        <ellipse
-           inkscape:transform-center-y="-2.5681986"
-           inkscape:transform-center-x="-1.8183937"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-3-7"
-           cx="14.967299"
-           cy="285.89139"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-1.8042036"
-           inkscape:transform-center-x="-1.05441"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-6-0"
-           cx="13.364642"
-           cy="287.48337"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-1.0402233"
-           inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-7-9"
-           cx="11.761985"
-           cy="289.07538"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-0.27624296"
-           inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-5-3"
-           cx="10.159327"
-           cy="290.66736"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="0.48773736"
-           inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-35-6"
-           cx="8.5566683"
-           cy="292.25934"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="1.2517323"
-           inkscape:transform-center-x="2.0015276"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-62-0"
-           cx="6.954011"
-           cy="293.85135"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="2.0157126"
-           inkscape:transform-center-x="2.7655121"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-9-6"
-           cx="5.3513532"
-           cy="295.44333"
-           rx="0.69321311"
-           ry="0.69321305" />
-      </g>
-      <g
-         id="g1056"
-         transform="translate(-0.28974602,-0.04111673)">
-        <ellipse
-           inkscape:transform-center-y="-1.8042036"
-           inkscape:transform-center-x="-1.05441"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-6-0-8"
-           cx="14.689195"
-           cy="289.13831"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-1.0402233"
-           inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-7-9-7"
-           cx="13.086537"
-           cy="290.73032"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-0.27624296"
-           inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-5-3-9"
-           cx="11.48388"
-           cy="292.3223"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="0.48773736"
-           inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-35-6-2"
-           cx="9.8812218"
-           cy="293.91428"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="1.2517323"
-           inkscape:transform-center-x="2.0015276"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-62-0-0"
-           cx="8.2785645"
-           cy="295.50629"
-           rx="0.69321311"
-           ry="0.69321305" />
-      </g>
-      <g
-         id="g1034"
-         transform="translate(8.4854191,7.1543113)">
-        <ellipse
-           inkscape:transform-center-y="-1.0402233"
-           inkscape:transform-center-x="-0.29042529"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-7-9-7-7"
-           cx="5.9463682"
-           cy="285.23096"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="-0.27624296"
-           inkscape:transform-center-x="0.47355939"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-5-3-9-5"
-           cx="4.3437109"
-           cy="286.82294"
-           rx="0.69321311"
-           ry="0.69321305" />
-        <ellipse
-           inkscape:transform-center-y="0.48773736"
-           inkscape:transform-center-x="1.2375436"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           id="path841-79-35-6-2-9"
-           cx="2.7410524"
-           cy="288.41492"
-           rx="0.69321311"
-           ry="0.69321305" />
-      </g>
-      <ellipse
-         ry="0.69321305"
-         rx="0.69321311"
-         cy="295.49088"
-         cx="14.451189"
-         id="path841-79-6-0-8-2"
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         inkscape:transform-center-x="-1.05441"
-         inkscape:transform-center-y="-1.8042036" />
-    </g>
-  </g>
-</svg>
-}
-          # slider-hd
-          set imgtype(slider-hd) svg
-          set imgdata(slider-hd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="28"
-   height="14"
-   viewBox="0 0 7.4083338 3.7041668"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-hd.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="19.035714"
-     inkscape:cx="14"
-     inkscape:cy="7"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     showguides="false" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-97.353814,-139.48844)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29253346;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4278965"
-       height="7.1305251"
-       x="139.61896"
-       y="-104.60221"
-       ry="0"
-       transform="rotate(90)" />
-  </g>
-</svg>
-}
-          # slider-h-grip
-          set imgtype(slider-h-grip) svg
-          set imgdata(slider-h-grip) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="9.2482166"
-   height="7.8451266"
-   viewBox="0 0 2.4468931 2.0756636"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-h-grip.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="44.169565"
-     inkscape:cx="4.6023201"
-     inkscape:cy="3.883272"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     scale-x="0.06458"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.605399,-140.46056)">
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1368"
-       width="2.0756626"
-       height="0.269997"
-       x="140.46056"
-       y="-100.96384"
-       ry="0.1349985"
-       transform="rotate(90)" />
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1368-3"
-       width="2.0756626"
-       height="0.269997"
-       x="140.46056"
-       y="-99.875397"
-       ry="0.1349985"
-       transform="rotate(90)" />
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1368-6"
-       width="2.0756626"
-       height="0.269997"
-       x="140.46056"
-       y="-101.50807"
-       ry="0.1349985"
-       transform="rotate(90)" />
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1368-7"
-       width="2.0756626"
-       height="0.269997"
-       x="140.46056"
-       y="-102.05229"
-       ry="0.1349985"
-       transform="rotate(90)" />
-    <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect1368-5"
-       width="2.0756626"
-       height="0.269997"
-       x="140.46056"
-       y="-100.41962"
-       ry="0.1349985"
-       transform="rotate(90)" />
-  </g>
-</svg>
-}
-          # slider-hn
-          set imgtype(slider-hn) svg
-          set imgdata(slider-hn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="28"
-   height="14"
-   viewBox="0 0 7.4083338 3.7041669"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-hn.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="19.035714"
-     inkscape:cx="14"
-     inkscape:cy="7"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     showguides="false" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-97.353814,-139.48844)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.29461741;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4380579"
-       height="7.1025405"
-       x="139.6192"
-       y="-104.59727"
-       ry="0"
-       transform="rotate(90)" />
-  </g>
-</svg>
-}
-          # slider-vd
-          set imgtype(slider-vd) svg
-          set imgdata(slider-vd) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
-   height="28"
-   viewBox="0 0 3.7041666 7.4083333"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-vd.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="15.678571"
-     inkscape:cx="7"
-     inkscape:cy="14"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.488592,-137.94053)">
-    <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.29152358;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="3.4021287"
-       height="7.1350117"
-       x="-103.0423"
-       y="-145.23125"
-       ry="0"
-       transform="scale(-1)" />
-  </g>
-</svg>
-}
-          # slider-v-grip
-          set imgtype(slider-v-grip) svg
-          set imgdata(slider-v-grip) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="7.8451266"
-   height="9.2482166"
-   viewBox="0 0 2.0756636 2.4468932"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-v-grip.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="44.169565"
-     inkscape:cx="3.9007484"
-     inkscape:cy="4.5847944"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="41"
-     inkscape:window-y="42"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     scale-x="0.06458"
-     inkscape:pagecheckerboard="true" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.791021,-140.27494)">
-    <g
-       id="g833"
-       transform="rotate(90,100.82885,141.49839)">
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.96384"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-99.875397"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-3"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-101.50807"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-6"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-102.05229"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-7"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-      <rect
-         transform="rotate(90)"
-         ry="0.1349985"
-         y="-100.41962"
-         x="140.46056"
-         height="0.269997"
-         width="2.0756626"
-         id="rect1368-5"
-         style="opacity:1;fill:#000000;fill-opacity:1;stroke:#07090b;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
-  </g>
-</svg>
-}
-          # slider-vn
-          set imgtype(slider-vn) svg
-          set imgdata(slider-vn) {
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14"
-   height="28"
-   viewBox="0 0 5.10412 10.20824"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="slider-vn.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs2" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="15.678571"
-     inkscape:cx="7"
-     inkscape:cy="14"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1315"
-     inkscape:window-height="617"
-     inkscape:window-x="44"
-     inkscape:window-y="37"
-     inkscape:window-maximized="0"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     units="px"
-     scale-x="0.26458" />
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(-99.48979,-137.92546)">
-    <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.40609768;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect815"
-       width="4.7264309"
-       height="9.8160715"
-       x="-104.38871"
-       y="-147.94322"
-       ry="0"
-       transform="scale(-1)" />
-  </g>
-</svg>
-}
-          #E == svgdata ==
-        }
-
-        if { $vars(theme.name) eq "awlight" } {
-          # convert all the svg colors to awlight specific colors
-          if { $vars(have.tksvg) } {
-            foreach {n} [array names ::ttk::theme::awdark::imgdata] {
-              set imgdata($n) $::ttk::theme::awdark::imgdata($n)
-              if { [string match *arrow* $n] } {
-                set oc $::ttk::theme::awdark::colors(highlight.selectbg)
-                set nc $colors(curr.base.lighter)
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
-              }
-              foreach {oc nc} [list \
-                  $::ttk::theme::awdark::colors(base.dark) \
-                  $colors(base.dark) \
-                  $::ttk::theme::awdark::colors(base.disabledfg) \
-                  $colors(base.disabledfg) \
-                  $::ttk::theme::awdark::colors(base.disabledbg) \
-                  $colors(base.disabledbg) \
-                  $::ttk::theme::awdark::colors(base.disabledborder) \
-                  $colors(base.disabledborder) \
-                  $::ttk::theme::awdark::colors(base.bpress) \
-                  $colors(base.bpress) \
-                  $::ttk::theme::awdark::colors(highlight.selectbg) \
-                  $colors(highlight.selectbg) \
-                  $::ttk::theme::awdark::colors(highlight.selectdisabledbg) \
-                  $colors(highlight.selectdisabledbg) \
-                  $::ttk::theme::awdark::colors(base.border) \
-                  $colors(base.border) \
-                  $::ttk::theme::awdark::colors(base.arrow) \
-                  $colors(base.arrow) \
-                  ] {
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
+          # load theme specific .svg files
+          if { [file exists $vars(image.dir)] } {
+            foreach {fn} [glob -directory $vars(image.dir) *.svg] {
+              if { [string match *-base* $fn] } { continue }
+              set origi [file rootname [file tail $fn]]
+              set imgtype($origi) svg
+              set imgdata($origi) [_readFile $fn]
+            }
+          }
+          # load generic .svg files
+          if { [file exists $vars(image.dir.generic)] } {
+            foreach {fn} [glob -directory $vars(image.dir.generic) *.svg] {
+              if { [string match *-base* $fn] } { continue }
+              set origi [file rootname [file tail $fn]]
+              if { ! [info exists imgtype($origi)] } {
+                set imgtype($origi) svg
+                set imgdata($origi) [_readFile $fn]
               }
             }
           }
         }
 
-        # convert all the svg colors to the current colors
+        # convert all the svg colors to theme specific colors
         if { $vars(have.tksvg) } {
           foreach {n} [array names imgdata] {
-            if { [string match *arrow* $n] } {
-              set oc $colors(highlight.selectbg)
-              set nc $colors(curr.highlight.selectbg)
-              if { $nc ne $oc } {
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
-              }
+            if { [string match arrow-bg* $n] } {
+              set oc $::ttk::theme::awdark::colors(height.arrow)
+              set nc $colors(height.arrow)
+              regsub -all height=\"$oc\" $imgdata($n) height=\"$nc\" imgdata($n)
+              regsub -all width=\"$oc\" $imgdata($n) width=\"$nc\" imgdata($n)
+            }
+            if { [string match combo* $n] } {
+              set oc $::ttk::theme::awdark::colors(height.combobox)
+              set nc $colors(height.combobox)
+              regsub -all height=\"$oc\" $imgdata($n) height=\"$nc\" imgdata($n)
             }
             foreach {oc nc} [list \
-                $colors(base.dark) \
+                _BG_ \
+                $colors(curr.base.bg) \
+                _FG_ \
+                $colors(curr.base.fg) \
+                _DARK_ \
                 $colors(curr.base.dark) \
-                $colors(base.disabledfg) \
-                $colors(curr.base.disabledfg) \
-                $colors(base.disabledbg) \
-                $colors(curr.base.disabledbg) \
-                $colors(base.disabledborder) \
-                $colors(curr.base.disabledborder) \
-                $colors(base.bpress) \
-                $colors(curr.base.bpress) \
-                $colors(highlight.selectbg) \
-                $colors(curr.highlight.selectbg) \
-                $colors(highlight.selectdisabledbg) \
-                $colors(curr.highlight.selectdisabledbg) \
-                $colors(base.border) \
+                _GC_ \
+                $colors(curr.graphics.color) \
+                _GCD_ \
+                $colors(curr.graphics.color.disabled) \
+                _GCB_ \
+                $colors(curr.graphics.color.b) \
+                _GCBD_ \
+                $colors(curr.graphics.color.b.disabled) \
+                _EBG_ \
+                $colors(curr.base.entry.bg) \
+                _BORD_ \
                 $colors(curr.base.border) \
-                $colors(base.arrow) \
-                $colors(curr.base.arrow) \
+                _BORDDARK_ \
+                $colors(curr.base.border.dark) \
+                _BORDD_ \
+                $colors(curr.base.border.disabled) \
+                _GRIP_ \
+                $colors(curr.graphics.grip) \
+                _SZGRIP_ \
+                $colors(curr.graphics.sizegrip) \
                 ] {
-              if { $nc ne $oc } {
-                regsub -all $oc $imgdata($n) $nc imgdata($n)
-              }
+              set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
             }
           }
         }
 
+        #BEGIN-PNG-DATA
         if { $vars(theme.name) eq "awdark" } {
           if { ! [info exists imgdata(cb-sa)] } {
             # cb-sa
@@ -5229,6 +1221,7 @@ proc awinit { } {
             }
           }
         }
+        #END-PNG-DATA
       }
 
       proc _mkimage { n } {
@@ -5244,7 +1237,8 @@ proc awinit { } {
           set images($n) [image create photo -data $imgdata($n) \
               -format "svg -scale [expr {round($vars(scale.factor))}]"]
         }
-        if { ! [info exists images($n)] } {
+        if { ! [info exists images($n)] &&
+            [info exists imgdata($n)] } {
           set images($n) [image create photo -data $imgdata($n)]
         }
       }
@@ -5254,325 +1248,347 @@ proc awinit { } {
         variable imgdata
         variable images
         variable vars
+        variable colors
 
-        # only the styling is set here.
+        # the styling is set here.
+        # the images are created here.
         # the colors are set in setStyledColors
 
         ttk::style theme create $vars(theme.name) -parent clam -settings {
-        # menu
 
-        foreach {n} {menu-cb-un-pad menu-cb-sn-pad menu-rb-un-pad menu-rb-sn-pad} {
-          _mkimage $n
-        }
+          # images
 
-        # sliders, arrows
+          # menu
 
-        if { $vars(have.tksvg) && [info exists imgdata(arrow-bg-right-n)] } {
-          foreach {n} {slider-vn slider-vd slider-hn slider-hd
-              scale-vn scale-vd scale-hn scale-hd
-              arrow-bg-up-n arrow-bg-down-n arrow-bg-right-n arrow-bg-left-n
-              arrow-bg-up-d arrow-bg-down-d arrow-bg-right-d arrow-bg-left-d
-              combo-arrow-down-n combo-arrow-down-d
-              arrow-right-n arrow-down-n arrow-down-d
-              slider-h-grip slider-v-grip
-              sizegrip} {
+          foreach {n} {menu-cb-un-pad menu-cb-sn-pad menu-rb-un-pad menu-rb-sn-pad} {
             _mkimage $n
           }
 
-          foreach {dir} {up down left right} {
-            ttk::style element create ${dir}arrow image \
-                [list $images(arrow-bg-${dir}-n) \
-                disabled $images(arrow-bg-${dir}-d) \
-                pressed $images(arrow-bg-${dir}-n) \
-                active $images(arrow-bg-${dir}-n)] \
-                -border 4 -sticky news
+          # sliders, arrows
+
+          if { $vars(have.tksvg) && [info exists imgdata(arrow-bg-right-n)] } {
+            foreach {n} {
+                arrow-bg-up-d arrow-bg-down-d arrow-bg-right-d arrow-bg-left-d
+                arrow-bg-up-n arrow-bg-down-n arrow-bg-right-n arrow-bg-left-n
+                arrow-down-n arrow-down-d
+                tree-arrow-right-n tree-arrow-down-n tree-arrow-empty
+                combo-arrow-down-n combo-arrow-down-d
+                scale-vn scale-vd scale-hn scale-hd
+                sizegrip
+                slider-h-grip slider-v-grip
+                slider-vn slider-vd slider-hn slider-hd
+                } {
+              _mkimage $n
+            }
+
+            foreach {dir} {up down left right} {
+              ttk::style element create ${dir}arrow image \
+                  [list $images(arrow-bg-${dir}-n) \
+                  disabled $images(arrow-bg-${dir}-d) \
+                  pressed $images(arrow-bg-${dir}-n) \
+                  active $images(arrow-bg-${dir}-n)] \
+                  -border 4 -sticky news
+            }
           }
-        }
 
-        # small checkbutton and radiobutton images
+          # small checkbutton and radiobutton images
 
-        foreach {n} {cb-un-small cb-sn-small rb-un-small rb-sn-small} {
-          _mkimage $n
-        }
+          foreach {n} {cb-un-small cb-sn-small rb-un-small rb-sn-small} {
+            _mkimage $n
+          }
 
-        # button
+          # checkbuttons
 
-        ttk::style configure TButton \
-            -anchor {} \
-            -width -8 \
-            -padding {5 4} \
-            -borderwidth 1 \
-            -relief raised
+          foreach {n} {cb-un cb-ud cb-sn cb-sd cb-sa cb-ua} {
+            _mkimage $n
+          }
 
-        # checkbutton
+          # radiobuttons
 
-        foreach {n} {cb-un cb-ud cb-sn cb-sd cb-sa cb-ua} {
-          _mkimage $n
-        }
+          foreach {n} {rb-un rb-ud rb-sn rb-sd rb-ua rb-sa} {
+            _mkimage $n
+          }
 
-        ttk::style element create Checkbutton.indicator image \
-            [list $images(cb-un) \
-            {hover selected !disabled} $images(cb-sa) \
-            {hover !selected !disabled} $images(cb-ua) \
-            {!selected disabled} $images(cb-ud) \
-            {selected disabled} $images(cb-sd) \
-            {selected !disabled} $images(cb-sn)]
+          # fallback images
+          # be sure that an appropriate image exists for the styling
 
-        ttk::style layout TCheckbutton {
-          Checkbutton.focus -side left -sticky w -children {
-            Checkbutton.indicator -side left -sticky {}
+          foreach {origi mapi} $vars(fallback.images) {
+            if { ! [info exists images($origi)] &&
+                [info exists images($mapi)] } {
+              set images($origi) $images($mapi)
+            }
+          }
+
+          # styling
+
+          # button
+
+          ttk::style configure TButton \
+              -anchor $colors(curr.anchor.button) \
+              -width -8 \
+              -padding $colors(curr.padding.button) \
+              -borderwidth 1 \
+              -relief raised
+
+          # checkbutton
+
+          ttk::style element create Checkbutton.indicator image \
+              [list $images(cb-un) \
+              {hover selected !disabled} $images(cb-sa) \
+              {hover !selected !disabled} $images(cb-ua) \
+              {!selected disabled} $images(cb-ud) \
+              {selected disabled} $images(cb-sd) \
+              {selected !disabled} $images(cb-sn)]
+
+          ttk::style layout TCheckbutton {
+            Checkbutton.focus -side left -sticky w -children {
+              Checkbutton.indicator -side left -sticky {}
+              Checkbutton.padding -sticky nswe -children {
+                Checkbutton.label -sticky nswe
+              }
+            }
+          }
+
+          ttk::style configure TCheckbutton \
+              -padding $colors(curr.padding.checkbutton) \
+              -borderwidth 1 \
+              -relief none \
+              -focusthickness $colors(curr.focusthickness.checkbutton)
+
+          ttk::style map TCheckbutton \
+              -background [list {hover !disabled} $colors(curr.base.hover)]
+
+          ttk::style element create Menu.Checkbutton.indicator image \
+              [list $images(cb-un-small) \
+              {selected !disabled} $images(cb-sn-small)]
+
+          ttk::style layout Menu.TCheckbutton {
             Checkbutton.padding -sticky nswe -children {
-              Checkbutton.label -sticky nswe
+              Menu.Checkbutton.indicator -side left -sticky {}
             }
           }
-        }
 
-        ttk::style configure TCheckbutton \
-            -padding {5 1 1 1} \
-            -borderwidth 1 \
-            -relief none \
-            -focusthickness 4
+          ttk::style configure Menu.TCheckbutton \
+              -padding $colors(curr.padding.checkbutton) \
+              -borderwidth 0 \
+              -relief none \
+              -focusthickness 0
 
-        ttk::style element create Menu.Checkbutton.indicator image \
-            [list $images(cb-un-small) \
-            {selected !disabled} $images(cb-sn-small)]
+          # combobox
 
-        ttk::style layout Menu.TCheckbutton {
-          Checkbutton.padding -sticky nswe -children {
-            Menu.Checkbutton.indicator -side left -sticky {}
+          if { $vars(have.tksvg) && [info exists images(combo-arrow-down-n)] } {
+            ttk::style element create Combobox.downarrow image \
+                [list $images(combo-arrow-down-n) \
+                disabled $images(combo-arrow-down-d)] \
+                -sticky e -border {17 0 0 0}
           }
-        }
 
-        ttk::style configure Menu.TCheckbutton \
-            -padding {5 1 1 1} \
-            -borderwidth 0 \
-            -relief none \
-            -focusthickness 0
+          ttk::style configure TCombobox \
+              -padding $colors(curr.padding.combobox) \
+              -borderwidth 1 \
+              -arrowsize 14 \
+              -relief none
 
-        # combobox
+          bind ComboboxListbox <Map> \
+              [list +::ttk::theme::${vars(theme.name)}::awCboxHandler %W]
 
-        if { $vars(have.tksvg) && [info exists images(combo-arrow-down-n)] } {
-          ttk::style element create Combobox.downarrow image \
-              [list $images(combo-arrow-down-n) \
-              disabled $images(combo-arrow-down-d)] \
-              -sticky e -border {18 0 0 0}
-        }
+          # entry
 
-        ttk::style configure TCombobox \
-            -padding {5 2} \
-            -borderwidth 1 \
-            -arrowsize 15 \
-            -relief none
+          ttk::style configure TEntry \
+              -padding $colors(curr.padding.entry) \
+              -borderwidth 0 \
+              -relief none
 
-        bind ComboboxListbox <Map> \
-            [list +::ttk::theme::${vars(theme.name)}::awCboxHandler %W]
+          # labelframe
 
-        # entry
+          ttk::style configure TLabelframe \
+              -borderwidth 1 \
+              -relief groove
 
-        ttk::style configure TEntry \
-            -padding {5 2} \
-            -borderwidth 1 \
-            -relief none
+          # menubutton
 
-        # labelframe
+          if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
+            ttk::style element create Menubutton.indicator image \
+                [list $images(arrow-down-n) \
+                disabled $images(arrow-down-d)]
+          }
 
-        ttk::style configure TLabelframe \
-            -borderwidth 1 \
-            -relief groove
+          ttk::style configure TMenubutton \
+              -padding $colors(curr.padding.menubutton) \
+              -relief none
 
-        # menubutton
+          # notebook
 
-        if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
-          ttk::style element create Menubutton.indicator image \
-              [list $images(arrow-down-n) \
-              disabled $images(arrow-down-d)]
-        }
+          _createNotebookStyle
 
-        ttk::style configure TMenubutton \
-            -padding {5 2} \
-            -relief none
+          ttk::style configure TNotebook \
+              -borderwidth 0
+          ttk::style configure TNotebook.Tab \
+              -padding $colors(curr.padding.notebooktab) \
+              -focusthickness $colors(focusthickness.notebooktab) \
+              -borderwidth 0
 
-        # notebook
+          # panedwindow
 
-        _createNotebookStyle
+          ttk::style configure Sash \
+              -sashthickness 10
 
-        ttk::style configure TNotebook \
-            -borderwidth 0
-        ttk::style configure TNotebook.Tab \
-            -padding {1 0 1 0} \
-            -focusthickness 5 \
-            -borderwidth 0
+          # progressbar
 
-        # panedwindow
+          if { $vars(have.tksvg) && [info exists images(slider-hn)] } {
+            ttk::style element create Horizontal.Progressbar.pbar image \
+                $images(slider-hn) \
+                -border 4
+            ttk::style element create Vertical.Progressbar.pbar image \
+                $images(slider-vn) \
+                -border 4
+          }
 
-        ttk::style configure Sash \
-            -sashthickness 8
+          ttk::style configure TProgressbar \
+              -borderwidth 1 \
+              -pbarrelief none
 
-        # progressbar
+          # radiobutton
 
-        if { $vars(have.tksvg) && [info exists images(slider-hn)] } {
-          ttk::style element create Horizontal.Progressbar.pbar image \
-              $images(slider-hn) \
-              -border 4
-          ttk::style element create Vertical.Progressbar.pbar image \
-              $images(slider-vn) \
-              -border 4
-        }
+          ttk::style element create Radiobutton.indicator image \
+              [list $images(rb-un) \
+              {hover selected !disabled} $images(rb-sa) \
+              {hover !selected !disabled} $images(rb-ua) \
+              {!selected disabled} $images(rb-ud) \
+              {selected disabled} $images(rb-sd) \
+              {selected !disabled} $images(rb-sn)]
 
-        ttk::style configure TProgressbar \
-            -borderwidth 1 \
-            -pbarrelief none
+          ttk::style layout TRadiobutton {
+            Radiobutton.focus -side left -sticky w -children {
+              Radiobutton.indicator -side left -sticky {}
+              Radiobutton.padding -sticky nswe -children {
+                Radiobutton.label -sticky nswe
+              }
+            }
+          }
 
-        # radiobutton
+          ttk::style configure TRadiobutton \
+              -padding $colors(curr.padding.radiobutton) \
+              -borderwidth 1 \
+              -relief none \
+              -focusthickness $colors(curr.focusthickness.radiobutton)
 
-        foreach {n} {rb-un rb-ud rb-sn rb-sd rb-ua rb-sa} {
-          _mkimage $n
-        }
+          ttk::style map TRadiobutton \
+              -background [list {hover !disabled} $colors(curr.base.hover)]
 
-        ttk::style element create Radiobutton.indicator image \
-            [list $images(rb-un) \
-            {hover selected !disabled} $images(rb-sa) \
-            {hover !selected !disabled} $images(rb-ua) \
-            {!selected disabled} $images(rb-ud) \
-            {selected disabled} $images(rb-sd) \
-            {selected !disabled} $images(rb-sn)]
+          ttk::style element create Menu.Radiobutton.indicator image \
+              [list $images(rb-un-small) \
+              {selected} $images(rb-sn-small)]
 
-        ttk::style layout TRadiobutton {
-          Radiobutton.focus -side left -sticky w -children {
-            Radiobutton.indicator -side left -sticky {}
+          ttk::style layout Menu.TRadiobutton {
             Radiobutton.padding -sticky nswe -children {
-              Radiobutton.label -sticky nswe
+              Menu.Radiobutton.indicator -side left -sticky {}
             }
           }
-        }
 
-        ttk::style configure TRadiobutton \
-            -padding {5 1 1 1} \
-            -borderwidth 1 \
-            -relief none \
-            -focusthickness 4
+          ttk::style configure Menu.TRadiobutton \
+              -padding $colors(curr.padding.radiobutton) \
+              -borderwidth 0 \
+              -relief none \
+              -focusthickness 0
 
-        ttk::style element create Menu.Radiobutton.indicator image \
-            [list $images(rb-un-small) \
-            {selected} $images(rb-sn-small)]
+          # scale
 
-        ttk::style layout Menu.TRadiobutton {
-          Radiobutton.padding -sticky nswe -children {
-            Menu.Radiobutton.indicator -side left -sticky {}
+          if { $vars(have.tksvg) && [info exists images(scale-hn)] } {
+            # using a separate image for the grip for the scale slider
+            # does not work, unlike the scrollbar.
+            ttk::style element create Horizontal.Scale.slider image \
+                [list $images(scale-hn) \
+                disabled $images(scale-hd)] \
+                -sticky {}
+            ttk::style element create Vertical.Scale.slider image \
+                [list $images(scale-vn) \
+                disabled $images(scale-vd)] \
+                -sticky {}
           }
-        }
 
-        ttk::style configure Menu.TRadiobutton \
-            -padding {5 1 1 1} \
-            -borderwidth 0 \
-            -relief none \
-            -focusthickness 0
+          ttk::style configure TScale \
+              -borderwidth 1
 
-        # scale
+          # scrollbar
 
-        if { $vars(have.tksvg) && [info exists images(scale-hn)] } {
-          # using a separate image for the grip for the scale slider
-          # does not work, unlike the scrollbar.
-          ttk::style element create Horizontal.Scale.slider image \
-              [list $images(scale-hn) \
-              disabled $images(scale-hd)] \
-              -sticky {}
-          ttk::style element create Vertical.Scale.slider image \
-              [list $images(scale-vn) \
-              disabled $images(scale-vd)] \
-              -sticky {}
-        }
+          if { $vars(have.tksvg) && [info exists images(slider-vn)] } {
+            ttk::style element create Vertical.Scrollbar.grip image \
+                [list $images(slider-v-grip)] -sticky {}
+            ttk::style element create Vertical.Scrollbar.thumb image \
+                [list $images(slider-vn) \
+                disabled $images(slider-vd) \
+                pressed $images(slider-vn) \
+                active $images(slider-vn)] \
+                -border 4 -sticky ns
 
-        ttk::style configure TScale \
-            -borderwidth 1
+            ttk::style element create Horizontal.Scrollbar.grip image \
+                [list $images(slider-h-grip)] -sticky {}
+            ttk::style element create Horizontal.Scrollbar.thumb image \
+                [list $images(slider-hn) \
+                disabled $images(slider-hd) \
+                pressed $images(slider-hn) \
+                active $images(slider-hn)] \
+                -border 4 -sticky ew
 
-        # scrollbar
+           ttk::style layout Vertical.TScrollbar {
+              Vertical.Scrollbar.uparrow -side top -sticky {}
+              Vertical.Scrollbar.downarrow -side bottom -sticky {}
+              Vertical.Scrollbar.trough -sticky nsew -children {
+                Vertical.Scrollbar.thumb -expand 1 -unit 1 -children {
+                  Vertical.Scrollbar.grip -sticky {}
+                }
+              }
+            }
 
-        if { $vars(have.tksvg) && [info exists images(slider-vn)] } {
-          ttk::style element create Vertical.Scrollbar.grip image \
-              [list $images(slider-v-grip)] -sticky {}
-          ttk::style element create Vertical.Scrollbar.thumb image \
-              [list $images(slider-vn) \
-              disabled $images(slider-vd) \
-              pressed $images(slider-vn) \
-              active $images(slider-vn)] \
-              -border 4 -sticky ns
-
-          ttk::style element create Horizontal.Scrollbar.grip image \
-              [list $images(slider-h-grip)] -sticky {}
-          ttk::style element create Horizontal.Scrollbar.thumb image \
-              [list $images(slider-hn) \
-              disabled $images(slider-hd) \
-              pressed $images(slider-hn) \
-              active $images(slider-hn)] \
-              -border 4 -sticky ew
-
-         ttk::style layout Vertical.TScrollbar {
-            Vertical.Scrollbar.uparrow -side top -sticky {}
-            Vertical.Scrollbar.downarrow -side bottom -sticky {}
-            Vertical.Scrollbar.trough -sticky nsew -children {
-              Vertical.Scrollbar.thumb -expand 1 -unit 1 -children {
-                Vertical.Scrollbar.grip -sticky {}
+            ttk::style layout Horizontal.TScrollbar {
+              Horizontal.Scrollbar.leftarrow -side left -sticky {}
+              Horizontal.Scrollbar.rightarrow -side right -sticky {}
+              Horizontal.Scrollbar.trough -sticky nsew -children {
+                Horizontal.Scrollbar.thumb -expand 1 -unit 1 -children {
+                  Horizontal.Scrollbar.grip -sticky {}
+                }
               }
             }
           }
 
-          ttk::style layout Horizontal.TScrollbar {
-            Horizontal.Scrollbar.leftarrow -side left -sticky {}
-            Horizontal.Scrollbar.rightarrow -side right -sticky {}
-            Horizontal.Scrollbar.trough -sticky nsew -children {
-              Horizontal.Scrollbar.thumb -expand 1 -unit 1 -children {
-                Horizontal.Scrollbar.grip -sticky {}
-              }
-            }
+          ttk::style configure TScrollbar \
+              -borderwidth 0 \
+              -arrowsize 14 \
+              -troughcolor $colors(curr.base.trough)
+
+          # sizegrip
+
+          if { $vars(have.tksvg) && [info exists images(sizegrip)] } {
+            ttk::style element create sizegrip image $images(sizegrip)
           }
-        }
 
-        ttk::style configure TScrollbar \
-            -borderwidth 0
+          # spinbox
 
-        # sizegrip
+          if { $vars(have.tksvg) && [info exists images(arrow-bg-down-n)] } {
+            ttk::style element create Spinbox.uparrow image \
+                [list $images(arrow-bg-up-n) \
+                disabled  $images(arrow-bg-up-d)]
+            ttk::style element create Spinbox.downarrow image \
+                [list $images(arrow-bg-down-n) \
+                disabled  $images(arrow-bg-down-d)]
+          }
 
-        if { $vars(have.tksvg) && [info exists images(sizegrip)] } {
-          ttk::style element create sizegrip image $images(sizegrip)
-        }
+          ttk::style configure TSpinbox \
+              -padding $colors(curr.padding.spinbox) \
+              -borderwidth 1 \
+              -relief none \
+              -arrowsize 14
 
-        # spinbox
+          # treeview
 
-        if { $vars(have.tksvg) && [info exists images(arrow-bg-down-n)] } {
-          ttk::style element create Spinbox.uparrow image \
-              [list $images(arrow-bg-up-n) \
-              disabled  $images(arrow-bg-up-d)]
-          ttk::style element create Spinbox.downarrow image \
-              [list $images(arrow-bg-down-n) \
-              disabled  $images(arrow-bg-down-d)]
-        }
-
-        ttk::style configure TSpinbox \
-            -padding {5 2} \
-            -borderwidth 1 \
-            -relief none \
-            -arrowsize 15
-        }
-
-        # treeview
-
-        if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
-          # Treeitem.indicator already exists for some reason.
-          # A new name must be used and a new layout created for 'Item'.
-          ttk::style element create $vars(theme.name).Treeitem.indicator image \
-              [list $images(arrow-right-n) \
-              user1 $images(arrow-down-n)] \
-              -sticky w
-          ttk::style layout Item [list \
-            Treeitem.padding -sticky nswe -children [list \
-              $vars(theme.name).Treeitem.indicator -side left -sticky {} \
-              Treeitem.image -side left -sticky {} \
-              Treeitem.focus -side left -sticky {} -children { \
-                Treeitem.text -side left -sticky {} \
-              } \
-            ]
-          ]
+          if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
+            ttk::style element create Treeitem.indicator image \
+                [list $images(tree-arrow-right-n) \
+                user1 $images(tree-arrow-down-n) \
+                user2 $images(tree-arrow-empty)] \
+                -sticky w
+          }
         }
       }
 
@@ -5581,11 +1597,15 @@ proc awinit { } {
         variable images
         variable vars
 
-        set tag "$colors(curr.base.tabhighlight)$colors(curr.base.tabinactive)$colors(curr.highlight.selectbg)"
+        if { $vars(theme.name) ne "awdark" && $vars(theme.name) ne "awlight" } {
+          return
+        }
+
+        set tag "$colors(curr.tab.highlight)$colors(curr.tab.highlight.inactive)$colors(curr.graphics.color)"
         foreach {k bg} [list \
-            indhover $colors(curr.base.tabhighlight) \
-            indnotactive $colors(curr.base.tabinactive) \
-            indselected $colors(curr.highlight.selectbg) \
+            indhover $colors(curr.tab.highlight) \
+            indnotactive $colors(curr.tab.highlight.inactive) \
+            indselected $colors(curr.graphics.color) \
             ] {
           if { ! [info exists images($k.$bg)] } {
             set images($k.$bg) [image create photo \
@@ -5632,42 +1652,40 @@ proc awinit { } {
         ttk::style theme settings $theme {
           # defaults
           ttk::style configure . \
-              -background $colors(curr.base.frame) \
-              -foreground $colors(curr.text.text) \
-              -borderwidth 1 \
+              -background $colors(curr.base.bg) \
               -bordercolor $colors(curr.base.border) \
-              -darkcolor $colors(curr.base.darkest) \
-              -lightcolor $colors(curr.base.darkest) \
-              -troughcolor $colors(curr.base.entrybg) \
-              -selectbackground $colors(curr.highlight.selectbg) \
-              -selectforeground $colors(curr.highlight.selectfg) \
+              -borderwidth 1 \
+              -darkcolor $colors(curr.base.darker) \
+              -fieldbackground $colors(curr.base.entry.bg) \
+              -focuscolor $colors(curr.base.focus) \
+              -foreground $colors(curr.base.fg) \
+              -insertcolor $colors(curr.base.entry.fg) \
+              -lightcolor $colors(curr.base.lighter) \
+              -relief none \
+              -selectbackground $colors(curr.text.select.bg) \
               -selectborderwidth 0 \
-              -fieldbackground $colors(curr.base.entrybg) \
-              -focuscolor $colors(curr.highlight.selectbg) \
-              -insertcolor $colors(curr.base.lightest) \
-              -relief none
+              -selectforeground $colors(curr.text.select.fg) \
+              -troughcolor $colors(curr.base.entry.bg)
           ttk::style map . \
-              -background [list disabled $colors(curr.base.frame)] \
-              -foreground [list active $colors(curr.text.text) \
-                  focus $colors(curr.text.text) \
-                  disabled $colors(curr.base.disabledfg)] \
-              -selectbackground [list !focus $colors(curr.base.darkest)] \
-              -selectforeground [list !focus $colors(curr.base.lightest)] \
-              -bordercolor [list disabled $colors(curr.base.disabledborder)]
+              -background [list disabled $colors(curr.base.bg)] \
+              -foreground [list disabled $colors(curr.base.fg.disabled)] \
+              -selectbackground [list !focus $colors(curr.text.select.bg)] \
+              -selectforeground [list !focus $colors(curr.text.select.fg)] \
+              -bordercolor [list disabled $colors(curr.base.border.disabled)]
 
           # button
 
           ttk::style configure TButton \
-              -bordercolor $colors(curr.base.frame) \
-              -background $colors(curr.base.dark) \
+              -bordercolor $colors(curr.base.button.border) \
+              -background $colors(curr.base.button.bg) \
               -lightcolor $colors(curr.base.lighter) \
               -darkcolor $colors(curr.base.darker)
           ttk::style map TButton \
-              -background [list {hover !pressed !disabled} $colors(curr.base.bpress) \
-                  {active !pressed} $colors(curr.base.bpress) \
-                  {selected !disabled} $colors(curr.base.dark) \
-                  pressed $colors(curr.base.dark) \
-                  disabled $colors(curr.base.disabledbg)] \
+              -background [list {hover !pressed !disabled} $colors(curr.base.button.active) \
+                  {active !pressed} $colors(curr.base.button.active) \
+                  {selected !disabled} $colors(curr.base.button.bg) \
+                  pressed $colors(curr.base.button.pressed) \
+                  disabled $colors(curr.base.bg.disabled)] \
               -lightcolor [list pressed $colors(curr.base.darker)] \
               -darkcolor [list pressed $colors(curr.base.lighter)]
 
@@ -5675,84 +1693,90 @@ proc awinit { } {
 
           ttk::style map TCheckbutton \
               -indicatorcolor [list selected $colors(curr.base.lightest)] \
-              -darkcolor [list disabled $colors(curr.base.frame)] \
-              -lightcolor [list disabled $colors(curr.base.frame)]
+              -darkcolor [list disabled $colors(curr.base.bg)] \
+              -lightcolor [list disabled $colors(curr.base.bg)]
 
           # combobox
 
           ttk::style configure TCombobox \
+              -foreground $colors(curr.base.entry.fg) \
               -bordercolor $colors(curr.base.border) \
-              -lightcolor $colors(curr.base.dark) \
-              -darkcolor $colors(curr.base.dark) \
+              -lightcolor $colors(curr.base.entry.box) \
               -arrowcolor $colors(curr.base.arrow)
           ttk::style map TCombobox \
-              -lightcolor [list active $colors(curr.highlight.selectbg) \
-                  focus $colors(curr.highlight.selectbg)] \
-              -darkcolor [list active $colors(curr.highlight.selectbg) \
-                  focus $colors(curr.highlight.selectbg)] \
+              -lightcolor [list active $colors(curr.graphics.color) \
+                  focus $colors(curr.graphics.color)] \
+              -darkcolor [list active $colors(curr.graphics.color) \
+                  focus $colors(curr.graphics.color)] \
               -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
-              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
+              -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TCombobox \
                 -background $colors(curr.base.dark)
             ttk::style map TCombobox \
-                -background [list disabled $colors(curr.base.disabledbg)]
+                -background [list disabled $colors(curr.base.bg.disabled)]
           }
 
           # entry
 
           ttk::style configure TEntry \
+              -foreground $colors(curr.base.entry.fg) \
               -background $colors(curr.base.dark) \
               -bordercolor $colors(curr.base.border) \
-              -lightcolor $colors(curr.base.dark)
+              -lightcolor $colors(curr.base.entry.box)
           ttk::style map TEntry \
-              -lightcolor [list active $colors(curr.highlight.selectbg) \
-                  focus $colors(curr.highlight.selectbg)] \
-              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
+              -lightcolor [list active $colors(curr.graphics.color) \
+                  focus $colors(curr.graphics.color)] \
+              -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TEntry \
                 -background $colors(curr.base.dark)
             ttk::style map TEntry \
-                -background [list disabled $colors(curr.base.disabledbg)]
+                -background [list disabled $colors(curr.base.bg.disabled)]
           }
 
           # frame
 
           ttk::style configure TFrame \
-              -bordercolor $colors(curr.base.frame) \
+              -bordercolor $colors(curr.base.bg) \
               -lightcolor $colors(curr.base.lighter) \
               -darkcolor $colors(curr.base.darker)
+
+          # label
 
           # labelframe
 
           ttk::style configure TLabelframe \
-              -bordercolor $colors(curr.base.frame) \
-              -lightcolor $colors(curr.base.frame) \
-              -darkcolor $colors(curr.base.frame)
+              -bordercolor $colors(curr.base.bg) \
+              -lightcolor $colors(curr.base.bg) \
+              -darkcolor $colors(curr.base.bg)
 
           # menubutton
 
           ttk::style configure TMenubutton \
               -arrowcolor $colors(curr.base.arrow)
           ttk::style map TMenubutton \
-              -background [list {active !disabled} $colors(curr.highlight.selectbg)] \
-              -foreground [list {active !disabled} $colors(curr.highlight.selectfg) \
-                  disabled $colors(curr.base.disabledfg)] \
+              -background [list {active !disabled} $colors(curr.highlight.active.bg)] \
+              -foreground [list {active !disabled} $colors(curr.highlight.active.fg) \
+                  disabled $colors(curr.base.fg.disabled)] \
               -arrowcolor [list disabled $colors(curr.base.arrow.disabled)]
 
           # notebook
 
           ttk::style configure TNotebook \
-              -bordercolor $colors(curr.base.frame) \
-              -lightcolor $colors(curr.base.lighter) \
+              -bordercolor $colors(curr.tab.border) \
+              -lightcolor $colors(curr.tab.box) \
               -darkcolor $colors(curr.base.darker)
           ttk::style configure TNotebook.Tab \
-              -lightcolor $colors(curr.base.frame) \
-              -darkcolor $colors(curr.base.frame) \
-              -bordercolor $colors(curr.base.tabborder) \
-              -background $colors(curr.base.dark)
+              -lightcolor $colors(curr.tab.box) \
+              -darkcolor $colors(curr.base.bg) \
+              -bordercolor $colors(curr.tab.border) \
+              -background $colors(curr.tab.bg)
+          ttk::style map TNotebook.Tab \
+              -foreground [list disabled $colors(curr.base.fg.disabled)] \
+              -background [list disabled $colors(curr.tab.bg.disabled)]
 
           # panedwindow
 
@@ -5766,70 +1790,74 @@ proc awinit { } {
           # progressbar
 
           ttk::style configure TProgressbar \
+              -troughcolor $colors(curr.base.trough) \
               -background $colors(curr.highlight.darkhighlight) \
-              -bordercolor $colors(curr.base.border.light) \
+              -bordercolor $colors(curr.base.border) \
               -lightcolor $colors(curr.highlight.darkhighlight) \
               -darkcolor $colors(curr.highlight.darkhighlight)
           ttk::style map TProgressbar \
               -troughcolor [list disabled $colors(curr.base.dark)] \
-              -darkcolor [list disabled $colors(curr.base.disabledbg)] \
-              -lightcolor [list disabled $colors(curr.base.disabledbg)]
+              -darkcolor [list disabled $colors(curr.base.bg.disabled)] \
+              -lightcolor [list disabled $colors(curr.base.bg.disabled)]
 
           # scale
 
           # background is used both for the background and
           # for the grip colors
+
           ttk::style configure TScale \
+              -troughcolor $colors(curr.base.trough) \
               -background $colors(curr.highlight.darkhighlight) \
-              -bordercolor $colors(curr.base.border.light) \
+              -bordercolor $colors(curr.base.border) \
               -lightcolor $colors(curr.highlight.darkhighlight) \
               -darkcolor $colors(curr.highlight.darkhighlight)
           ttk::style map TScale \
               -troughcolor [list disabled $colors(curr.base.dark)] \
-              -darkcolor [list disabled $colors(curr.base.disabledbg)] \
-              -lightcolor [list disabled $colors(curr.base.disabledbg)]
+              -darkcolor [list disabled $colors(curr.base.bg.disabled)] \
+              -lightcolor [list disabled $colors(curr.base.bg.disabled)]
 
           # scrollbar
 
           ttk::style configure TScrollbar \
-              -background $colors(curr.highlight.selectbg) \
-              -bordercolor $colors(curr.base.border.light) \
-              -lightcolor $colors(curr.highlight.selectbg) \
-              -darkcolor $colors(curr.highlight.selectbg) \
+              -background $colors(curr.graphics.color) \
+              -bordercolor $colors(curr.base.border) \
+              -lightcolor $colors(curr.graphics.color) \
+              -darkcolor $colors(curr.graphics.color) \
               -arrowcolor $colors(curr.base.lightest)
           ttk::style map TScrollbar \
               -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
-              -darkcolor [list disabled $colors(curr.base.frame)] \
-              -lightcolor [list disabled $colors(curr.base.frame)]
+              -darkcolor [list disabled $colors(curr.base.bg)] \
+              -lightcolor [list disabled $colors(curr.base.bg)]
 
           # spinbox
 
           ttk::style configure TSpinbox \
+              -foreground $colors(curr.base.entry.fg) \
               -bordercolor $colors(curr.base.border) \
-              -lightcolor $colors(curr.base.dark) \
+              -lightcolor $colors(curr.base.entry.box) \
               -arrowcolor $colors(curr.base.arrow)
           ttk::style map TSpinbox \
-              -lightcolor [list active $colors(curr.highlight.selectbg) \
-                  focus $colors(curr.highlight.selectbg)] \
-              -darkcolor [list active $colors(curr.highlight.selectbg) \
-                  focus $colors(curr.highlight.selectbg)] \
+              -lightcolor [list active $colors(curr.graphics.color) \
+                  focus $colors(curr.graphics.color)] \
+              -darkcolor [list active $colors(curr.graphics.color) \
+                  focus $colors(curr.graphics.color)] \
               -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
-              -fieldbackground [list disabled $colors(curr.base.disabledbg)]
+              -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
           if { $::tcl_platform(os) eq "Darwin" } {
             # mac os x has cross-platform incompatibilities
             ttk::style configure TSpinbox \
                 -background $colors(curr.base.dark)
             ttk::style map TSpinbox \
-                -background [list disabled $colors(curr.base.disabledbg)]
+                -background [list disabled $colors(curr.base.bg.disabled)]
           }
 
           # treeview
 
           ttk::style configure Treeview \
-              -fieldbackground $colors(curr.base.frame)
+              -fieldbackground $colors(curr.base.bg)
           ttk::style map Treeview \
-              -background [list selected $colors(curr.highlight.selectbg)] \
-              -foreground [list selected $colors(curr.highlight.selectfg)]
+              -background [list selected $colors(curr.text.select.bg)] \
+              -foreground [list selected $colors(curr.text.select.fg)]
         }
       }
 
@@ -5843,7 +1871,7 @@ proc awinit { } {
 
         foreach {k} [array names colors base.*] {
           regsub {^base} $k curr nk
-          set tc [::colorutils::adjustColor $colors($k) $colors(base.frame) $bcol]
+          set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
           set colors($nk) $tc
         }
 
@@ -5860,7 +1888,7 @@ proc awinit { } {
 
         foreach {k} [array names colors highlight.*] {
           regsub {^highlight} $k curr nk
-          set tc [::colorutils::adjustColor $colors($k) $colors(highlight.selectbg) $hcol]
+          set tc [::colorutils::adjustColor $colors($k) $colors(graphics.color) $hcol]
           set colors($nk) $tc
         }
 
@@ -5899,12 +1927,12 @@ proc awinit { } {
           dict set vars(cache.menu) $w 1
         }
 
-        $w configure -background $colors(curr.base.frame)
-        $w configure -foreground $colors(curr.text.text)
-        $w configure -activebackground $colors(curr.highlight.selectbg)
-        $w configure -activeforeground $colors(curr.highlight.selectfg)
-        $w configure -disabledforeground $colors(curr.base.disabledfg)
-        $w configure -selectcolor $colors(curr.highlight.selectbg)
+        $w configure -background $colors(curr.base.bg)
+        $w configure -foreground $colors(curr.base.fg)
+        $w configure -activebackground $colors(curr.highlight.active.bg)
+        $w configure -activeforeground $colors(curr.highlight.active.fg)
+        $w configure -disabledforeground $colors(curr.base.fg.disabled)
+        $w configure -selectcolor $colors(curr.highlight.active.bg)
 
         set max [$w index end]
         if { $max eq "none" } {
@@ -5944,11 +1972,11 @@ proc awinit { } {
           dict set vars(cache.listbox) $w 1
         }
 
-        $w configure -background $colors(curr.base.frame)
-        $w configure -foreground $colors(curr.text.text)
-        $w configure -disabledforeground $colors(curr.base.disabledfg)
-        $w configure -selectbackground $colors(curr.highlight.selectbg)
-        $w configure -selectforeground $colors(curr.highlight.selectfg)
+        $w configure -background $colors(curr.text.bg)
+        $w configure -foreground $colors(curr.text.fg)
+        $w configure -disabledforeground $colors(curr.base.fg.disabled)
+        $w configure -selectbackground $colors(curr.text.select.bg)
+        $w configure -selectforeground $colors(curr.text.select.fg)
         $w configure -borderwidth 1p
         $w configure -relief solid
       }
@@ -5963,16 +1991,17 @@ proc awinit { } {
         }
 
         if { $useflag eq "-entry" } {
-          $w configure -background $colors(curr.base.entrybg)
+          $w configure -background $colors(curr.base.entry.bg)
         } elseif { $useflag eq "-dark" } {
           $w configure -background $colors(curr.base.dark)
         } else {
-          $w configure -background $colors(curr.base.frame)
+          $w configure -background $colors(curr.base.bg)
         }
-        $w configure -foreground $colors(curr.text.text)
-        $w configure -selectforeground $colors(curr.highlight.selectfg)
-        $w configure -selectbackground $colors(curr.highlight.selectbg)
-        $w configure -inactiveselectbackground $colors(curr.base.darkest)
+        $w configure -background $colors(curr.text.bg)
+        $w configure -foreground $colors(curr.text.fg)
+        $w configure -selectforeground $colors(curr.text.select.fg)
+        $w configure -selectbackground $colors(curr.text.select.bg)
+        $w configure -inactiveselectbackground $colors(curr.text.select.bg.inactive)
         $w configure -borderwidth 1p
       }
 
@@ -5981,7 +2010,7 @@ proc awinit { } {
         variable colors
 
         set theme [ttk::style theme use]
-        if { [info exists colors(curr.base.entrybg)] &&
+        if { [info exists colors(curr.base.entry.bg)] &&
             $theme eq $vars(theme.name) &&
             ! [dict exists $vars(cache.listbox) $w] } {
           ::ttk::theme::${vars(theme.name)}::setListboxColors $w
@@ -5995,3 +2024,4 @@ proc awinit { } {
 
 awinit
 unset -nocomplain ::awthemename
+unset -nocomplain ::tawthemename

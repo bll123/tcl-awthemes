@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17"
-   height="17.066668"
+   width="15"
+   height="15"
    id="svg4152"
    version="1.1"
    inkscape:version="0.92.1 r15371"
@@ -71,7 +71,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <circle
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:3.65624976;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path4485"
        cx="31.874998"
        cy="32"

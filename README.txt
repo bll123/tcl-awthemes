@@ -1,7 +1,15 @@
 
-Only the 'awthemes.tcl', 'colorutils.tcl', 'themeutils.tcl'
-and 'pkgIndex.tcl' files are necessary.  The other files are
-infrastructure files and only needed for development.
+The following files are needed:
+  awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
+
+awthemes 4.0
+   - added support for other clam based themes.
+   - breaking change: the .svg files are now loaded from the filesystem
+       in order to support multiple themes.
+   - breaking change: All of the various colors and derived colors have
+       been renamed.
+   - awdark/awlight: Fixed empty treeview indicator.
+   - added scalable 'black' theme.
 
 awthemes 3.1
   - Added themeutils.tcl.

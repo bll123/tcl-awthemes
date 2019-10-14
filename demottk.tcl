@@ -2,10 +2,24 @@
 
 package require Tk
 
+if { 0 } {
+  set ap [file normalize [file join [file dirname [info script]] .. code]]
+} else {
+  set ap [pwd]
+}
+if { $ap ni $::auto_path } {
+  lappend ::auto_path $ap
+}
+unset ap
+package require colorutils
+package require themeutils
+
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> [-scale <scale-factor>]"
+  puts "Usage: demottk.tcl <theme> \[-scale <scale-factor>] \[-bgcolor <color>] \[-highlightcolor <color>]"
   exit 1
 }
+
+set theme [lindex $::argv 0]
 
 set fn data/bll-tecra/tkscale.txt
 if { [file exists $fn] } {
@@ -15,29 +29,34 @@ if { [file exists $fn] } {
   tk scaling -displayof . $scale
 }
 
-set theme [lindex $::argv 0]
-if { [llength $::argv] == 3 } {
-  if { [lindex $::argv 1] eq "-scale" } {
-    tk scaling [lindex $::argv 2]
+for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
+  if { [lindex $::argv $idx] eq "-scale" } {
+    incr idx
+    tk scaling [lindex $::argv $idx]
+  }
+  if { [lindex $::argv $idx] eq "-bgcolor" } {
+    incr idx
+    ::themeutils::setThemeColors $theme base.frame [lindex $::argv $idx]
+  }
+  if { [lindex $::argv $idx] eq "-highlightcolor" } {
+    incr idx
+    ::themeutils::setThemeColors $theme \
+        graphics.color [lindex $::argv $idx] \
+        graphics.color.disabled #222222
   }
 }
 
 set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]
 
-# replace this block with your method of loading the theme
 if { 0 } {
-  set ap [file normalize [file join [file dirname [info script]] .. code]]
-  if { $ap ni $::auto_path } {
-    lappend ::auto_path $ap
-  }
-  unset ap
   package require themeloader
   themeloader::loadTheme $theme
 } ; # if 0
 
 set ttheme $theme
-if { $theme eq "awdark" || $theme eq "awlight" } {
+set ::awthemename $ttheme
+if { $theme eq "awdark" || $theme eq "awlight" || $theme eq "black" } {
   set ttheme awthemes
 }
 if { [file exists $ttheme.tcl] } {
@@ -127,6 +146,8 @@ ttk::frame .five
 .nb add .five -text {Menubutton}
 ttk::frame .six
 .nb add .six -text {Listbox}
+ttk::frame .seven
+.nb add .seven -text {Inactive} -state disabled
 
 foreach {k} {n d} {
   set s !disabled
@@ -327,20 +348,26 @@ if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
 
 pack .menubar.file .menubar.edit .menubar.dis -side left
 
-if { $theme eq "aqua" } {
-  ttk::scrollbar .sblbox -command [list .lbox yview]
-} else {
-  ttk::scrollbar .sblbox -command [list .lbox yview] -style Vertical.TScrollbar
-}
+ttk::scrollbar .sblbox1 -command [list .lbox1 yview]
+ttk::scrollbar .sblbox2 -command [list .lbox2 yview]
 set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
-listbox .lbox \
+listbox .lbox1 \
     -listvariable ::lbox \
-    -yscrollcommand [list .sblbox set] \
+    -yscrollcommand [list .sblbox1 set] \
     -highlightthickness 0 \
     -font TextFont
+listbox .lbox2 \
+    -listvariable ::lbox \
+    -yscrollcommand [list .sblbox2 set] \
+    -highlightthickness 0 \
+    -font TextFont
+.lbox2 configure -state disabled
 
 if { [info commands ::ttk::theme::${theme}::setListboxColors] ne {} } {
-  ::ttk::theme::${theme}::setListboxColors .lbox
+  ::ttk::theme::${theme}::setListboxColors .lbox1
+  ::ttk::theme::${theme}::setListboxColors .lbox2
 }
-pack .sblbox -in .six -side right -padx 0 -pady 3p -fill y
-pack .lbox -in .six -padx 3p -pady 3p -expand true -fill both
+pack .lbox1 -in .six -padx 3p -pady 3p -expand true -fill both -side left
+pack .sblbox1 -in .six -padx 0 -pady 3p -fill y -side left
+pack .lbox2 -in .six -padx 3p -pady 3p -expand true -fill both -side left
+pack .sblbox2 -in .six -padx 0 -pady 3p -fill y -side left
