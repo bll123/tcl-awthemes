@@ -50,6 +50,11 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 4.1
+#   - breaking change: renamed tab.* color names to base.tab.*
+#   - fix bugs in setBackground and setHighlight caused by the color
+#       renaming.
+#   - fix where the hover color for check and radio buttons is set.
 # 4.0
 #   - add support for other clam based themes.
 #   - breaking change: the .svg files are now loaded from the filesystem
@@ -268,7 +273,7 @@ proc awinit { } {
           _setImageData
           _createTheme
           _setStyledColors
-          package provide $::awthemename 4.0
+          package provide $::awthemename 4.1
         }
       }
 
@@ -404,12 +409,12 @@ proc awinit { } {
           set colors(${prefix}padding.combobox) $colors(padding.entry)
           set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
           set colors(${prefix}padding.spinbox) $colors(padding.entry)
-          set colors(${prefix}tab.bg) $colors(base.bg)
-          set colors(${prefix}tab.bg.disabled) $colors(base.bg)
-          set colors(${prefix}tab.border) $colors(base.darkest)
-          set colors(${prefix}tab.box) $colors(base.lighter)
-          set colors(${prefix}tab.highlight) {}
-          set colors(${prefix}tab.highlight.inactive) $colors(base.bg)
+          set colors(${prefix}base.tab.bg) $colors(base.bg)
+          set colors(${prefix}base.tab.bg.disabled) $colors(base.bg)
+          set colors(${prefix}base.tab.border) $colors(base.darkest)
+          set colors(${prefix}base.tab.box) $colors(base.lighter)
+          set colors(${prefix}base.tab.highlight) {}
+          set colors(${prefix}base.tab.highlight.inactive) $colors(base.bg)
           set colors(${prefix}text.bg) $colors(base.bg)
           set colors(${prefix}text.fg) $colors(base.fg)
           set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
@@ -423,11 +428,11 @@ proc awinit { } {
             set colors(${prefix}base.entry.bg) $colors(base.darker)
             set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
             set colors(${prefix}base.entry.box) $colors(base.dark)
-            set colors(${prefix}tab.bg) $colors(base.dark)
-            set colors(${prefix}tab.border) $colors(base.bg)
-            set colors(${prefix}tab.box) $colors(base.bg)
-            set colors(${prefix}tab.highlight) #8b9ca1
-            set colors(${prefix}tab.highlight.inactive) $colors(base.darker)
+            set colors(${prefix}base.tab.bg) $colors(base.dark)
+            set colors(${prefix}base.tab.border) $colors(base.bg)
+            set colors(${prefix}base.tab.box) $colors(base.bg)
+            set colors(${prefix}base.tab.highlight) #8b9ca1
+            set colors(${prefix}base.tab.highlight.inactive) $colors(base.darker)
             set colors(${prefix}text.fg) $colors(base.lightest)
             set colors(${prefix}text.select.bg.inactive) $colors(base.darkest)
             #
@@ -444,11 +449,11 @@ proc awinit { } {
             set colors(${prefix}base.entry.bg) $colors(base.lightest)
             set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
             set colors(${prefix}base.entry.box) $colors(base.dark)
-            set colors(${prefix}tab.bg) $colors(base.dark)
-            set colors(${prefix}tab.border) $colors(base.bg)
-            set colors(${prefix}tab.box) $colors(base.bg)
-            set colors(${prefix}tab.highlight) $colors(base.darkest)
-            set colors(${prefix}tab.highlight.inactive) $colors(base.darker)
+            set colors(${prefix}base.tab.bg) $colors(base.dark)
+            set colors(${prefix}base.tab.border) $colors(base.bg)
+            set colors(${prefix}base.tab.box) $colors(base.bg)
+            set colors(${prefix}base.tab.highlight) $colors(base.darkest)
+            set colors(${prefix}base.tab.highlight.inactive) $colors(base.darker)
             set colors(${prefix}text.fg) $colors(base.darkest)
             set colors(${prefix}text.select.bg.inactive) $colors(base.darkest)
             #
@@ -1355,9 +1360,6 @@ proc awinit { } {
               -relief none \
               -focusthickness $colors(curr.focusthickness.checkbutton)
 
-          ttk::style map TCheckbutton \
-              -background [list {hover !disabled} $colors(curr.base.hover)]
-
           ttk::style element create Menu.Checkbutton.indicator image \
               [list $images(cb-un-small) \
               {selected !disabled} $images(cb-sn-small)]
@@ -1472,9 +1474,6 @@ proc awinit { } {
               -borderwidth 1 \
               -relief none \
               -focusthickness $colors(curr.focusthickness.radiobutton)
-
-          ttk::style map TRadiobutton \
-              -background [list {hover !disabled} $colors(curr.base.hover)]
 
           ttk::style element create Menu.Radiobutton.indicator image \
               [list $images(rb-un-small) \
@@ -1601,10 +1600,10 @@ proc awinit { } {
           return
         }
 
-        set tag "$colors(curr.tab.highlight)$colors(curr.tab.highlight.inactive)$colors(curr.graphics.color)"
+        set tag "$colors(curr.base.tab.highlight)$colors(curr.base.tab.highlight.inactive)$colors(curr.graphics.color)"
         foreach {k bg} [list \
-            indhover $colors(curr.tab.highlight) \
-            indnotactive $colors(curr.tab.highlight.inactive) \
+            indhover $colors(curr.base.tab.highlight) \
+            indnotactive $colors(curr.base.tab.highlight.inactive) \
             indselected $colors(curr.graphics.color) \
             ] {
           if { ! [info exists images($k.$bg)] } {
@@ -1692,6 +1691,7 @@ proc awinit { } {
           # checkbutton
 
           ttk::style map TCheckbutton \
+              -background [list {hover !disabled} $colors(curr.base.hover)] \
               -indicatorcolor [list selected $colors(curr.base.lightest)] \
               -darkcolor [list disabled $colors(curr.base.bg)] \
               -lightcolor [list disabled $colors(curr.base.bg)]
@@ -1766,17 +1766,17 @@ proc awinit { } {
           # notebook
 
           ttk::style configure TNotebook \
-              -bordercolor $colors(curr.tab.border) \
-              -lightcolor $colors(curr.tab.box) \
+              -bordercolor $colors(curr.base.tab.border) \
+              -lightcolor $colors(curr.base.tab.box) \
               -darkcolor $colors(curr.base.darker)
           ttk::style configure TNotebook.Tab \
-              -lightcolor $colors(curr.tab.box) \
+              -lightcolor $colors(curr.base.tab.box) \
               -darkcolor $colors(curr.base.bg) \
-              -bordercolor $colors(curr.tab.border) \
-              -background $colors(curr.tab.bg)
+              -bordercolor $colors(curr.base.tab.border) \
+              -background $colors(curr.base.tab.bg)
           ttk::style map TNotebook.Tab \
               -foreground [list disabled $colors(curr.base.fg.disabled)] \
-              -background [list disabled $colors(curr.tab.bg.disabled)]
+              -background [list disabled $colors(curr.base.tab.bg.disabled)]
 
           # panedwindow
 
@@ -1799,6 +1799,11 @@ proc awinit { } {
               -troughcolor [list disabled $colors(curr.base.dark)] \
               -darkcolor [list disabled $colors(curr.base.bg.disabled)] \
               -lightcolor [list disabled $colors(curr.base.bg.disabled)]
+
+          # radiobutton
+
+          ttk::style map TRadiobutton \
+              -background [list {hover !disabled} $colors(curr.base.hover)]
 
           # scale
 
@@ -1870,8 +1875,23 @@ proc awinit { } {
         }
 
         foreach {k} [array names colors base.*] {
-          regsub {^base} $k curr nk
+          if { $k eq "base.bg" } { continue }
+          set nk curr.$k
+          if { $colors($k) eq $colors(base.bg) } {
+            set tc $bcol
+          } else {
+            set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
+            if { $tc eq {} } { set tc $colors($k) }
+          }
+          set colors($nk) $tc
+        }
+        set colors(curr.base.bg) $bcol
+
+        foreach {k} [array names colors highlight.*] {
+          set nk curr.$k
           set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
+          set colors($nk) $tc
+          if { $tc eq {} } { set tc $colors($k) }
           set colors($nk) $tc
         }
 
@@ -1887,8 +1907,9 @@ proc awinit { } {
         }
 
         foreach {k} [array names colors highlight.*] {
-          regsub {^highlight} $k curr nk
+          set nk curr.$k
           set tc [::colorutils::adjustColor $colors($k) $colors(graphics.color) $hcol]
+          if { $tc eq {} } { set tc $colors($k) }
           set colors($nk) $tc
         }
 

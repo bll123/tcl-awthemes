@@ -1,8 +1,8 @@
-package ifneeded awdark 4.0 {
+package ifneeded awdark 4.1 {
     set ::awthemename awdark
     source [file join $dir awthemes.tcl]
 }
-package ifneeded awlight 4.0 {
+package ifneeded awlight 4.1 {
     set ::awthemename awlight
     source [file join $dir awthemes.tcl]
 }
