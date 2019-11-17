@@ -2,7 +2,6 @@
 #
 # awdark and awlight themes
 #
-#
 # Copyright 2018 Brad Lanam Walnut Creek, CA
 # Copyright 2019 Brad Lanam Pleasant Hill, CA
 #
@@ -50,6 +49,10 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 4.2
+#   - fix scaling of images.
+#   - adjust sizing for menu checkbutton and radiobutton.
+#   - add support for flexmenu.
 # 4.1
 #   - breaking change: renamed tab.* color names to base.tab.*
 #   - fix bugs in setBackground and setHighlight caused by the color
@@ -273,7 +276,7 @@ proc awinit { } {
           _setImageData
           _createTheme
           _setStyledColors
-          package provide $::awthemename 4.1
+          package provide $::awthemename 4.2
         }
       }
 
@@ -1229,7 +1232,7 @@ proc awinit { } {
         #END-PNG-DATA
       }
 
-      proc _mkimage { n } {
+      proc _mkimage { n {scale 1.0} } {
         variable vars
         variable imgtype
         variable imgdata
@@ -1239,8 +1242,9 @@ proc awinit { } {
             [info exists imgtype($n)] &&
             $imgtype($n) eq "svg" &&
             [info exists imgdata($n)] } {
+          set sf [expr {$vars(scale.factor)*$scale}]
           set images($n) [image create photo -data $imgdata($n) \
-              -format "svg -scale [expr {round($vars(scale.factor))}]"]
+              -format "svg -scale $sf"]
         }
         if { ! [info exists images($n)] &&
             [info exists imgdata($n)] } {
@@ -1266,7 +1270,7 @@ proc awinit { } {
           # menu
 
           foreach {n} {menu-cb-un-pad menu-cb-sn-pad menu-rb-un-pad menu-rb-sn-pad} {
-            _mkimage $n
+            _mkimage $n 0.9
           }
 
           # sliders, arrows
@@ -1299,7 +1303,7 @@ proc awinit { } {
           # small checkbutton and radiobutton images
 
           foreach {n} {cb-un-small cb-sn-small rb-un-small rb-sn-small} {
-            _mkimage $n
+            _mkimage $n 0.9
           }
 
           # checkbuttons
@@ -1369,8 +1373,18 @@ proc awinit { } {
               Menu.Checkbutton.indicator -side left -sticky {}
             }
           }
+          ttk::style layout Flexmenu.TCheckbutton {
+            Checkbutton.padding -sticky nswe -children {
+              Menu.Checkbutton.indicator -side left -sticky {}
+            }
+          }
 
           ttk::style configure Menu.TCheckbutton \
+              -padding $colors(curr.padding.checkbutton) \
+              -borderwidth 0 \
+              -relief none \
+              -focusthickness 0
+          ttk::style configure Flexmenu.TCheckbutton \
               -padding $colors(curr.padding.checkbutton) \
               -borderwidth 0 \
               -relief none \
@@ -1484,8 +1498,18 @@ proc awinit { } {
               Menu.Radiobutton.indicator -side left -sticky {}
             }
           }
+          ttk::style layout Flexmenu.TRadiobutton {
+            Radiobutton.padding -sticky nswe -children {
+              Menu.Radiobutton.indicator -side left -sticky {}
+            }
+          }
 
           ttk::style configure Menu.TRadiobutton \
+              -padding $colors(curr.padding.radiobutton) \
+              -borderwidth 0 \
+              -relief none \
+              -focusthickness 0
+          ttk::style configure Flexmenu.TRadiobutton \
               -padding $colors(curr.padding.radiobutton) \
               -borderwidth 0 \
               -relief none \

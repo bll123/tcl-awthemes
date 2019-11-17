@@ -2,6 +2,17 @@
 The following files are needed:
   awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
 
+awthemes 4.2
+   - fix scaling of images.
+   - size menu radiobutton and checkbutton images.
+   - add support for flexmenu.
+
+awthemes 4.1
+   - breaking change: renamed tab.* color names to base.tab.*
+   - fix bugs in setBackground and setHighlight caused by the color
+       renaming.
+   - fix where the hover color for check and radio buttons is set.
+
 awthemes 4.0
    - added support for other clam based themes.
    - breaking change: the .svg files are now loaded from the filesystem
