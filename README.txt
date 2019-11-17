@@ -2,6 +2,9 @@
 The following files are needed:
   awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
 
+awthemes 4.2.1
+   - fix pkgIndex.tcl to be able to load the themes
+
 awthemes 4.2
    - fix scaling of images.
    - size menu radiobutton and checkbutton images.
