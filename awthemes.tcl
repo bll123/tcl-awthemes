@@ -49,6 +49,8 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 4.2.1
+#   - fix pkgIndex.tcl
 # 4.2
 #   - fix scaling of images.
 #   - adjust sizing for menu checkbutton and radiobutton.
@@ -276,7 +278,7 @@ proc awinit { } {
           _setImageData
           _createTheme
           _setStyledColors
-          package provide $::awthemename 4.2
+          package provide $::awthemename 4.2.1
         }
       }
 
