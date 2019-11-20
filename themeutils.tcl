@@ -7,7 +7,7 @@
 # zlib/libpng license
 #
 
-package provide themeutils 2.1
+package provide themeutils 2.2
 
 # scale.factor
 #   additional scaling factor (default 1.0)
@@ -72,10 +72,14 @@ package provide themeutils 2.1
 #   menu button padding
 # padding.notebooktab
 #   notebook tab padding
+# relief.menubutton
+#   menubutton relief
 # text.select.bg
 #   selected text background
 # text.select.fg
 #   selected text foreground
+# width.menubutton
+#   menubutton width setting
 
 # Derived Colors
 #
@@ -95,6 +99,13 @@ package provide themeutils 2.1
 # base.hover                          base.bg
 # base.trough
 # focusthickness.radiobutton          focusthickness.checkbutton
+# graphics.color.cb                   graphics.color.arrow
+# graphics.color.cb.disabled          graphics.color.arrow.disabled
+# graphics.color.spin.arrow           graphics.color.arrow
+# graphics.color.spin.arrow.disabled  graphics.color.arrow.disabled
+# graphics.color.spin.bg              graphics.color
+# graphics.color.spin.bg.disabled     graphics.color.disabled
+# graphics.color.spin.border          base.darker
 # padding.combobox                    padding.entry
 # padding.radiobutton                 padding.checkbutton
 # padding.spinbox                     padding.entry
@@ -130,9 +141,9 @@ namespace eval ::themeutils {
           focusthickness.notebooktab
           graphics.border
           graphics.color
-          graphics.color.b.disabled
-          graphics.color.b
           graphics.color.disabled
+          graphics.color.arrow
+          graphics.color.arrow.disabled
           graphics.grip
           graphics.sizegrip
           height.arrow
@@ -145,9 +156,11 @@ namespace eval ::themeutils {
           padding.entry
           padding.menubutton
           padding.notebooktab
+          relief.menubutton
           scale.factor
           text.select.bg
           text.select.fg
+          width.menubutton
           }
       set vars(names.colors.derived) {
           base.arrow
@@ -166,6 +179,13 @@ namespace eval ::themeutils {
           base.hover
           base.trough
           focusthickness.radiobutton
+          graphics.color.cb
+          graphics.color.cb.disabled
+          graphics.color.spin.arrow
+          graphics.color.spin.arrow.disabled
+          graphics.color.spin.bg
+          graphics.color.spin.bg.disabled
+          graphics.color.spin.border
           padding.combobox
           padding.radiobutton
           padding.spinbox

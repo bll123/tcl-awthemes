@@ -64,7 +64,12 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
-# 5.0
+# 5.1 (2019-11-20)
+#   - add more colors to support differing spinbox and scroll arrow colors.
+#   - awlight, awdark, black theme cleanup
+#   - rename menubutton arrow .svg files.
+#   - menubutton styling fixes
+# 5.0 (2019-11-19)
 #   - rewrite so that the procedures are no longer duplicated.
 #   - rewrite set of arrow height/width and combobox arrow height.
 #   - Add scaledStyle procedure to add a scaled style to the theme.
@@ -159,7 +164,10 @@
 #
 
 package require Tk
-catch { package require tksvg }
+# set ::notksvg to true for testing purposes
+if { ! [info exists ::notksvg] || ! $::notksvg } {
+  catch { package require tksvg }
+}
 
 try {
   set ap [file normalize [file dirname [info script]]]
@@ -231,10 +239,14 @@ namespace eval ::ttk::awthemes {
     # sizes and before the -pad images.
     # make sure the -pad images are processed last.
     set vars(fallback.images) {
-      arrow-bg-down-d     arrow-bg-down-n
-      arrow-bg-left-d     arrow-bg-left-n
-      arrow-bg-right-d    arrow-bg-right-n
-      arrow-bg-up-d     arrow-bg-up-n
+      arrow-bg-down-d       arrow-bg-down-n
+      arrow-bg-left-d       arrow-bg-left-n
+      arrow-bg-right-d      arrow-bg-right-n
+      arrow-bg-up-d         arrow-bg-up-n
+      spin-arrow-bg-down-d  arrow-bg-down-d
+      spin-arrow-bg-down-n  arrow-bg-down-n
+      spin-arrow-bg-up-d    arrow-bg-up-d
+      spin-arrow-bg-up-n    arrow-bg-up-n
       cb-sa     cb-sn
       cb-sd     cb-sn
       cb-ua     cb-un
@@ -289,8 +301,7 @@ namespace eval ::ttk::awthemes {
     # only need to do this for the requested theme
     _setImageData
     _createTheme
-    _setStyledColors
-    package provide $::awthemename 5.0
+    package provide $::awthemename 5.1
   }
 
   proc _setThemeBaseColors { } {
@@ -317,23 +328,25 @@ namespace eval ::ttk::awthemes {
           focusthickness.notebooktab  5
           graphics.border          #252a2c
           graphics.color        #215d9c
-          graphics.color.b.disabled #919282
-          graphics.color.b      #ffffff
-          graphics.color.disabled   #224162
+          graphics.color.disabled   #0c233c
+          graphics.color.arrow      #ffffff
+          graphics.color.arrow.disabled #787878
           graphics.grip           #000000
           graphics.sizegrip           #215d9c
           height.arrow          16
-          height.combobox       27
+          height.combobox       25
           highlight.active.bg   #215d9c
           highlight.active.fg   #ffffff
           highlight.darkhighlight   #1a497c
-          padding.button        {5 4}
+          padding.button        {5 3}
           padding.checkbutton   {5 1 1 1}
-          padding.entry         {5 2}
+          padding.entry         {5 1}
           padding.menubutton    {5 2}
           padding.notebooktab   {1 0 1 0}
+          relief.menubutton     none
           text.select.bg        #215d9c
           text.select.fg        #ffffff
+          width.menubutton      {}
           }
     }
     if { $vars(theme.name) eq "awlight" } {
@@ -353,23 +366,25 @@ namespace eval ::ttk::awthemes {
           focusthickness.notebooktab  5
           graphics.border          #222222
           graphics.color        #1a497c
-          graphics.color.b      #000000
-          graphics.color.b.disabled #8e8e8f
-          graphics.color.disabled   #65707c
+          graphics.color.disabled   #8191a3
+          graphics.color.arrow      #ffffff
+          graphics.color.arrow.disabled #585859
           graphics.grip           #ffffff
           graphics.sizegrip           #1a497c
           height.arrow          16
-          height.combobox       27
+          height.combobox       25
           highlight.active.bg   #1a497c
           highlight.active.fg   #ffffff
           highlight.darkhighlight   #1a497c
-          padding.button        {5 4}
+          padding.button        {5 3}
           padding.checkbutton   {5 1 1 1}
-          padding.entry         {5 2}
+          padding.entry         {5 1}
           padding.menubutton    {5 2}
           padding.notebooktab   {1 0 1 0}
+          relief.menubutton     none
           text.select.bg        #1a497c
           text.select.fg        #ffffff
+          width.menubutton      {}
           }
     }
     if { $vars(theme.name) eq "black" } {
@@ -389,13 +404,13 @@ namespace eval ::ttk::awthemes {
           focusthickness.notebooktab  1
           graphics.border       #626262
           graphics.color        #424242
-          graphics.color.b      #000000
-          graphics.color.b.disabled   #000000
           graphics.color.disabled     #424242
+          graphics.color.arrow      #000000
+          graphics.color.arrow.disabled   #000000
           graphics.grip         #000000
           graphics.sizegrip     #000000
-          height.arrow          14
-          height.combobox       24
+          height.arrow          16
+          height.combobox       23
           highlight.active.bg   #4a6984
           highlight.active.fg   #ffffff
           highlight.darkhighlight     #424242
@@ -404,9 +419,11 @@ namespace eval ::ttk::awthemes {
           padding.entry         {2 0}
           padding.menubutton    {5 1}
           padding.notebooktab   {4 2 4 2}
-          text.select.bg        #c3c3c3
-          text.select.fg        #000000
-          }
+          relief.menubutton     raised
+          text.select.bg        #4a6984
+          text.select.fg        #ffffff
+          width.menubutton      -8
+      }
     }
   }
 
@@ -420,10 +437,15 @@ namespace eval ::ttk::awthemes {
       # common defaults
       set colors(${prefix}base.arrow) $colors(base.darkest)
       set colors(${prefix}base.arrow.disabled) $colors(base.lighter)
+      set colors(${prefix}base.border) $colors(base.darkest)
+      set colors(${prefix}base.border.dark) $colors(base.darkest)
+      set colors(${prefix}base.border.disabled) $colors(base.border)
       set colors(${prefix}base.button.active) $colors(base.lighter)
       set colors(${prefix}base.button.bg) $colors(base.bg)
       set colors(${prefix}base.button.border) $colors(base.bg)
       set colors(${prefix}base.button.pressed) $colors(base.dark)
+      set colors(${prefix}base.entry.bg) $colors(base.darker)
+      set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
       set colors(${prefix}base.entry.box) $colors(base.lighter)
       set colors(${prefix}base.hover) $colors(base.bg)
       set colors(${prefix}focusthickness.radiobutton) $colors(focusthickness.checkbutton)
@@ -439,6 +461,16 @@ namespace eval ::ttk::awthemes {
       set colors(${prefix}text.bg) $colors(base.bg)
       set colors(${prefix}text.fg) $colors(base.fg)
       set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
+      set colors(${prefix}graphics.color.cb) $colors(graphics.color.arrow)
+      set colors(${prefix}graphics.color.cb.disabled) $colors(graphics.color.arrow.disabled)
+      set colors(${prefix}graphics.color.spin.bg) $colors(graphics.color)
+      set colors(${prefix}graphics.color.spin.bg.disabled) $colors(graphics.color.disabled)
+      set colors(${prefix}graphics.color.spin.border) $colors(base.darker)
+      set colors(${prefix}graphics.color.spin.arrow) $colors(graphics.color.arrow)
+      set colors(${prefix}graphics.color.spin.arrow.disabled) $colors(graphics.color.arrow.disabled)
+      #
+      set colors(${prefix}base.entry.fg) $colors(text.fg)
+      set colors(${prefix}base.trough) $colors(base.entry.bg)
 
       if { $vars(theme.name) eq "awdark" } {
         set colors(${prefix}base.arrow) $colors(base.lightest)
@@ -481,6 +513,11 @@ namespace eval ::ttk::awthemes {
         set colors(${prefix}base.entry.fg) $colors(text.fg)
         #
         set colors(${prefix}base.trough) $colors(base.entry.bg)
+        #
+        set colors(${prefix}graphics.color.cb) #000000
+        set colors(${prefix}graphics.color.spin.bg) $colors(base.bg)
+        set colors(${prefix}graphics.color.spin.bg.disabled) $colors(base.bg)
+        set colors(${prefix}graphics.color.spin.arrow) #000000
       }
       if { $vars(theme.name) eq "black" } {
         set colors(${prefix}base.border) $colors(base.darkest)
@@ -537,8 +574,39 @@ namespace eval ::ttk::awthemes {
           }
         }
       }
+      # copy some derived files if there is no theme specific file.
+      foreach {n} {spin-arrow-bg-down-d spin-arrow-bg-down-n
+            spin-arrow-bg-up-d spin-arrow-bg-up-n} {
+        regsub {^spin-} $n {} tn
+        if { ! [info exists imgdata($n)] } {
+          set imgdata($n) $imgdata($tn)
+          set imgtype($n) $imgtype($tn)
+        }
+      }
 
       # convert all the svg colors to theme specific colors
+
+      # handle spin and combo arrows separately, as they may
+      # have different bg/arrow colors.
+      foreach {n} {spin-arrow-bg-down-d spin-arrow-bg-down-n
+          spin-arrow-bg-up-d spin-arrow-bg-up-n
+          combo-arrow-down-d combo-arrow-down-n
+          mb-arrow-down-d mb-arrow-down-n
+          tree-arrow-down-n tree-arrow-right-n } {
+        foreach {oc nc} [list \
+            _GC_ \
+            $colors(curr.graphics.color.spin.bg) \
+            _BORD_ \
+            $colors(curr.graphics.color.spin.border) \
+            _GCARR_ \
+            $colors(curr.graphics.color.spin.arrow) \
+            _GCARRD_ \
+            $colors(curr.graphics.color.spin.arrow.disabled) \
+            ] {
+          set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
+        }
+      }
+
       foreach {n} [array names imgdata] {
         foreach {oc nc} [list \
             _ARROWH_ \
@@ -559,10 +627,14 @@ namespace eval ::ttk::awthemes {
             $colors(curr.graphics.color) \
             _GCD_ \
             $colors(curr.graphics.color.disabled) \
-            _GCB_ \
-            $colors(curr.graphics.color.b) \
-            _GCBD_ \
-            $colors(curr.graphics.color.b.disabled) \
+            _GCARR_ \
+            $colors(curr.graphics.color.arrow) \
+            _GCARRD_ \
+            $colors(curr.graphics.color.arrow.disabled) \
+            _GCCB_ \
+            $colors(curr.graphics.color.cb) \
+            _GCCBD_ \
+            $colors(curr.graphics.color.cb.disabled) \
             _EBG_ \
             $colors(curr.base.entry.bg) \
             _BORD_ \
@@ -1274,9 +1346,7 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TButton \
-        -anchor $colors(curr.anchor.button) \
         -width -8 \
-        -padding $colors(curr.padding.button) \
         -borderwidth 1 \
         -relief raised
   }
@@ -1306,10 +1376,8 @@ namespace eval ::ttk::awthemes {
     ]
 
     ttk::style configure ${pfx}TCheckbutton \
-        -padding $colors(curr.padding.checkbutton) \
         -borderwidth 1 \
-        -relief none \
-        -focusthickness $colors(curr.focusthickness.checkbutton)
+        -relief none
 
     ttk::style element create ${pfx}Menu.Checkbutton.indicator image \
         [list $images(cb-un-small${sfx}) \
@@ -1327,12 +1395,10 @@ namespace eval ::ttk::awthemes {
     ]
 
     ttk::style configure ${pfx}Menu.TCheckbutton \
-        -padding $colors(curr.padding.checkbutton) \
         -borderwidth 0 \
         -relief none \
         -focusthickness 0
     ttk::style configure ${pfx}Flexmenu.TCheckbutton \
-        -padding $colors(curr.padding.checkbutton) \
         -borderwidth 0 \
         -relief none \
         -focusthickness 0
@@ -1358,7 +1424,6 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TCombobox \
-        -padding $colors(curr.padding.combobox) \
         -borderwidth 1 \
         -arrowsize 14 \
         -relief none
@@ -1371,7 +1436,6 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TEntry \
-        -padding $colors(curr.padding.entry) \
         -borderwidth 0 \
         -relief none
   }
@@ -1389,10 +1453,10 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
+    if { $vars(have.tksvg) && [info exists images(mb-arrow-down-n)] } {
       ttk::style element create ${pfx}Menubutton.indicator image \
-          [list $images(arrow-down-n${sfx}) \
-          disabled $images(arrow-down-d${sfx})]
+          [list $images(mb-arrow-down-n${sfx}) \
+          disabled $images(mb-arrow-down-d${sfx})]
 
       if { $pfx ne {} } {
         set layout [ttk::style layout TMenubutton]
@@ -1402,8 +1466,7 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TMenubutton \
-        -padding $colors(curr.padding.menubutton) \
-        -relief none
+        -borderwidth 1
   }
 
   proc _createNotebook { {pfx {}} {sfx {}} } {
@@ -1417,8 +1480,6 @@ namespace eval ::ttk::awthemes {
     ttk::style configure ${pfx}TNotebook \
         -borderwidth 0
     ttk::style configure ${pfx}TNotebook.Tab \
-        -padding $colors(curr.padding.notebooktab) \
-        -focusthickness $colors(focusthickness.notebooktab) \
         -borderwidth 0
   }
 
@@ -1482,10 +1543,8 @@ namespace eval ::ttk::awthemes {
     ]
 
     ttk::style configure ${pfx}TRadiobutton \
-        -padding $colors(curr.padding.radiobutton) \
         -borderwidth 1 \
-        -relief none \
-        -focusthickness $colors(curr.focusthickness.radiobutton)
+        -relief none
 
     ttk::style element create ${pfx}Menu.Radiobutton.indicator image \
         [list $images(rb-un-small${sfx}) \
@@ -1503,7 +1562,6 @@ namespace eval ::ttk::awthemes {
     ]
 
     ttk::style configure ${pfx}Menu.TRadiobutton \
-        -padding $colors(curr.padding.radiobutton) \
         -borderwidth 0 \
         -relief none \
         -focusthickness 0
@@ -1594,8 +1652,7 @@ namespace eval ::ttk::awthemes {
 
     ttk::style configure TScrollbar \
         -borderwidth 0 \
-        -arrowsize 14 \
-        -troughcolor $colors(curr.base.trough)
+        -arrowsize 14
   }
 
   proc _createSizegrip { {pfx {}} {sfx {}} } {
@@ -1621,13 +1678,13 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { $vars(have.tksvg) && [info exists images(arrow-bg-down-n)] } {
+    if { $vars(have.tksvg) && [info exists images(spin-arrow-bg-down-n)] } {
       ttk::style element create ${pfx}Spinbox.uparrow image \
-          [list $images(arrow-bg-up-n${sfx}) \
-          disabled  $images(arrow-bg-up-d${sfx})]
+          [list $images(spin-arrow-bg-up-n${sfx}) \
+          disabled  $images(spin-arrow-bg-up-d${sfx})]
       ttk::style element create ${pfx}Spinbox.downarrow image \
-          [list $images(arrow-bg-down-n${sfx}) \
-          disabled  $images(arrow-bg-down-d${sfx})]
+          [list $images(spin-arrow-bg-down-n${sfx}) \
+          disabled  $images(spin-arrow-bg-down-d${sfx})]
 
       if { $pfx ne {} } {
         set layout [ttk::style layout TSpinbox]
@@ -1637,7 +1694,6 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TSpinbox \
-        -padding $colors(curr.padding.spinbox) \
         -borderwidth 1 \
         -relief none \
         -arrowsize 14
@@ -1649,7 +1705,7 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { $vars(have.tksvg) && [info exists images(arrow-down-n)] } {
+    if { $vars(have.tksvg) && [info exists images(tree-arrow-down-n)] } {
       ttk::style element create ${pfx}Treeitem.indicator image \
           [list $images(tree-arrow-right-n${sfx}) \
           user1 $images(tree-arrow-down-n${sfx}) \
@@ -1673,7 +1729,7 @@ namespace eval ::ttk::awthemes {
 
     # the styling is set here.
     # the images are created here.
-    # the colors are set in setStyledColors
+    # the colors are set in setStyledColors (called by scaledStyle)
 
     bind ComboboxListbox <Map> \
         [list +::ttk::awthemes::awCboxHandler %W]
@@ -1733,15 +1789,13 @@ namespace eval ::ttk::awthemes {
     ]
   }
 
-  proc _setStyledColors { {theme {}} } {
+  proc _setStyledColors { {pfx {}} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { $theme eq {} } {
-      set theme $vars(theme.name)
-    }
+    set theme $vars(theme.name)
 
     ttk::style theme settings $theme {
       # defaults
@@ -1769,12 +1823,14 @@ namespace eval ::ttk::awthemes {
 
       # button
 
-      ttk::style configure TButton \
+      ttk::style configure ${pfx}TButton \
           -bordercolor $colors(curr.base.button.border) \
           -background $colors(curr.base.button.bg) \
           -lightcolor $colors(curr.base.lighter) \
-          -darkcolor $colors(curr.base.darker)
-      ttk::style map TButton \
+          -darkcolor $colors(curr.base.darker) \
+          -anchor $colors(curr.anchor.button) \
+          -padding $colors(curr.padding.button)
+      ttk::style map ${pfx}TButton \
           -background [list {hover !pressed !disabled} $colors(curr.base.button.active) \
               {active !pressed} $colors(curr.base.button.active) \
               {selected !disabled} $colors(curr.base.button.bg) \
@@ -1785,20 +1841,28 @@ namespace eval ::ttk::awthemes {
 
       # checkbutton
 
+      ttk::style configure ${pfx}TCheckbutton \
+          -padding $colors(curr.padding.checkbutton) \
+          -focusthickness $colors(curr.focusthickness.checkbutton)
+      ttk::style configure ${pfx}Menu.TCheckbutton \
+          -padding $colors(curr.padding.checkbutton)
+      ttk::style configure ${pfx}Flexmenu.TCheckbutton \
+          -padding $colors(curr.padding.checkbutton)
       ttk::style map TCheckbutton \
           -background [list {hover !disabled} $colors(curr.base.hover)] \
           -indicatorcolor [list selected $colors(curr.base.lightest)] \
           -darkcolor [list disabled $colors(curr.base.bg)] \
-          -lightcolor [list disabled $colors(curr.base.bg)]
+          -lightcolor [list disabled $colors(curr.base.bg)] \
 
       # combobox
 
-      ttk::style configure TCombobox \
+      ttk::style configure ${pfx}TCombobox \
           -foreground $colors(curr.base.entry.fg) \
           -bordercolor $colors(curr.base.border) \
           -lightcolor $colors(curr.base.entry.box) \
-          -arrowcolor $colors(curr.base.arrow)
-      ttk::style map TCombobox \
+          -arrowcolor $colors(curr.base.arrow) \
+          -padding $colors(curr.padding.combobox)
+      ttk::style map ${pfx}TCombobox \
           -lightcolor [list active $colors(curr.graphics.color) \
               focus $colors(curr.graphics.color)] \
           -darkcolor [list active $colors(curr.graphics.color) \
@@ -1807,34 +1871,35 @@ namespace eval ::ttk::awthemes {
           -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
       if { $::tcl_platform(os) eq "Darwin" } {
         # mac os x has cross-platform incompatibilities
-        ttk::style configure TCombobox \
+        ttk::style configure ${pfx}TCombobox \
             -background $colors(curr.base.dark)
-        ttk::style map TCombobox \
+        ttk::style map ${pfx}TCombobox \
             -background [list disabled $colors(curr.base.bg.disabled)]
       }
 
       # entry
 
-      ttk::style configure TEntry \
+      ttk::style configure ${pfx}TEntry \
           -foreground $colors(curr.base.entry.fg) \
           -background $colors(curr.base.dark) \
           -bordercolor $colors(curr.base.border) \
-          -lightcolor $colors(curr.base.entry.box)
-      ttk::style map TEntry \
+          -lightcolor $colors(curr.base.entry.box) \
+          -padding $colors(curr.padding.entry)
+      ttk::style map ${pfx}TEntry \
           -lightcolor [list active $colors(curr.graphics.color) \
               focus $colors(curr.graphics.color)] \
           -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
       if { $::tcl_platform(os) eq "Darwin" } {
         # mac os x has cross-platform incompatibilities
-        ttk::style configure TEntry \
+        ttk::style configure ${pfx}TEntry \
             -background $colors(curr.base.dark)
-        ttk::style map TEntry \
+        ttk::style map ${pfx}TEntry \
             -background [list disabled $colors(curr.base.bg.disabled)]
       }
 
       # frame
 
-      ttk::style configure TFrame \
+      ttk::style configure ${pfx}TFrame \
           -bordercolor $colors(curr.base.bg) \
           -lightcolor $colors(curr.base.lighter) \
           -darkcolor $colors(curr.base.darker)
@@ -1843,16 +1908,19 @@ namespace eval ::ttk::awthemes {
 
       # labelframe
 
-      ttk::style configure TLabelframe \
+      ttk::style configure ${pfx}TLabelframe \
           -bordercolor $colors(curr.base.bg) \
           -lightcolor $colors(curr.base.bg) \
           -darkcolor $colors(curr.base.bg)
 
       # menubutton
 
-      ttk::style configure TMenubutton \
-          -arrowcolor $colors(curr.base.arrow)
-      ttk::style map TMenubutton \
+      ttk::style configure ${pfx}TMenubutton \
+          -arrowcolor $colors(curr.base.arrow) \
+          -padding $colors(curr.padding.menubutton) \
+          -relief $colors(curr.relief.menubutton) \
+          -width $colors(curr.width.menubutton)
+      ttk::style map ${pfx}TMenubutton \
           -background [list {active !disabled} $colors(curr.highlight.active.bg)] \
           -foreground [list {active !disabled} $colors(curr.highlight.active.fg) \
               disabled $colors(curr.base.fg.disabled)] \
@@ -1860,22 +1928,24 @@ namespace eval ::ttk::awthemes {
 
       # notebook
 
-      ttk::style configure TNotebook \
+      ttk::style configure ${pfx}TNotebook \
           -bordercolor $colors(curr.base.tab.border) \
           -lightcolor $colors(curr.base.tab.box) \
           -darkcolor $colors(curr.base.darker)
-      ttk::style configure TNotebook.Tab \
+      ttk::style configure ${pfx}TNotebook.Tab \
           -lightcolor $colors(curr.base.tab.box) \
           -darkcolor $colors(curr.base.bg) \
           -bordercolor $colors(curr.base.tab.border) \
-          -background $colors(curr.base.tab.bg)
-      ttk::style map TNotebook.Tab \
+          -background $colors(curr.base.tab.bg) \
+          -padding $colors(curr.padding.notebooktab) \
+          -focusthickness $colors(focusthickness.notebooktab)
+      ttk::style map ${pfx}TNotebook.Tab \
           -foreground [list disabled $colors(curr.base.fg.disabled)] \
           -background [list disabled $colors(curr.base.tab.bg.disabled)]
 
       # panedwindow
 
-      ttk::style configure TPanedwindow \
+      ttk::style configure ${pfx}TPanedwindow \
           -background $colors(curr.base.dark)
       ttk::style configure Sash \
           -lightcolor $colors(curr.highlight.darkhighlight) \
@@ -1884,20 +1954,27 @@ namespace eval ::ttk::awthemes {
 
       # progressbar
 
-      ttk::style configure TProgressbar \
+      ttk::style configure ${pfx}TProgressbar \
           -troughcolor $colors(curr.base.trough) \
           -background $colors(curr.highlight.darkhighlight) \
           -bordercolor $colors(curr.base.border) \
           -lightcolor $colors(curr.highlight.darkhighlight) \
           -darkcolor $colors(curr.highlight.darkhighlight)
-      ttk::style map TProgressbar \
+      ttk::style map ${pfx}TProgressbar \
           -troughcolor [list disabled $colors(curr.base.dark)] \
           -darkcolor [list disabled $colors(curr.base.bg.disabled)] \
           -lightcolor [list disabled $colors(curr.base.bg.disabled)]
 
       # radiobutton
 
-      ttk::style map TRadiobutton \
+      ttk::style configure ${pfx}TRadiobutton \
+          -padding $colors(curr.padding.radiobutton) \
+          -focusthickness $colors(curr.focusthickness.radiobutton)
+      ttk::style configure ${pfx}Menu.TRadiobutton \
+          -padding $colors(curr.padding.radiobutton)
+      ttk::style configure ${pfx}Flexmenu.TRadiobutton \
+          -padding $colors(curr.padding.radiobutton)
+      ttk::style map ${pfx}TRadiobutton \
           -background [list {hover !disabled} $colors(curr.base.hover)]
 
       # scale
@@ -1905,7 +1982,7 @@ namespace eval ::ttk::awthemes {
       # background is used both for the background and
       # for the grip colors
 
-      ttk::style configure TScale \
+      ttk::style configure ${pfx}TScale \
           -troughcolor $colors(curr.base.trough) \
           -background $colors(curr.highlight.darkhighlight) \
           -bordercolor $colors(curr.base.border) \
@@ -1918,25 +1995,28 @@ namespace eval ::ttk::awthemes {
 
       # scrollbar
 
-      ttk::style configure TScrollbar \
+      ttk::style configure ${pfx}TScrollbar \
           -background $colors(curr.graphics.color) \
           -bordercolor $colors(curr.base.border) \
           -lightcolor $colors(curr.graphics.color) \
           -darkcolor $colors(curr.graphics.color) \
-          -arrowcolor $colors(curr.base.lightest)
-      ttk::style map TScrollbar \
+          -arrowcolor $colors(curr.base.lightest) \
+          -troughcolor $colors(curr.base.trough)
+      ttk::style map ${pfx}TScrollbar \
+          -troughcolor [list disabled $colors(curr.base.dark)] \
           -arrowcolor [list disabled $colors(curr.base.arrow.disabled)] \
           -darkcolor [list disabled $colors(curr.base.bg)] \
           -lightcolor [list disabled $colors(curr.base.bg)]
 
       # spinbox
 
-      ttk::style configure TSpinbox \
+      ttk::style configure ${pfx}TSpinbox \
           -foreground $colors(curr.base.entry.fg) \
           -bordercolor $colors(curr.base.border) \
           -lightcolor $colors(curr.base.entry.box) \
-          -arrowcolor $colors(curr.base.arrow)
-      ttk::style map TSpinbox \
+          -arrowcolor $colors(curr.base.arrow) \
+          -padding $colors(curr.padding.spinbox)
+      ttk::style map ${pfx}TSpinbox \
           -lightcolor [list active $colors(curr.graphics.color) \
               focus $colors(curr.graphics.color)] \
           -darkcolor [list active $colors(curr.graphics.color) \
@@ -1945,17 +2025,17 @@ namespace eval ::ttk::awthemes {
           -fieldbackground [list disabled $colors(curr.base.entry.bg.disabled)]
       if { $::tcl_platform(os) eq "Darwin" } {
         # mac os x has cross-platform incompatibilities
-        ttk::style configure TSpinbox \
+        ttk::style configure ${pfx}TSpinbox \
             -background $colors(curr.base.dark)
-        ttk::style map TSpinbox \
+        ttk::style map ${pfx}TSpinbox \
             -background [list disabled $colors(curr.base.bg.disabled)]
       }
 
       # treeview
 
-      ttk::style configure Treeview \
+      ttk::style configure ${pfx}Treeview \
           -fieldbackground $colors(curr.base.bg)
-      ttk::style map Treeview \
+      ttk::style map ${pfx}Treeview \
           -background [list selected $colors(curr.text.select.bg)] \
           -foreground [list selected $colors(curr.text.select.fg)]
     }
@@ -2160,7 +2240,9 @@ namespace eval ::ttk::awthemes {
         rb-un rb-ud rb-sn rb-sd rb-ua rb-sa
         arrow-bg-up-d arrow-bg-down-d arrow-bg-right-d arrow-bg-left-d
         arrow-bg-up-n arrow-bg-down-n arrow-bg-right-n arrow-bg-left-n
-        arrow-down-n arrow-down-d
+        spin-arrow-bg-down-d spin-arrow-bg-down-n
+        spin-arrow-bg-up-n spin-arrow-bg-up-d
+        mb-arrow-down-n mb-arrow-down-d
         tree-arrow-right-n tree-arrow-down-n tree-arrow-empty
         combo-arrow-down-n combo-arrow-down-d
         scale-vn scale-vd scale-hn scale-hd
@@ -2209,21 +2291,22 @@ namespace eval ::ttk::awthemes {
         }
       }
 
-      _createButton ${pfx} ${sfx}
-      _createCheckButton ${pfx} ${sfx}
-      _createCombobox ${pfx} ${sfx}
-      _createEntry ${pfx} ${sfx}
-      _createLabelframe ${pfx} ${sfx}
-      _createMenubutton ${pfx} ${sfx}
-      _createNotebook ${pfx} ${sfx}
-      _createProgressbar ${pfx} ${sfx}
-      _createRadioButton ${pfx} ${sfx}
-      _createScale ${pfx} ${sfx}
-      _createScrollbars ${pfx} ${sfx}
-      _createSizegrip ${pfx} ${sfx}
-      _createSpinbox ${pfx} ${sfx}
-      _createTreeview ${pfx} ${sfx}
+      _createButton $pfx $sfx
+      _createCheckButton $pfx $sfx
+      _createCombobox $pfx $sfx
+      _createEntry $pfx $sfx
+      _createLabelframe $pfx $sfx
+      _createMenubutton $pfx $sfx
+      _createNotebook $pfx $sfx
+      _createProgressbar $pfx $sfx
+      _createRadioButton $pfx $sfx
+      _createScale $pfx $sfx
+      _createScrollbars $pfx $sfx
+      _createSizegrip $pfx $sfx
+      _createSpinbox $pfx $sfx
+      _createTreeview $pfx $sfx
     }
+    _setStyledColors $pfx
   }
 
   proc awCboxHandler { w } {

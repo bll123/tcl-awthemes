@@ -2,7 +2,7 @@
 
 package require Tk
 
-if { 0 } {
+if { 1 } {
   set ap [file normalize [file join [file dirname [info script]] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
@@ -10,25 +10,12 @@ if { 0 } {
   unset ap
 }
 
-lappend ::auto_path [file dirname [info script]]
-package require colorutils
-package require themeutils
-
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-highlightcolor <color>]"
+  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"
   exit 1
 }
 
-set theme [lindex $::argv 0]
-
-set fn data/bll-tecra/tkscale.txt
-if { [file exists $fn] } {
-  set fh [open $fn r]
-  set scale [gets $fh]
-  close $fh
-  tk scaling -displayof . $scale
-}
-
+set ::notksvg false
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
@@ -45,22 +32,41 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
         graphics.color [lindex $::argv $idx] \
         graphics.color.disabled #222222
   }
+  if { [lindex $::argv $idx] eq "-notksvg" } {
+    set ::notksvg true
+  }
+}
+
+lappend ::auto_path [file dirname [info script]]
+package require colorutils
+package require themeutils
+
+set theme [lindex $::argv 0]
+
+set fn data/bll-tecra/tkscale.txt
+if { [file exists $fn] } {
+  set fh [open $fn r]
+  set scale [gets $fh]
+  close $fh
+  tk scaling -displayof . $scale
 }
 
 set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]
 
-if { 0 } {
-  package require themeloader
+set loaded false
+if { 1 } {
+  source [file join $::env(HOME) s ballroomdj code themes themeloader.tcl]
   themeloader::loadTheme $theme
-} ; # if 0
+  set loaded true
+}
 
 set ttheme $theme
 set ::awthemename $ttheme
 if { $theme eq "awdark" || $theme eq "awlight" } {
   set ttheme awthemes
 }
-if { [file exists $ttheme.tcl] } {
+if { [file exists $ttheme.tcl] && ! $loaded } {
   source $ttheme.tcl
 }
 
@@ -290,7 +296,10 @@ pack .pl1 -in .p1 -anchor nw
 pack .pl2 -in .p2 -anchor se
 
 ttk::style configure Treeview \
-    -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}]
+    -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}] \
+    -fieldbackground [ttk::style lookup TFrame -background] \
+    -borderwidth 0 \
+    -relief none
 ttk::treeview .tv -columns {a b c}
 pack .tv -in .four -fill both -expand true
 .tv heading #0 -text #0
