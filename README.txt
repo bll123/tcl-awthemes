@@ -2,6 +2,12 @@
 The following files are needed:
   awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
 
+awthemes 5.0
+   - rewrite so that the procedures are no longer duplicated.
+   - rewrite set of arrow height/width and combobox arrow height.
+   - Add scaledStyle procedure to add a scaled style to the theme.
+   - Added a user configurable scaling factor.
+
 awthemes 4.2.1
    - fix pkgIndex.tcl to be able to load the themes
 
