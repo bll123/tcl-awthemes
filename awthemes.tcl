@@ -34,6 +34,13 @@
 #     will change the selection and graphical colors to a green, and the
 #     the disabled selection color to a dark grey.
 #
+#     To change the user scaling:
+#       awthemes uses the [tk scaling] factor multiplied by
+#         the user scaling factor to determine the graphics scaling factor.
+#       ::themeutils::setThemeColors awdark \
+#             scale.factor 1.5
+#       package require awdark
+#
 #   ::awthemes::scaledStyle \
 #           name-prefix defaultfont listingfont
 #     Creates a set of scaled widgets with a new style name
@@ -2177,7 +2184,7 @@ namespace eval ::ttk::awthemes {
     foreach {n} {menu-cb-un-pad menu-cb-sn-pad menu-rb-un-pad menu-rb-sn-pad
         cb-un-small cb-sn-small rb-un-small rb-sn-small} {
       set tn $n
-      while { ! [info exists imgdata($tn)] && 
+      while { ! [info exists imgdata($tn)] &&
           [dict exists $vars(fallback.images) $tn] } {
         set tn [dict get $vars(fallback.images) $tn]
       }
