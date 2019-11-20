@@ -145,6 +145,7 @@ namespace eval ::themeutils {
           padding.entry
           padding.menubutton
           padding.notebooktab
+          scale.factor
           text.select.bg
           text.select.fg
           }
@@ -168,7 +169,6 @@ namespace eval ::themeutils {
           padding.combobox
           padding.radiobutton
           padding.spinbox
-          scale.factor
           tab.bg
           tab.bg.disabled
           tab.border
