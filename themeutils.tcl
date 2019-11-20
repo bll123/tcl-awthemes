@@ -7,8 +7,11 @@
 # zlib/libpng license
 #
 
-package provide themeutils 2.0
+package provide themeutils 2.1
 
+# scale.factor
+#   additional scaling factor (default 1.0)
+#   scaling is computed based on the ttk scaling multipled by this scale factor.
 # anchor.button
 #   button text anchor: {} for center, e, w
 # base.bg
@@ -165,6 +168,7 @@ namespace eval ::themeutils {
           padding.combobox
           padding.radiobutton
           padding.spinbox
+          scale.factor
           tab.bg
           tab.bg.disabled
           tab.border

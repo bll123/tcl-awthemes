@@ -4,18 +4,18 @@ package require Tk
 
 if { 0 } {
   set ap [file normalize [file join [file dirname [info script]] .. code]]
-} else {
-  set ap [pwd]
+  if { $ap ni $::auto_path } {
+    lappend ::auto_path $ap
+  }
+  unset ap
 }
-if { $ap ni $::auto_path } {
-  lappend ::auto_path $ap
-}
-unset ap
+
+lappend ::auto_path [file dirname [info script]]
 package require colorutils
 package require themeutils
 
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-scale <scale-factor>] \[-bgcolor <color>] \[-highlightcolor <color>]"
+  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-highlightcolor <color>]"
   exit 1
 }
 
@@ -30,13 +30,14 @@ if { [file exists $fn] } {
 }
 
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
-  if { [lindex $::argv $idx] eq "-scale" } {
+  if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
     tk scaling [lindex $::argv $idx]
   }
-  if { [lindex $::argv $idx] eq "-bgcolor" } {
+  if { [lindex $::argv $idx] eq "-scale" } {
     incr idx
-    ::themeutils::setThemeColors $theme base.frame [lindex $::argv $idx]
+    ::themeutils::setThemeColors $theme \
+        scale.factor [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-highlightcolor" } {
     incr idx
@@ -56,7 +57,7 @@ if { 0 } {
 
 set ttheme $theme
 set ::awthemename $ttheme
-if { $theme eq "awdark" || $theme eq "awlight" || $theme eq "black" } {
+if { $theme eq "awdark" || $theme eq "awlight" } {
   set ttheme awthemes
 }
 if { [file exists $ttheme.tcl] } {
