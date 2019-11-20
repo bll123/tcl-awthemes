@@ -2,6 +2,12 @@
 The following files are needed:
   awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
 
+awthemes 5.1 (2019-11-20)
+   - add more colors to support differing spinbox and scroll arrow colors.
+   - awlight, awdark, black theme cleanup
+   - rename menubutton arrow .svg files.
+   - menubutton styling fixes
+
 awthemes 5.0
    - rewrite so that the procedures are no longer duplicated.
    - rewrite set of arrow height/width and combobox arrow height.
