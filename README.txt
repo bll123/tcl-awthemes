@@ -2,6 +2,16 @@
 The following files are needed:
   awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
 
+6.0  (2019-11-23)
+   - fix !focus colors
+   - slider border color
+   - various styling fixes and improvements
+   - separate scrollbar color
+   - optional scrollbar grip
+   - button images are now supported
+   - added winxpblue scalable theme
+   - fixed missing awdark and awlight labelframe
+
 awthemes 5.1 (2019-11-20)
    - add more colors to support differing spinbox and scroll arrow colors.
    - awlight, awdark, black theme cleanup
