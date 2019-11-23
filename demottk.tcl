@@ -16,7 +16,6 @@ if { [llength $::argv] < 1 } {
 }
 
 lappend ::auto_path [file dirname [info script]]
-catch { package require tksvg }
 package require colorutils
 package require themeutils
 
@@ -42,6 +41,10 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-notksvg" } {
     set ::notksvg true
   }
+}
+
+if { ! $::notksvg } {
+  catch { package require tksvg }
 }
 
 set fn data/bll-tecra/tkscale.txt
