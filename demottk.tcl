@@ -15,6 +15,13 @@ if { [llength $::argv] < 1 } {
   exit 1
 }
 
+lappend ::auto_path [file dirname [info script]]
+catch { package require tksvg }
+package require colorutils
+package require themeutils
+
+set theme [lindex $::argv 0]
+
 set ::notksvg false
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
@@ -37,12 +44,6 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   }
 }
 
-lappend ::auto_path [file dirname [info script]]
-package require colorutils
-package require themeutils
-
-set theme [lindex $::argv 0]
-
 set fn data/bll-tecra/tkscale.txt
 if { [file exists $fn] } {
   set fh [open $fn r]
@@ -56,14 +57,24 @@ set scalefactor [expr {$calcdpi/100.0}]
 
 set loaded false
 if { 1 } {
-  source [file join $::env(HOME) s ballroomdj code themes themeloader.tcl]
-  themeloader::loadTheme $theme
-  set loaded true
+  set fn [file join $::env(HOME) s ballroomdj code themes themeloader.tcl]
+  if { [file exists $fn] } {
+    source $fn
+    themeloader::loadTheme $theme
+    set loaded true
+  }
+}
+
+set havetksvg false
+if { ! [catch {package present tksvg}] } {
+  set havetksvg true
 }
 
 set ttheme $theme
-set ::awthemename $ttheme
-if { $theme eq "awdark" || $theme eq "awlight" } {
+set ::awthemename $theme
+if { $theme eq "awdark" || $theme eq "awlight" ||
+    ($havetksvg && $theme eq "black") ||
+    ($havetksvg && $theme eq "winxpblue") } {
   set ttheme awthemes
 }
 if { [file exists $ttheme.tcl] && ! $loaded } {

@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="27.999998"
-   height="14"
-   viewBox="0 0 27.999998 14"
+   width="14"
+   height="27.999998"
+   viewBox="0 0 14 27.999998"
    version="1.1"
    id="svg8"
-   sodipodi:docname="slider-hn-base.svg"
+   sodipodi:docname="slider-vn-base.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <defs
      id="defs2" />
@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="19.210362"
-     inkscape:cx="13.997542"
-     inkscape:cy="7.0155371"
+     inkscape:cx="6.9975422"
+     inkscape:cy="18.179957"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -59,15 +59,15 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-97.353821,-139.48844)">
+     transform="translate(-104.35382,-132.48844)">
     <rect
-       style="opacity:1;fill:_GC_;fill-opacity:1;stroke:_BORD_;stroke-width:1.00361502;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#8080ff;fill-opacity:1;stroke:#8000ff;stroke-width:1.00361502;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
        width="12.996385"
        height="26.996384"
-       x="139.99025"
-       y="-124.85201"
+       x="-117.85201"
+       y="-159.98663"
        ry="0"
-       transform="rotate(90)" />
+       transform="scale(-1)" />
   </g>
 </svg>
