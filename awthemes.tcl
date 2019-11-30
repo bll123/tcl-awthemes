@@ -69,6 +69,8 @@
 #   - Fix scaledStyle set of treeview indicator.
 #   - make the tab topbar a generalized option.
 #   - merge themeutils package
+#   - clean up notebook tabs.
+#   - add some disabled images to winxpblue.
 # 6.0
 #   - fix !focus colors
 #   - slider border color
@@ -300,6 +302,7 @@ namespace eval ::ttk::awthemes {
       sb-slider-vd          slider-vd
       sb-slider-vn          slider-vn
       sb-slider-vp          sb-slider-va
+      notebook-tab-a        notebook-tab-i
     }
 
     _setThemeBaseColors $theme
@@ -381,16 +384,19 @@ namespace eval ::ttk::awthemes {
       set colors(${prefix}base.tab.bg.selected) $colors(base.bg)
       set colors(${prefix}base.tab.border) $colors(base.darkest)
       set colors(${prefix}base.tab.box) $colors(base.lighter)
-      set colors(${prefix}base.tab.highlight) {}
-      set colors(${prefix}base.tab.highlight.inactive) $colors(base.bg)
+      set colors(${prefix}base.tab.image.border) {2 2 2 1}
       set colors(${prefix}text.bg) $colors(base.bg)
       set colors(${prefix}text.fg) $colors(base.fg)
       set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
       set colors(${prefix}graphics.color.cb) $colors(graphics.color.arrow)
-      set colors(${prefix}graphics.color.spin.bg) $colors(graphics.color)
       set colors(${prefix}graphics.color.spin.border) $colors(base.darker)
+      set colors(${prefix}graphics.color.spin.bg) $colors(graphics.color)
       set colors(${prefix}graphics.color.spin.arrow) $colors(graphics.color.arrow)
       #
+      set colors(${prefix}base.tab.highlight) $colors(graphics.color)
+      set colors(${prefix}base.tab.highlight.inactive) $colors(base.tab.bg.inactive)
+      set colors(${prefix}base.tab.highlight.selected) $colors(graphics.color)
+      set colors(${prefix}base.tab.highlight.disabled) $colors(base.tab.bg.disabled)
       set colors(${prefix}graphics.color.scrollbar.border) $colors(graphics.border)
       set colors(${prefix}graphics.color.scrollbar) $colors(graphics.color)
       #
@@ -1395,12 +1401,21 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    _createNotebookStyle
+    _createNotebookStyle $currtheme $pfx
+
+    if { $vars(have.tksvg) && [info exists images(notebook-tab-i)] } {
+      ttk::style element create ${pfx}tab image \
+          [list $images(notebook-tab-i${sfx}) \
+          {selected !disabled} $images(notebook-tab-a${sfx})] \
+          -border $colors(curr.base.tab.image.border)
+    }
 
     ttk::style configure ${pfx}TNotebook \
         -borderwidth 0
     ttk::style configure ${pfx}TNotebook.Tab \
         -borderwidth 0
+    ttk::style map ${pfx}TNotebook.Tab \
+        -borderwidth [list disabled 0]
   }
 
   proc _createPanedwindow { {pfx {}} {sfx {}} } {
@@ -1678,7 +1693,7 @@ namespace eval ::ttk::awthemes {
     }
   }
 
-  proc _createNotebookStyle { } {
+  proc _createNotebookStyle { theme {pfx {}} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1688,38 +1703,39 @@ namespace eval ::ttk::awthemes {
       return
     }
 
-    set tag "$colors(curr.base.tab.highlight)$colors(curr.base.tab.highlight.inactive)$colors(curr.graphics.color)"
     foreach {k bg} [list \
-        indhover $colors(curr.base.tab.highlight) \
-        indnotactive $colors(curr.base.tab.highlight.inactive) \
-        indselected $colors(curr.graphics.color) \
+        tabindhover $colors(curr.base.tab.highlight) \
+        tabindnotactive $colors(curr.base.tab.highlight.inactive) \
+        tabindselected $colors(curr.base.tab.highlight.selected) \
+        tabinddisabled $colors(curr.base.tab.highlight.disabled) \
         ] {
-      if { ! [info exists images($k.$bg)] } {
-        set images($k.$bg) [image create photo \
-            -width $vars(nb.img.width) -height $vars(nb.img.height)]
+      if { ! [info exists images(${pfx}$k)] } {
+        set images(${pfx}$k) [image create photo \
+            -width $vars(nb.img.width) \
+            -height $vars(nb.img.height)]
         set row [lrepeat $vars(nb.img.width) $bg]
         set pix [list]
         for {set i 0} {$i < $vars(nb.img.height)} {incr i} {
           lappend pix $row
         }
-        $images($k.$bg) put $pix
+        $images(${pfx}$k) put $pix
       }
-      set images($k) $images($k.$bg)
     }
 
-    if { ! [info exists vars(cache.nb.ind.${tag})] } {
+    if { ! [info exists vars(cache.nb.tabind.${pfx})] } {
       ttk::style element create \
-         Notebook.indicator.${tag} image \
-         [list $images(indnotactive) \
-         {hover active !selected !disabled} $images(indhover) \
-         {selected !disabled} $images(indselected)]
-      set vars(cache.nb.ind.${tag}) true
+         ${pfx}${theme}.Notebook.indicator image \
+         [list $images(${pfx}tabindnotactive) \
+         {hover active !selected !disabled} $images(${pfx}tabindhover) \
+         {selected !disabled} $images(${pfx}tabindselected) \
+         {disabled} $images(${pfx}tabinddisabled)]
+      set vars(cache.nb.tabind.${pfx}) true
     }
 
     ttk::style layout TNotebook.Tab [list \
       Notebook.tab -sticky nswe -children [list \
+        ${pfx}${theme}.Notebook.indicator -side top -sticky we \
         Notebook.padding -side top -sticky nswe -children [list \
-          Notebook.indicator.${tag} -side top -sticky we \
           Notebook.focus -side top -sticky nswe -children {
             Notebook.label -side top -sticky {} \
           } \
@@ -1893,6 +1909,7 @@ namespace eval ::ttk::awthemes {
           -padding $colors(curr.padding.notebooktab) \
           -focusthickness $colors(focusthickness.notebooktab)
       ttk::style map ${pfx}TNotebook.Tab \
+          -bordercolor [list disabled $colors(curr.base.tab.border)] \
           -foreground [list disabled $colors(curr.base.fg.disabled)] \
           -background [list \
               {selected !disabled} $colors(curr.base.tab.bg.selected) \
@@ -2032,7 +2049,7 @@ namespace eval ::ttk::awthemes {
       }
     }
 
-    _createNotebookStyle
+    _createNotebookStyle $currtheme {}
   }
 
   proc setBackground { bcol } {
@@ -2224,6 +2241,7 @@ namespace eval ::ttk::awthemes {
         button-n button-a button-d button-p
         sb-slider-ha sb-slider-hd sb-slider-hn sb-slider-hp
         sb-slider-va sb-slider-vd sb-slider-vn sb-slider-vp
+        notebook-tab-i notebook-tab-a
         } {
       if { $sfx ne {} && [info exists imgdata($n)] } {
         set imgdata($n${sfx}) $imgdata($n)
@@ -2379,8 +2397,10 @@ namespace eval ::ttk::awthemes {
 # base.tab.bg.selected                base.bg
 # base.tab.border                     base.darkest
 # base.tab.box                        base.lighter
-# base.tab.highlight                  {}
-# base.tab.highlight.inactive         base.bg
+# base.tab.highlight                  graphics.color
+# base.tab.highlight.inactive         base.tab.bg.inactive
+# base.tab.highlight.selected         graphics.color
+# base.tab.highlight.disabled         base.tab.bg.disabled
 # base.trough                         base.entry.bg
 # focusthickness.radiobutton          focusthickness.checkbutton
 # graphics.border                     base.border
@@ -2465,6 +2485,8 @@ namespace eval ::themeutils {
           base.tab.box
           base.tab.highlight
           base.tab.highlight.inactive
+          base.tab.highlight.selected
+          base.tab.highlight.disabled
           base.tab.use.topbar
           base.trough
           focusthickness.radiobutton

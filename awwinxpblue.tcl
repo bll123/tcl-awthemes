@@ -71,12 +71,12 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(${prefix}base.trough) $colors(base.lightest)
     set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
     set colors(${prefix}text.fg) $colors(base.darkest)
-    set colors(${prefix}base.tab.border) #919b9c
+    set colors(${prefix}base.tab.use.topbar) false
+    set colors(${prefix}base.tab.border) $colors(base.bg)
     set colors(${prefix}base.tab.box) $colors(base.bg)
     set colors(${prefix}base.tab.bg.active) $colors(base.tab.bg.inactive)
     set colors(${prefix}base.tab.bg.inactive) #f0f0eb
-    set colors(${prefix}base.tab.highlight) {}
-    set colors(${prefix}base.tab.highlight.inactive) $colors(base.dark)
+    set colors(${prefix}base.tab.image.border) {3 4 3 4}
     set colors(${prefix}graphics.color.scrollbar.border) #c1d2ee
     set colors(${prefix}graphics.color.scrollbar)        #c1d2ee
     #

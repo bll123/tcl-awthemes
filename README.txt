@@ -1,7 +1,17 @@
 
 The following files are needed:
-  awthemes.tcl, colorutils.tcl, themeutils.tcl, pkgIndex.tcl, i/
+  awthemes.tcl, colorutils.tcl, pkgIndex.tcl,
+  awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl,
+  i/
 
+7.0
+   - clean up .svg files to use alpha channel for disabled colors.
+   - calculate some disabled colors.
+   - fix doc.
+   - split out theme specific code into separate files.
+   - Fix scaledStyle set of treeview indicator.
+   - make the tab topbar a generalized option.
+   - merge themeutils package
 6.0  (2019-11-23)
    - fix !focus colors
    - slider border color

@@ -8,6 +8,6 @@ package ifneeded awdark 7.0 \
 package ifneeded awlight 7.0 \
     [list source [file join $dir awlight.tcl]]
 package ifneeded black 7.0 \
-    [list source [file join $dir black.tcl]]
+    [list source [file join $dir awblack.tcl]]
 package ifneeded winxpblue 7.0 \
-    [list source [file join $dir winxpblue.tcl]]
+    [list source [file join $dir awwinxpblue.tcl]]

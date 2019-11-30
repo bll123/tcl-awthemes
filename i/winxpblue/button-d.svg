@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="button-p.svg">
+   sodipodi:docname="button-n.svg">
   <defs
      id="defs2">
     <linearGradient
@@ -40,7 +40,7 @@
        x2="1.8520832"
        y2="296.71826"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.93266362,0,0,0.95286452,0.12471259,13.867626)" />
+       gradientTransform="matrix(0.93266362,0,0,0.95286452,0.12471259,13.867633)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -50,18 +50,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="16.857142"
-     inkscape:cx="7.0000004"
-     inkscape:cy="9.9999865"
+     inkscape:cx="7.0000003"
+     inkscape:cy="9.999983"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="0"
+     fit-margin-left="-2.7755576e-17"
      fit-margin-right="0"
      fit-margin-bottom="0"
      showborder="false"
      units="px"
-     inkscape:window-width="1027"
+     inkscape:window-width="1025"
      inkscape:window-height="577"
      inkscape:window-x="260"
      inkscape:window-y="78"
@@ -82,15 +82,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(6.7055225e-8,296.85842)">
+     transform="translate(6.7055225e-8,-291.56675)">
     <rect
-       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:#003c74;stroke-width:0.24942534;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:url(#linearGradient823);fill-opacity:0.4;stroke:#003c74;stroke-width:0.24942534;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4;paint-order:normal"
        id="rect815"
        width="3.4547415"
        height="5.0422411"
        x="0.1247126"
        y="291.69147"
-       ry="1"
-       transform="scale(1,-1)" />
+       ry="1" />
   </g>
 </svg>
