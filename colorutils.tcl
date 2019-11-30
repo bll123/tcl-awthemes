@@ -120,9 +120,9 @@ namespace eval ::colorutils {
   }
 
   # blend with the background
-  proc disabledColor { col bg } {
-    # 0.6 * 65535 = 39321
-    return [opaqueblend $col $bg 39321]
+  proc disabledColor { col bg {perc 0.6} } {
+    set val [expr {round(65535.0*$perc)}]
+    return [opaqueblend $col $bg $val]
   }
 
   proc getLightDarkColors { c } {
@@ -373,4 +373,4 @@ namespace eval ::colorutils {
   }
 }
 
-package provide colorutils 4.3
+package provide colorutils 4.4

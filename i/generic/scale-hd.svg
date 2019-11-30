@@ -60,7 +60,7 @@
      id="layer1"
      transform="translate(-97.353814,-139.48844)">
     <rect
-       style="opacity:1;fill:_GCD_;fill-opacity:1;stroke:_BORDD_;stroke-width:1.00625348;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:1.00625348;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8"
        id="rect815"
        width="12.900603"
        height="28.9182"
@@ -79,7 +79,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-67"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill-opacity:0.4;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -88,7 +88,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-3-5"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill-opacity:0.4;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -97,7 +97,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-6-3"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill-opacity:0.4;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -106,7 +106,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-7-5"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill-opacity:0.4;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -115,7 +115,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-5-6"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill-opacity:0.4;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4" />
     </g>
   </g>
 </svg>

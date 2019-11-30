@@ -17,7 +17,6 @@ if { [llength $::argv] < 1 } {
 
 lappend ::auto_path [file dirname [info script]]
 package require colorutils
-package require themeutils
 
 set theme [lindex $::argv 0]
 
@@ -74,11 +73,9 @@ if { ! [catch {package present tksvg}] } {
 }
 
 set ttheme $theme
-set ::awthemename $theme
-if { $theme eq "awdark" || $theme eq "awlight" ||
-    ($havetksvg && $theme eq "black") ||
+if { ($havetksvg && $theme eq "black") ||
     ($havetksvg && $theme eq "winxpblue") } {
-  set ttheme awthemes
+  set ttheme aw${theme}
 }
 if { [file exists $ttheme.tcl] && ! $loaded } {
   source $ttheme.tcl

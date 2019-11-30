@@ -59,7 +59,7 @@
      id="layer1"
      transform="translate(131.69759,-128.34964)">
     <rect
-       style="opacity:1;fill:_GCD_;fill-opacity:1;stroke:_BORDD_;stroke-width:0.25425968;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:0.25425968;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8"
        id="rect819"
        width="3.9790735"
        height="3.9790738"
@@ -68,11 +68,11 @@
     <g
        aria-label="⏷"
        transform="matrix(0,0.97989453,-1.020518,0,0,0)"
-       style="font-style:normal;font-weight:normal;font-size:3.76433468px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARRD_;fill-opacity:1;stroke:none;stroke-width:0.09410837"
+       style="font-style:normal;font-weight:normal;font-size:3.76433468px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARRR_;fill-opacity:0.4;stroke:none;stroke-width:0.09410837"
        id="text817">
       <path
          d="m 134.4241,125.68674 q 0.0723,0 0.0723,0.0562 0,0.008 -0.008,0.0241 l -1.30095,2.44933 q -0.0241,0.0482 -0.0482,0.0482 -0.0241,0 -0.0482,-0.0482 l -1.30095,-2.4413 q 0,-0.0161 0,-0.0321 0,-0.0562 0.0803,-0.0562 z"
-         style="font-size:8.03058147px;fill:_GCARRD_;fill-opacity:1;stroke-width:0.09410837"
+         style="font-size:8.03058147px;fill:_GCARR_;fill-opacity:0.4;stroke-width:0.09410837"
          id="path2055" />
     </g>
   </g>
