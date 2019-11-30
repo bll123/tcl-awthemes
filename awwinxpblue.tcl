@@ -69,6 +69,7 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(${prefix}base.hover) #c1d2ee
     set colors(${prefix}base.active) #c1d2ee
     set colors(${prefix}base.trough) $colors(base.lightest)
+    set colors(${prefix}base.labelframe) $colors(base.darker)
     set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
     set colors(${prefix}text.fg) $colors(base.darkest)
     set colors(${prefix}base.tab.use.topbar) false

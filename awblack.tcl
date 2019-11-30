@@ -65,7 +65,6 @@ namespace eval ::ttk::theme::black {
     set colors(${prefix}base.entry.bg) $colors(base.lightest)
     set colors(${prefix}base.hover) $colors(base.lighter)
     set colors(${prefix}base.trough) $colors(base.darker)
-    set colors(${prefix}base.labelframe) $colors(base.bg)
     set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
     set colors(${prefix}text.fg) $colors(base.darkest)
     #

@@ -372,7 +372,7 @@ namespace eval ::ttk::awthemes {
       set colors(${prefix}base.entry.box) $colors(base.lighter)
       set colors(${prefix}base.hover) $colors(base.bg)
       set colors(${prefix}base.active) $colors(base.bg)
-      set colors(${prefix}base.labelframe) $colors(base.darker)
+      set colors(${prefix}base.labelframe) $colors(base.darkest)
       set colors(${prefix}focusthickness.radiobutton) $colors(focusthickness.checkbutton)
       set colors(${prefix}padding.combobox) $colors(padding.entry)
       set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
