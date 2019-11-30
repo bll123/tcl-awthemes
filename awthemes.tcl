@@ -70,7 +70,10 @@
 #   - make the tab topbar a generalized option.
 #   - merge themeutils package
 #   - clean up notebook tabs.
-#   - add some disabled images to winxpblue.
+#   - winxpcblue: notebook tab graphics.
+#   - winxpcblue: disabled images.
+#   - black: disabled cb/rb images.
+#   - black: add labelframe color.
 # 6.0
 #   - fix !focus colors
 #   - slider border color

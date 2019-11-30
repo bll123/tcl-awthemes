@@ -4,7 +4,7 @@ The following files are needed:
   awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl,
   i/
 
-7.0
+7.0 (2019-11-30)
    - clean up .svg files to use alpha channel for disabled colors.
    - calculate some disabled colors.
    - fix doc.
@@ -12,6 +12,11 @@ The following files are needed:
    - Fix scaledStyle set of treeview indicator.
    - make the tab topbar a generalized option.
    - merge themeutils package
+   - clean up notebook tabs.
+   - winxpcblue: notebook tab graphics.
+   - winxpcblue: disabled images.
+   - black: disabled cb/rb images.
+   - black: add labelframe color.
 6.0  (2019-11-23)
    - fix !focus colors
    - slider border color
