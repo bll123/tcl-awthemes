@@ -64,7 +64,7 @@ namespace eval ::ttk::theme::awdark {
     set colors(${prefix}base.entry.bg) $colors(base.darker)
     set colors(${prefix}base.entry.bg.disabled) $colors(base.bg.disabled)
     set colors(${prefix}base.entry.box) $colors(base.dark)
-    set colors(${prefix}base.tab.use.topbar) true
+    set colors(${prefix}tab.use.topbar) true
     set colors(${prefix}base.tab.bg.active) $colors(base.dark)
     set colors(${prefix}base.tab.bg.disabled) $colors(base.dark)
     set colors(${prefix}base.tab.bg.inactive) $colors(base.dark)

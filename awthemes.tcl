@@ -70,8 +70,8 @@
 #   - make the tab topbar a generalized option.
 #   - merge themeutils package
 #   - clean up notebook tabs.
-#   - winxpcblue: notebook tab graphics.
-#   - winxpcblue: disabled images.
+#   - winxpblue: notebook tab graphics.
+#   - winxpblue: disabled images.
 #   - black: disabled cb/rb images.
 #   - black: add labelframe color.
 # 6.0
@@ -380,14 +380,14 @@ namespace eval ::ttk::awthemes {
       set colors(${prefix}padding.combobox) $colors(padding.entry)
       set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
       set colors(${prefix}padding.spinbox) $colors(padding.entry)
-      set colors(${prefix}base.tab.use.topbar) false
+      set colors(${prefix}tab.use.topbar) false
       set colors(${prefix}base.tab.bg.active) $colors(base.lighter)
       set colors(${prefix}base.tab.bg.disabled) $colors(base.bg)
       set colors(${prefix}base.tab.bg.inactive) $colors(base.bg)
       set colors(${prefix}base.tab.bg.selected) $colors(base.bg)
       set colors(${prefix}base.tab.border) $colors(base.darkest)
       set colors(${prefix}base.tab.box) $colors(base.lighter)
-      set colors(${prefix}base.tab.image.border) {2 2 2 1}
+      set colors(${prefix}tab.image.border) {2 2 2 1}
       set colors(${prefix}text.bg) $colors(base.bg)
       set colors(${prefix}text.fg) $colors(base.fg)
       set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
@@ -1410,7 +1410,7 @@ namespace eval ::ttk::awthemes {
       ttk::style element create ${pfx}tab image \
           [list $images(notebook-tab-i${sfx}) \
           {selected !disabled} $images(notebook-tab-a${sfx})] \
-          -border $colors(curr.base.tab.image.border)
+          -border $colors(curr.tab.image.border)
     }
 
     ttk::style configure ${pfx}TNotebook \
@@ -1702,7 +1702,7 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { ! $colors(curr.base.tab.use.topbar) } {
+    if { ! $colors(curr.tab.use.topbar) } {
       return
     }
 
@@ -2490,7 +2490,7 @@ namespace eval ::themeutils {
           base.tab.highlight.inactive
           base.tab.highlight.selected
           base.tab.highlight.disabled
-          base.tab.use.topbar
+          tab.use.topbar
           base.trough
           focusthickness.radiobutton
           graphics.color.cb
@@ -2500,6 +2500,7 @@ namespace eval ::themeutils {
           padding.combobox
           padding.radiobutton
           padding.spinbox
+          tab.image.border
           text.select.bg.inactive
           tree.select.bg
           tree.select.fg
