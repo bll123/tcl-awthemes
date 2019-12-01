@@ -4,6 +4,17 @@ The following files are needed:
   awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl,
   i/
 
+Try:
+  # application scaling
+  tclsh demottk.tcl winxpblue -fontscale 1.2
+  # tk scaling only
+  tclsh demottk.tcl winxpblue -ttkscale 2.0
+  # user with high dpi, smaller font
+  tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
+
+7.1 (2019-12-1)
+   - fix border/padding scaling, needed for rounded buttons/tabs.
+
 7.0 (2019-11-30)
    - clean up .svg files to use alpha channel for disabled colors.
    - calculate some disabled colors.
