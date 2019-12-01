@@ -17,10 +17,12 @@ if { [llength $::argv] < 1 } {
 
 lappend ::auto_path [file dirname [info script]]
 package require colorutils
+package require awthemes
 
 set theme [lindex $::argv 0]
 
 set ::notksvg false
+set fontscale 1.0 ; # default
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
@@ -36,6 +38,10 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     ::themeutils::setThemeColors $theme \
         graphics.color [lindex $::argv $idx] \
         graphics.color.disabled #222222
+  }
+  if { [lindex $::argv $idx] eq "-fontscale" } {
+    incr idx
+    set fontscale [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-notksvg" } {
     set ::notksvg true
@@ -56,6 +62,23 @@ if { [file exists $fn] } {
 
 set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]
+
+# Tk defaults to pixels.  Sigh.
+# Use points so that the fonts scale.
+font configure TkDefaultFont -size 11
+set origfontsz [font metrics TkDefaultFont -ascent]
+font configure TkDefaultFont -size [expr {round(11.0*$fontscale)}]
+font create TextFont
+font configure TextFont -size  [expr {round(10.0*$fontscale)}]
+font create MenuFont
+font configure MenuFont -size  [expr {round(9.0*$fontscale)}]
+
+set newfontsz [font metrics TkDefaultFont -ascent]
+if { $origfontsz != $newfontsz } {
+  set appscale [expr {double($newfontsz)/double($origfontsz)}]
+  ::themeutils::setThemeColors $theme \
+      scale.factor $appscale
+}
 
 set loaded false
 if { 1 } {
@@ -89,14 +112,6 @@ set off 0
 set on 1
 
 . configure -background [ttk::style lookup TFrame -background]
-
-# Tk defaults to pixels.  Sigh.
-# Use points so that the fonts scale.
-font configure TkDefaultFont -size 11
-font create TextFont
-font configure TextFont -size 10
-font create MenuFont
-font configure MenuFont -size 9
 
 menu .mb -font MenuFont
 . configure -menu .mb

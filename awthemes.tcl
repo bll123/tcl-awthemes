@@ -25,6 +25,8 @@
 #     Allows modification of any of the colors used by awdark and awlight.
 #     The graphical colors will be changed to match.
 #     e.g.
+#
+#       package require awthemes
 #       package require colorutils
 #       ::themeutils::setThemeColors awdark \
 #           graphics.color #007000
@@ -34,6 +36,8 @@
 #     To change the user scaling:
 #       awthemes uses the [tk scaling] factor multiplied by
 #         the user scaling factor to determine the graphics scaling factor.
+#
+#       package require awthemes
 #       ::themeutils::setThemeColors awdark \
 #             scale.factor 1.5
 #       package require awdark
@@ -61,6 +65,8 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.1
+#   - fix border/padding scaling, needed for rounded buttons/tabs.
 # 7.0
 #   - clean up .svg files to use alpha channel for disabled colors.
 #   - calculate some disabled colors.
@@ -557,6 +563,7 @@ namespace eval ::ttk::awthemes {
       }
     }
 
+# if using tksvg, this block may be removed to make the code smaller.
 #BEGIN-PNG-DATA
     if { $vars(theme.name) eq "awdark" } {
       if { ! [info exists imgdata(cb-sa)] } {
@@ -1250,14 +1257,26 @@ namespace eval ::ttk::awthemes {
     }
 
     if { $vars(have.tksvg) && [info exists images(button-n)] } {
+
+      # adjust the borders and padding by the scale factor
+      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)}]
+      set imgbord {}
+      set imgpad {}
+      foreach {sz} $colors(curr.button.image.border) {
+        lappend imgbord [expr {round(double($sz)*$sf)}]
+      }
+      foreach {sz} $colors(curr.button.image.padding) {
+        lappend imgpad [expr {round(double($sz)*$sf)}]
+      }
+
       ttk::style element create ${pfx}Button.button image \
           [list $images(button-n${sfx}) \
           disabled $images(button-d${sfx}) \
           {active !pressed !disabled} $images(button-a${sfx}) \
           {pressed !disabled} $images(button-p${sfx})] \
           -sticky nsew \
-          -border $colors(curr.button.image.border) \
-          -padding $colors(curr.button.image.padding) \
+          -border $imgbord \
+          -padding $imgpad
 
       ttk::style layout TButton [list \
         ${pfx}Button.button -children [list \
@@ -1407,10 +1426,17 @@ namespace eval ::ttk::awthemes {
     _createNotebookStyle $currtheme $pfx
 
     if { $vars(have.tksvg) && [info exists images(notebook-tab-i)] } {
+      # adjust the borders and padding by the scale factor
+      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)}]
+      set imgbord {}
+      foreach {sz} $colors(curr.tab.image.border) {
+        lappend imgbord [expr {round(double($sz)*$sf)}]
+      }
+
       ttk::style element create ${pfx}tab image \
           [list $images(notebook-tab-i${sfx}) \
           {selected !disabled} $images(notebook-tab-a${sfx})] \
-          -border $colors(curr.tab.image.border)
+          -border $imgbord
     }
 
     ttk::style configure ${pfx}TNotebook \
