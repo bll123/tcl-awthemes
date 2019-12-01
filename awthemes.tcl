@@ -188,7 +188,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.0
+package provide awthemes 7.1
 
 package require Tk
 # set ::notksvg to true for testing purposes
