@@ -56,6 +56,7 @@
 #   ::ttk::theme::${theme}::setHighlight color
 #     requires the colorutils package
 #     ** This does not work with the scalable graphics. **
+#     ** May be removed at a later date **
 #
 # Mac OS X notes for prior to 8.6.9:
 #   To style the scrollbars, use:
@@ -65,6 +66,10 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.2
+#   - setBackground will not do anything if the background color is unchanged.
+#   - fixed a bug with graphical buttons.
+#   - make setbackground more robust.
 # 7.1
 #   - fix border/padding scaling, needed for rounded buttons/tabs.
 # 7.0
@@ -188,7 +193,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.1
+package provide awthemes 7.2
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -229,6 +234,7 @@ namespace eval ::ttk::awthemes {
     interp alias {} ::ttk::theme::${theme}::setListboxColors {} ::ttk::awthemes::setListboxColors
     interp alias {} ::ttk::theme::${theme}::setMenuColors {} ::ttk::awthemes::setMenuColors
     interp alias {} ::ttk::theme::${theme}::setTextColors {} ::ttk::awthemes::setTextColors
+    interp alias {} ::ttk::theme::${theme}::hasImage {} ::ttk::awthemes::hasImage
 
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::${theme} $var $var
@@ -398,6 +404,7 @@ namespace eval ::ttk::awthemes {
       set colors(${prefix}text.fg) $colors(base.fg)
       set colors(${prefix}text.select.bg.inactive) $colors(base.lighter)
       set colors(${prefix}graphics.color.cb) $colors(graphics.color.arrow)
+      set colors(${prefix}progressbar.color) $colors(graphics.color)
       set colors(${prefix}graphics.color.spin.border) $colors(base.darker)
       set colors(${prefix}graphics.color.spin.bg) $colors(graphics.color)
       set colors(${prefix}graphics.color.spin.arrow) $colors(graphics.color.arrow)
@@ -493,6 +500,18 @@ namespace eval ::ttk::awthemes {
             $colors(curr.graphics.color.scrollbar) \
             _BORD_ \
             $colors(curr.graphics.color.scrollbar.border) \
+            ] {
+          set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
+        }
+      }
+
+      # the progressbar may be colored differently.
+      foreach {n} {slider-hn slider-vn} {
+        foreach {oc nc} [list \
+            _GC_ \
+            $colors(curr.progressbar.color) \
+            _BORD_ \
+            $colors(curr.graphics.border) \
             ] {
           set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
         }
@@ -1278,7 +1297,7 @@ namespace eval ::ttk::awthemes {
           -border $imgbord \
           -padding $imgpad
 
-      ttk::style layout TButton [list \
+      ttk::style layout ${pfx}TButton [list \
         ${pfx}Button.button -children [list \
           Button.focus -children [list \
             Button.padding -children [list \
@@ -1761,7 +1780,7 @@ namespace eval ::ttk::awthemes {
       set vars(cache.nb.tabind.${pfx}) true
     }
 
-    ttk::style layout TNotebook.Tab [list \
+    ttk::style layout ${pfx}TNotebook.Tab [list \
       Notebook.tab -sticky nswe -children [list \
         ${pfx}${theme}.Notebook.indicator -side top -sticky we \
         Notebook.padding -side top -sticky nswe -children [list \
@@ -2081,6 +2100,20 @@ namespace eval ::ttk::awthemes {
     _createNotebookStyle $currtheme {}
   }
 
+  proc hasImage { nm } {
+    variable currtheme
+    set currtheme [ttk::style theme use]
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::$currtheme $var $var
+    }
+
+    set rc false
+    if { $vars(have.tksvg) && [info exists images($nm)] } {
+      set rc true
+    }
+    return $rc
+  }
+
   proc setBackground { bcol } {
     variable currtheme
     set currtheme [ttk::style theme use]
@@ -2091,15 +2124,21 @@ namespace eval ::ttk::awthemes {
     if { ! [package present colorutils] } {
       return
     }
+    if { $colors(curr.base.bg) eq $bcol } {
+      return
+    }
 
     foreach {k} [array names colors base.*] {
-      if { $k eq "base.bg" } { continue }
       set nk curr.$k
       if { $colors($k) eq $colors(base.bg) } {
         set tc $bcol
+      } elseif { $k eq "base.bg" || $colors($k) eq {} } {
+        set tc $colors($k)
       } else {
         set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
-        if { $tc eq {} } { set tc $colors($k) }
+        if { $tc eq {} } {
+          set tc $colors($k)
+        }
       }
       set colors($nk) $tc
     }
@@ -2107,9 +2146,13 @@ namespace eval ::ttk::awthemes {
 
     foreach {k} [array names colors highlight.*] {
       set nk curr.$k
-      set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
-      set colors($nk) $tc
-      if { $tc eq {} } { set tc $colors($k) }
+      set tc $colors($k)
+      if { $colors($k) ne {} } {
+        set tc [::colorutils::adjustColor $colors($k) $colors(base.bg) $bcol]
+      }
+      if { $tc eq {} } {
+        set tc $colors($k)
+      }
       set colors($nk) $tc
     }
 
@@ -2129,8 +2172,13 @@ namespace eval ::ttk::awthemes {
 
     foreach {k} [array names colors highlight.*] {
       set nk curr.$k
-      set tc [::colorutils::adjustColor $colors($k) $colors(graphics.color) $hcol]
-      if { $tc eq {} } { set tc $colors($k) }
+      set tc $colors($k)
+      if { $colors($k) ne {} } {
+        set tc [::colorutils::adjustColor $colors($k) $colors(graphics.color) $hcol]
+      }
+      if { $tc eq {} } {
+        set tc $colors($k)
+      }
       set colors($nk) $tc
     }
 
@@ -2435,6 +2483,7 @@ namespace eval ::ttk::awthemes {
 # graphics.border                     base.border
 # graphics.color.cb.disabled          graphics.color.arrow.disabled
 # graphics.color.cb                   graphics.color.arrow
+# progressbar.color                   graphics.color
 # graphics.color.scrollbar.border     graphics.border
 # graphics.color.scrollbar            graphics.color
 # graphics.color.spin.arrow.disabled  graphics.color.arrow.disabled
@@ -2520,6 +2569,7 @@ namespace eval ::themeutils {
           base.trough
           focusthickness.radiobutton
           graphics.color.cb
+          progressbar.color
           graphics.color.spin.arrow
           graphics.color.spin.bg
           graphics.color.spin.border

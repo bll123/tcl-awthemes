@@ -11,18 +11,18 @@ if { 1 } {
 }
 
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"
+  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"
   exit 1
 }
 
 lappend ::auto_path [file dirname [info script]]
-package require colorutils
-package require awthemes
 
 set theme [lindex $::argv 0]
 
 set ::notksvg false
 set fontscale 1.0 ; # default
+set sf 1.0
+set gc {}
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
@@ -30,14 +30,11 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   }
   if { [lindex $::argv $idx] eq "-scale" } {
     incr idx
-    ::themeutils::setThemeColors $theme \
-        scale.factor [lindex $::argv $idx]
+    set sf [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-highlightcolor" } {
     incr idx
-    ::themeutils::setThemeColors $theme \
-        graphics.color [lindex $::argv $idx] \
-        graphics.color.disabled #222222
+    set gc [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-fontscale" } {
     incr idx
@@ -47,6 +44,17 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     set ::notksvg true
   }
 }
+
+# now do the requires so that -notksvg has an effect.
+package require colorutils
+package require awthemes
+
+if { $gc ne {} } {
+  ::themeutils::setThemeColors $theme \
+      graphics.color $gc
+}
+::themeutils::setThemeColors $theme \
+    scale.factor $sf
 
 if { ! $::notksvg } {
   catch { package require tksvg }

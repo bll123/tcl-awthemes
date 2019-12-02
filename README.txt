@@ -12,6 +12,11 @@ Try:
   # user with high dpi, smaller font
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
 
+7.2 (2019-12-2)
+   - setBackground will not do anything if the background color is unchanged.
+   - fixed a bug with graphical buttons.
+   - make setbackground more robust.
+
 7.1 (2019-12-1)
    - fix border/padding scaling, needed for rounded buttons/tabs.
 
