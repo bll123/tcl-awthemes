@@ -67,7 +67,7 @@
 #     afterwards, it must be configured when the scrollbar is created.
 #
 # 7.3 (2019-12-2)
-#   - fix some issues with scaled styling
+#   - fix spinbox scaled styling
 # 7.2 (2019-12-2)
 #   - setBackground will not do anything if the background color is unchanged.
 #   - fixed a bug with graphical buttons.

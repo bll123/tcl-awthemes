@@ -12,6 +12,9 @@ Try:
   # user with high dpi, smaller font
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
 
+7.3 (2019-12-2)
+   - fix spinbox scaled styling
+
 7.2 (2019-12-2)
    - setBackground will not do anything if the background color is unchanged.
    - fixed a bug with graphical buttons.
