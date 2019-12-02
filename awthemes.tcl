@@ -66,13 +66,15 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
-# 7.2
+# 7.3 (2019-12-2)
+#   - fix some issues with scaled styling
+# 7.2 (2019-12-2)
 #   - setBackground will not do anything if the background color is unchanged.
 #   - fixed a bug with graphical buttons.
 #   - make setbackground more robust.
-# 7.1
+# 7.1 (2019-12-1)
 #   - fix border/padding scaling, needed for rounded buttons/tabs.
-# 7.0
+# 7.0 (2019-11-30)
 #   - clean up .svg files to use alpha channel for disabled colors.
 #   - calculate some disabled colors.
 #   - fix doc.
@@ -85,7 +87,7 @@
 #   - winxpblue: disabled images.
 #   - black: disabled cb/rb images.
 #   - black: add labelframe color.
-# 6.0
+# 6.0 (2019-11-23)
 #   - fix !focus colors
 #   - slider border color
 #   - various styling fixes and improvements
@@ -193,7 +195,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.2
+package provide awthemes 7.3
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -1689,7 +1691,8 @@ namespace eval ::ttk::awthemes {
 
       if { $pfx ne {} } {
         set layout [ttk::style layout TSpinbox]
-        regsub {(Spinbox.[a-z]*arrow)} $layout "${pfx}\\1" layout
+        regsub {(Spinbox.uparrow)} $layout "${pfx}\\1" layout
+        regsub {(Spinbox.downarrow)} $layout "${pfx}\\1" layout
         ttk::style layout ${pfx}TSpinbox $layout
       }
     }
