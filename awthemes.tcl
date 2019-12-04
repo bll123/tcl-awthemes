@@ -53,6 +53,8 @@
 #   ::ttk::theme::${theme}::setBackground color
 #     requires the colorutils package
 #
+#   ::ttk::theme::${theme}::getColor theme colorname
+#
 #   ::ttk::theme::${theme}::setHighlight color
 #     requires the colorutils package
 #     ** This does not work with the scalable graphics. **
@@ -66,6 +68,16 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.5 (2019-12-4)
+#   - reworked all .svg files.
+#   - cleaned up notebook colors.
+#   - fixed scaling issue with scaled style scaling.
+#   - fixed combobox scaling.
+#   - fixed scrollbar arrows.
+#   - scaled combobox listbox scrollbar.
+# 7.4 (2019-12-3)
+#   - added getColor routine for use by checkButtonToggle
+#   - Fix menu highlight color
 # 7.3 (2019-12-2)
 #   - fix spinbox scaled styling
 # 7.2 (2019-12-2)
@@ -195,7 +207,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.3
+package provide awthemes 7.5
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -237,6 +249,7 @@ namespace eval ::ttk::awthemes {
     interp alias {} ::ttk::theme::${theme}::setMenuColors {} ::ttk::awthemes::setMenuColors
     interp alias {} ::ttk::theme::${theme}::setTextColors {} ::ttk::awthemes::setTextColors
     interp alias {} ::ttk::theme::${theme}::hasImage {} ::ttk::awthemes::hasImage
+    interp alias {} ::ttk::theme::${theme}::getColor {} ::ttk::awthemes::getColor
 
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::${theme} $var $var
@@ -264,6 +277,7 @@ namespace eval ::ttk::awthemes {
     set vars(cache.popdown) false
     set vars(nb.img.width) 20
     set vars(nb.img.height) 3
+    set vars(registered.combobox) [dict create]
     set vars(have.tksvg) false
     if { ! [catch {package present tksvg}] } {
       set vars(have.tksvg) true
@@ -370,8 +384,9 @@ namespace eval ::ttk::awthemes {
 
     foreach {prefix} {{} curr.} {
       # common defaults
+      set colors(${prefix}parent.theme) clam
       set colors(${prefix}base.fg.disabled) \
-          [::colorutils::disabledColor $colors(base.fg) $colors(base.bg)]
+          [::colorutils::disabledColor $colors(base.fg) $colors(base.bg) 0.65]
       set colors(${prefix}base.arrow) $colors(base.darkest)
       set colors(${prefix}base.arrow.disabled) \
           [::colorutils::disabledColor $colors(base.arrow) $colors(base.bg)]
@@ -1271,7 +1286,7 @@ namespace eval ::ttk::awthemes {
     }
   }
 
-  proc _createButton { {pfx {}} {sfx {}} } {
+  proc _createButton { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1280,7 +1295,7 @@ namespace eval ::ttk::awthemes {
     if { $vars(have.tksvg) && [info exists images(button-n)] } {
 
       # adjust the borders and padding by the scale factor
-      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)}]
+      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)*$scale}]
       set imgbord {}
       set imgpad {}
       foreach {sz} $colors(curr.button.image.border) {
@@ -1317,7 +1332,7 @@ namespace eval ::ttk::awthemes {
   }
 
   # prefix must include the trailing dot.
-  proc _createCheckButton { {pfx {}} {sfx {}} } {
+  proc _createCheckButton { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1369,24 +1384,27 @@ namespace eval ::ttk::awthemes {
         -focusthickness 0
   }
 
-  proc _createCombobox { {pfx {}} {sfx {}} } {
+  proc _createCombobox { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    set wid 14
     if { $vars(have.tksvg) && [info exists images(combo-arrow-down-n)] } {
+      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)*$scale}]
+      set wid [image width $images(combo-arrow-down-n${sfx})]
+
       ttk::style element create ${pfx}Combobox.downarrow image \
           [list $images(combo-arrow-down-n${sfx}) \
           disabled $images(combo-arrow-down-d${sfx})] \
-          -sticky e -border {17 0 0 0}
-      set wid [image width $images(combo-arrow-down-n${sfx})]
+          -sticky e -border [list $wid 0 0 0]
 
       if { $pfx ne {} } {
         set layout [ttk::style layout TCombobox]
         regsub {(Combobox.downarrow)} $layout "${pfx}\\1" layout
         ttk::style layout ${pfx}TCombobox $layout
+
+        dict set vars(registered.combobox) ${pfx}TCombobox $pfx
       }
     }
 
@@ -1396,7 +1414,7 @@ namespace eval ::ttk::awthemes {
         -relief none
   }
 
-  proc _createEntry { {pfx {}} {sfx {}} } {
+  proc _createEntry { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1407,14 +1425,14 @@ namespace eval ::ttk::awthemes {
         -relief none
   }
 
-  proc _createLabelframe { {pfx {}} {sfx {}} } {
+  proc _createLabelframe { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     ttk::style configure TLabelframe \
         -borderwidth 1 \
         -relief groove
   }
 
-  proc _createMenubutton { {pfx {}} {sfx {}} } {
+  proc _createMenubutton { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1438,7 +1456,7 @@ namespace eval ::ttk::awthemes {
         -borderwidth 1
   }
 
-  proc _createNotebook { {pfx {}} {sfx {}} } {
+  proc _createNotebook { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1448,7 +1466,7 @@ namespace eval ::ttk::awthemes {
 
     if { $vars(have.tksvg) && [info exists images(notebook-tab-i)] } {
       # adjust the borders and padding by the scale factor
-      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)}]
+      set sf [expr {$vars(scale.factor)*$colors(curr.scale.factor)*$scale}]
       set imgbord {}
       foreach {sz} $colors(curr.tab.image.border) {
         lappend imgbord [expr {round(double($sz)*$sf)}]
@@ -1468,13 +1486,13 @@ namespace eval ::ttk::awthemes {
         -borderwidth [list disabled 0]
   }
 
-  proc _createPanedwindow { {pfx {}} {sfx {}} } {
+  proc _createPanedwindow { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     ttk::style configure Sash \
         -sashthickness 10
   }
 
-  proc _createProgressbar { {pfx {}} {sfx {}} } {
+  proc _createProgressbar { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1504,7 +1522,7 @@ namespace eval ::ttk::awthemes {
   }
 
   # prefix must include the trailing dot.
-  proc _createRadioButton { {pfx {}} {sfx {}} } {
+  proc _createRadioButton { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1557,7 +1575,7 @@ namespace eval ::ttk::awthemes {
         -focusthickness 0
   }
 
-  proc _createScale { {pfx {}} {sfx {}} } {
+  proc _createScale { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1595,13 +1613,19 @@ namespace eval ::ttk::awthemes {
         -borderwidth 1
   }
 
-  proc _createScrollbars { {pfx {}} {sfx {}} } {
+  proc _createScrollbars { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
     if { $vars(have.tksvg) && [info exists images(slider-vn)] } {
+      ttk::style element create ${pfx}Vertical.Scrollbar.uparrow image \
+          [list $images(arrow-bg-up-n${sfx}) \
+          disabled  $images(arrow-bg-up-d${sfx})]
+      ttk::style element create ${pfx}Vertical.Scrollbar.downarrow image \
+          [list $images(arrow-bg-down-n${sfx}) \
+          disabled  $images(arrow-bg-down-d${sfx})]
       ttk::style element create ${pfx}Vertical.Scrollbar.grip image \
           [list $images(slider-v-grip${sfx})] -sticky {}
       ttk::style element create ${pfx}Vertical.Scrollbar.thumb image \
@@ -1627,6 +1651,12 @@ namespace eval ::ttk::awthemes {
       regsub {_GRIP_} $vlayout $grip vlayout
       ttk::style layout ${pfx}Vertical.TScrollbar $vlayout
 
+      ttk::style element create ${pfx}Horizontal.Scrollbar.leftarrow image \
+          [list $images(arrow-bg-left-n${sfx}) \
+          disabled  $images(arrow-bg-left-d${sfx})]
+      ttk::style element create ${pfx}Horizontal.Scrollbar.rightarrow image \
+          [list $images(arrow-bg-right-n${sfx}) \
+          disabled  $images(arrow-bg-right-d${sfx})]
       ttk::style element create ${pfx}Horizontal.Scrollbar.grip image \
           [list $images(slider-h-grip${sfx})] -sticky {}
       ttk::style element create ${pfx}Horizontal.Scrollbar.thumb image \
@@ -1658,7 +1688,7 @@ namespace eval ::ttk::awthemes {
         -arrowsize 14
   }
 
-  proc _createSizegrip { {pfx {}} {sfx {}} } {
+  proc _createSizegrip { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1675,7 +1705,7 @@ namespace eval ::ttk::awthemes {
     }
   }
 
-  proc _createSpinbox { {pfx {}} {sfx {}} } {
+  proc _createSpinbox { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1706,7 +1736,7 @@ namespace eval ::ttk::awthemes {
   # Treeview
   #   Item
   #   Cell
-  proc _createTreeview { {pfx {}} {sfx {}} } {
+  proc _createTreeview { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1739,7 +1769,7 @@ namespace eval ::ttk::awthemes {
     bind ComboboxListbox <Map> \
         [list +::ttk::awthemes::awCboxHandler %W]
 
-    ttk::style theme create $theme -parent clam -settings {
+    ttk::style theme create $theme -parent $colors(parent.theme) -settings {
       scaledStyle {} {} {} $theme
     }
   }
@@ -1795,7 +1825,7 @@ namespace eval ::ttk::awthemes {
     ]
   }
 
-  proc _setStyledColors { {pfx {}} } {
+  proc _setStyledColors { {pfx {}} {scale {}} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -1975,7 +2005,8 @@ namespace eval ::ttk::awthemes {
       ttk::style configure Sash \
           -lightcolor $colors(curr.highlight.darkhighlight) \
           -darkcolor $colors(curr.base.darkest) \
-          -sashthickness [expr {round(10*$vars(scale.factor)*$colors(curr.scale.factor))}]
+          -sashthickness \
+          [expr {round(10*$vars(scale.factor)*$colors(curr.scale.factor)*$scale)}]
 
       # progressbar
 
@@ -2113,6 +2144,18 @@ namespace eval ::ttk::awthemes {
     set rc false
     if { $vars(have.tksvg) && [info exists images($nm)] } {
       set rc true
+    }
+    return $rc
+  }
+
+  proc getColor { theme nm } {
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::$theme $var $var
+    }
+
+    set rc {}
+    if { [info exists colors($nm)] } {
+      set rc $colors($nm)
     }
     return $rc
   }
@@ -2351,22 +2394,22 @@ namespace eval ::ttk::awthemes {
         }
       }
 
-      _createButton $pfx $sfx
-      _createCheckButton $pfx $sfx
-      _createCombobox $pfx $sfx
-      _createEntry $pfx $sfx
-      _createLabelframe $pfx $sfx
-      _createMenubutton $pfx $sfx
-      _createNotebook $pfx $sfx
-      _createProgressbar $pfx $sfx
-      _createRadioButton $pfx $sfx
-      _createScale $pfx $sfx
-      _createScrollbars $pfx $sfx
-      _createSizegrip $pfx $sfx
-      _createSpinbox $pfx $sfx
-      _createTreeview $pfx $sfx
+      _createButton $pfx $sfx $sf
+      _createCheckButton $pfx $sfx $sf
+      _createCombobox $pfx $sfx $sf
+      _createEntry $pfx $sfx $sf
+      _createLabelframe $pfx $sfx $sf
+      _createMenubutton $pfx $sfx $sf
+      _createNotebook $pfx $sfx $sf
+      _createProgressbar $pfx $sfx $sf
+      _createRadioButton $pfx $sfx $sf
+      _createScale $pfx $sfx $sf
+      _createScrollbars $pfx $sfx $sf
+      _createSizegrip $pfx $sfx $sf
+      _createSpinbox $pfx $sfx $sf
+      _createTreeview $pfx $sfx $sf
     }
-    _setStyledColors $pfx
+    _setStyledColors $pfx $sf
   }
 
   proc awCboxHandler { w } {
@@ -2379,6 +2422,18 @@ namespace eval ::ttk::awthemes {
     if { [info exists colors(curr.base.entry.bg)] &&
         $currtheme eq $vars(theme.name) &&
         ! [dict exists $vars(cache.listbox) $w] } {
+      regsub {\.popdown\.f\.l$} $w {} cbw
+      set style [$cbw cget -style]
+      if { [dict exists $vars(registered.combobox) $style] != -1 } {
+        set pfx [dict get $vars(registered.combobox) $style]
+        set sb $cbw.popdown.f.sb
+        set sborient [string totitle [$sb cget -orient]]
+        set sbstyle [$sb cget -style]
+        if { $sbstyle eq {} } {
+          set sbstyle ${sborient}.TScrollbar
+        }
+        $cbw.popdown.f.sb configure -style ${pfx}${sbstyle}
+      }
       ::ttk::awthemes::setListboxColors $w
     }
   }
@@ -2541,6 +2596,7 @@ namespace eval ::themeutils {
           width.menubutton
           }
       set vars(names.colors.derived) {
+          parent.theme
           base.active
           base.arrow
           base.arrow.disabled

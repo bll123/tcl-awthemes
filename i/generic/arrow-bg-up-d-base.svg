@@ -11,12 +11,12 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
-   viewBox="0 0 4.2333333 4.2333333"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="arrow-bg-up-d-base.svg"
-   shape-rendering="crispEdges">
+   style="shape-rendering:crispEdges">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,23 +26,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.944125"
-     inkscape:cx="7.978441"
-     inkscape:cy="8.0005532"
-     inkscape:document-units="mm"
+     inkscape:zoom="14.75"
+     inkscape:cx="8.3389813"
+     inkscape:cy="-3.7666652"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1023"
+     inkscape:window-height="657"
+     inkscape:window-x="145"
+     inkscape:window-y="35"
+     inkscape:window-maximized="0"
      units="px"
-     inkscape:pagecheckerboard="true" />
+     inkscape:pagecheckerboard="true"
+     showborder="false" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -59,25 +60,25 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(131.69759,-128.34964)">
+     transform="translate(131.69759,-116.58298)">
     <rect
-       style="opacity:1;fill:#224162;fill-opacity:1;stroke:#202425;stroke-width:0.25427344;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#224162;fill-opacity:0.4;stroke:#202425;stroke-width:0.96103352;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4"
        id="rect819"
-       width="3.9790597"
-       height="3.9790599"
-       x="-131.57045"
-       y="128.47678" />
+       width="15.038966"
+       height="15.038966"
+       x="-131.21707"
+       y="117.06349" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:3.21954036px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:1;stroke:none;stroke-width:0.0804885"
-       x="-130.16154"
-       y="-130.57411"
+       style="font-style:normal;font-weight:normal;font-size:12.16834164px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#919282;fill-opacity:0.4;stroke:none;stroke-width:0.30420852"
+       x="-133.94347"
+       y="-116.70261"
        id="text817"
-       transform="scale(1.0224896,-0.97800507)"><tspan
+       transform="scale(1.0224896,-0.97800502)"><tspan
          sodipodi:role="line"
          id="tspan815"
-         x="-130.16154"
-         y="-130.57411"
-         style="font-size:6.86835289px;fill:#919282;fill-opacity:1;stroke-width:0.0804885">⏷</tspan></text>
+         x="-133.94347"
+         y="-116.70261"
+         style="font-size:25.95912933px;fill:#919282;fill-opacity:0.4;stroke-width:0.30420852">⏷</tspan></text>
   </g>
 </svg>

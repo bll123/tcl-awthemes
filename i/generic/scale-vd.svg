@@ -14,7 +14,7 @@
    viewBox="0 0 14 30"
    version="1.1"
    id="svg8"
-   sodipodi:docname="scale-vd.svg"
+   sodipodi:docname="scale-vd-base.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <defs
      id="defs2" />
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="14.633333"
-     inkscape:cx="-14.116174"
-     inkscape:cy="15"
+     inkscape:zoom="14.733333"
+     inkscape:cx="6.9285948"
+     inkscape:cy="15.171553"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,7 +40,9 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     units="px" />
+     units="px"
+     inkscape:pagecheckerboard="true"
+     showborder="false" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -57,18 +59,18 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-99.488592,-135.94053)">
+     transform="translate(-99.559997,-136.11208)">
     <rect
-       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:1.00313985;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8"
+       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:1.00739932;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8"
        id="rect815"
-       width="12.846608"
-       height="29.074648"
-       x="-112.90817"
-       y="-165.6105"
+       width="12.9926"
+       height="28.992601"
+       x="-113.0563"
+       y="-165.60838"
        ry="0"
        transform="scale(-1)" />
     <g
-       transform="matrix(0,5.3235555,-4.3896019,0,727.61018,-385.82743)"
+       transform="matrix(0,5.3085329,-4.4394866,0,734.74395,-384.27344)"
        id="g3071">
       <rect
          transform="rotate(90)"

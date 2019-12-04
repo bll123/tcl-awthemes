@@ -12,7 +12,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="13"
    height="13"
-   viewBox="0 0 3.4395832 3.4395834"
+   viewBox="0 0 13 13"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -41,7 +41,7 @@
        x2="2.872113"
        y2="296.67389"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.0782432,0,0,1.088476,-0.12421083,-26.136966)" />
+       gradientTransform="matrix(4.0752498,0,0,4.113925,-0.10174979,-924.67265)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -50,10 +50,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="18.846154"
+     inkscape:zoom="19.769231"
      inkscape:cx="6.5"
-     inkscape:cy="6.5000177"
-     inkscape:document-units="mm"
+     inkscape:cy="6.5000003"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
@@ -63,7 +63,7 @@
      inkscape:window-y="31"
      inkscape:window-maximized="0"
      showborder="false"
-     inkscape:pagecheckerboard="false"
+     inkscape:pagecheckerboard="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -84,22 +84,24 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0.13229171,-293.69266)">
+     transform="translate(0.13229173,-284.13224)">
     <rect
-       style="opacity:0.98999999;fill:url(#linearGradient825);fill-opacity:1;stroke:#003c74;stroke-width:0.33978707;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:0.98999999;fill:url(#linearGradient825);fill-opacity:1;stroke:#003c74;stroke-width:1.28423464;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect814"
-       width="3.0997963"
-       height="3.0997963"
-       x="0.037601821"
-       y="293.86255" />
+       width="11.715765"
+       height="11.715765"
+       x="0.50982559"
+       y="284.77435" />
     <g
        aria-label="✔"
        style="font-style:normal;font-weight:normal;font-size:3.13044333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#21a12a;fill-opacity:1;stroke:none;stroke-width:0.07826108"
-       id="text817">
+       id="text817"
+       transform="matrix(3.7795275,0,0,3.7795275,0.36770846,-825.88727)">
       <path
          d="m 0.9699711,295.32229 q 0.0596129,0 0.0901837,0.0978 0.061141,0.18342 0.087127,0.18342 0.019871,0 0.04127,-0.0306 0.4295188,-0.63128 0.7948391,-0.89878 0.1543822,-0.11311 0.3011217,-0.11311 0.1941242,0 0.2338662,0.0122 0.016814,0.005 0.016814,0.0382 0,0.0275 -0.035156,0.0688 -0.9828491,1.12806 -1.1708592,1.46739 -0.064199,0.11617 -0.2965361,0.11617 -0.0764268,0 -0.16049636,-0.0397 -0.0351563,-0.0183 -0.12228294,-0.23387 -0.11005465,-0.27208 -0.11005465,-0.4769 0,-0.0749 0.10699758,-0.12381 0.14673953,-0.0673 0.22010929,-0.0673 z"
          style="fill:#21a12a;fill-opacity:1;stroke-width:0.07826108"
-         id="path936" />
+         id="path936"
+         inkscape:connector-curvature="0" />
     </g>
   </g>
 </svg>

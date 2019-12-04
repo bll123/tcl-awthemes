@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="53.3"
-     inkscape:cx="-0.79737336"
-     inkscape:cy="4.4808262"
+     inkscape:zoom="53.8"
+     inkscape:cx="5"
+     inkscape:cy="4"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -59,10 +59,10 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-99.605399,-140.30569)">
+     transform="translate(-99.998011,-140.27973)">
     <g
        id="g3791"
-       transform="matrix(3.7659049,0,0,3.8291772,-275.10645,-397.51671)">
+       transform="matrix(4.0868168,0,0,3.8541909,-307.07101,-401.08207)">
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -71,7 +71,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill:_GRIP_;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -80,7 +80,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-3"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -89,7 +89,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-6"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -98,7 +98,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-7"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <rect
          transform="rotate(90)"
          ry="0.1349985"
@@ -107,7 +107,7 @@
          height="0.269997"
          width="2.0756626"
          id="rect1368-5"
-         style="opacity:1;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="opacity:1;fill:_GRIP_;fill:_GRIP_;fill-opacity:1;stroke:_GRIP_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
   </g>
 </svg>

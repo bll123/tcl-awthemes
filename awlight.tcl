@@ -2,7 +2,7 @@
 #
 #
 
-package provide awlight 7.0
+package provide awlight 7.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -71,7 +71,6 @@ namespace eval ::ttk::theme::awlight {
     set colors(${prefix}base.tab.bg.inactive) $colors(base.dark)
     set colors(${prefix}base.tab.bg.selected) $colors(base.dark)
     set colors(${prefix}base.tab.border) $colors(base.bg)
-    set colors(${prefix}base.tab.box) $colors(base.bg)
     set colors(${prefix}base.tab.highlight) $colors(base.darkest)
     set colors(${prefix}base.tab.highlight.inactive) $colors(base.darker)
     set colors(${prefix}text.fg) $colors(base.darkest)

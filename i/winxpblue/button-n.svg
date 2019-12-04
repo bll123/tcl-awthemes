@@ -10,9 +10,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="14.000001"
+   width="13.999999"
    height="20"
-   viewBox="0 0 3.7041669 5.2916665"
+   viewBox="0 0 13.999999 20"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -40,7 +40,7 @@
        x2="1.8520832"
        y2="296.71826"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.93266362,0,0,0.95286452,0.12471259,13.867633)" />
+       gradientTransform="matrix(3.5104987,0,0,3.591208,0.46961835,-769.692)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -49,14 +49,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.857142"
-     inkscape:cx="7.0000003"
-     inkscape:cy="9.999983"
-     inkscape:document-units="mm"
+     inkscape:zoom="17.714286"
+     inkscape:cx="7.0286449"
+     inkscape:cy="10.028637"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="-2.7755576e-17"
+     fit-margin-left="-0.2"
      fit-margin-right="0"
      fit-margin-bottom="0"
      showborder="false"
@@ -65,7 +65,8 @@
      inkscape:window-height="577"
      inkscape:window-x="260"
      inkscape:window-y="78"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     inkscape:pagecheckerboard="true" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -82,14 +83,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(6.7055225e-8,-291.56675)">
+     transform="translate(0.0286451,-276.88739)">
     <rect
-       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:#003c74;stroke-width:0.24942534;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:#003c74;stroke-width:0.99652702;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect815"
-       width="3.4547415"
-       height="5.0422411"
-       x="0.1247126"
-       y="291.69147"
-       ry="1" />
+       width="13.003472"
+       height="19.003473"
+       x="0.46961841"
+       y="277.38565"
+       ry="3.7688546" />
   </g>
 </svg>

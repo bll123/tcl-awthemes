@@ -11,7 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="_CBOXH_"
-   viewBox="0 0 4.2333333 7.14375"
+   viewBox="0 0 16 27"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -25,10 +25,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="8.7407407"
+     inkscape:zoom="15.625"
      inkscape:cx="8"
      inkscape:cy="13.5"
-     inkscape:document-units="mm"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
@@ -36,14 +36,15 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1029"
-     inkscape:window-height="414"
-     inkscape:window-x="45"
-     inkscape:window-y="161"
+     inkscape:window-height="627"
+     inkscape:window-x="174"
+     inkscape:window-y="50"
      inkscape:window-maximized="0"
      units="px"
-     showguides="false"
-     scale-x="0.8"
-     inkscape:pagecheckerboard="true" />
+     inkscape:pagecheckerboard="true"
+     showguides="true"
+     scale-x="1"
+     showborder="false" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -60,24 +61,23 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(131.69759,-125.78318)">
+     transform="translate(131.70758,-105.59397)">
     <rect
-       style="opacity:1;fill:_GC_;fill-opacity:1;stroke:_BORD_;stroke-width:0.11302858;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_GC_;fill-opacity:1;stroke:_BORD_;stroke-width:0.42496574;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
-       width="4.1379242"
-       height="7.0760179"
-       x="-131.65642"
-       y="125.79185" />
+       width="15.575034"
+       height="26.575035"
+       x="-131.4951"
+       y="105.80645" />
     <g
        aria-label="⏷"
-       transform="matrix(1.1362206,0,0,1.1516568,19.229082,-20.409724)"
-       style="font-style:normal;font-weight:normal;font-size:2.90202522px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARR_;fill-opacity:1;stroke:none;stroke-width:0.07255063"
+       transform="scale(0.99357554,1.006466)"
+       style="font-style:normal;font-weight:normal;font-size:12.5132246px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARR_;fill-opacity:1;stroke:none;stroke-width:0.31283066"
        id="text817">
       <path
-         d="m -129.98195,129.04927 q 0.0557,0 0.0557,0.0433 0,0.006 -0.006,0.0186 l -1.00294,1.88825 q -0.0186,0.0371 -0.0371,0.0371 -0.0186,0 -0.0371,-0.0371 l -1.00294,-1.88206 q 0,-0.0124 0,-0.0248 0,-0.0433 0.0619,-0.0433 z"
-         style="font-size:6.19098759px;fill:_GCARR_;fill-opacity:1;stroke-width:0.07255063"
-         id="path4706"
-         inkscape:connector-curvature="0" />
+         d="m -120.23374,114.02632 q 0.24025,0 0.24025,0.18686 0,0.0267 -0.0267,0.0801 l -4.32457,8.14194 q -0.0801,0.16017 -0.16017,0.16017 -0.0801,0 -0.16017,-0.16017 l -4.32457,-8.11525 q 0,-0.0534 0,-0.10678 0,-0.18686 0.26695,-0.18686 z"
+         style="font-size:26.69488335px;fill:_GCARR_;fill-opacity:1;stroke-width:0.31283066"
+         id="path815" />
     </g>
   </g>
 </svg>

@@ -14,8 +14,8 @@
    id="svg4152"
    version="1.1"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 74.999996 64"
-   sodipodi:docname="cb-sn-pad.svg">
+   viewBox="0 0 18 15"
+   sodipodi:docname="menu-cb-sn-pad.svg">
   <defs
      id="defs4154" />
   <sodipodi:namedview
@@ -25,18 +25,23 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.3"
-     inkscape:cx="10"
-     inkscape:cy="8.5333338"
+     inkscape:zoom="13.111111"
+     inkscape:cx="9"
+     inkscape:cy="7.5"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
+     inkscape:window-width="1015"
      inkscape:window-height="708"
      inkscape:window-x="221"
      inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     fit-margin-right="3"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true" />
   <metadata
      id="metadata4157">
     <rdf:RDF>
@@ -45,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
@@ -69,24 +74,25 @@
   <g
      id="layer1"
      inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
+     inkscape:groupmode="layer"
+     transform="translate(-0.12256801,-49.194793)">
     <rect
-       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0.81868827;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
+       width="14.181312"
+       height="14.181312"
+       x="0.53191215"
+       y="49.604137"
+       ry="2.5027611" />
     <g
        aria-label="✔"
-       transform="scale(0.96762071,1.0334628)"
-       style="font-style:normal;font-weight:normal;font-size:80.48880005px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCCB_;fill-opacity:1;stroke:none;stroke-width:2.01222014"
+       transform="scale(0.9478328,1.0550384)"
+       style="font-style:normal;font-weight:normal;font-size:15.68263435px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCCB_;fill-opacity:1;stroke:none;stroke-width:0.39206591"
        id="text9056">
       <path
-         d="m 17.358988,28.775613 q 1.532746,0 2.31877,2.515275 1.572046,4.716141 2.240166,4.716141 0.510916,0 1.061132,-0.786024 11.043629,-16.231384 20.436609,-23.109089 3.969419,-2.9082867 7.742331,-2.9082867 4.991249,0 6.013079,0.3144094 0.432313,0.1179035 0.432313,0.9825293 0,0.707421 -0.903927,1.768553 -25.270653,29.004265 -30.104697,37.729125 -1.650649,2.986889 -7.624428,2.986889 -1.965058,0 -4.126623,-1.021831 Q 13.939786,51.49169 11.69962,45.950225 8.8699352,38.954616 8.8699352,33.688259 q 0,-1.925757 2.7510818,-3.183395 3.772913,-1.729251 5.659369,-1.729251 z"
-         style="fill:_GCCB_;fill-opacity:1;stroke-width:2.01222014"
-         id="path5780" />
+         d="m 4.9484572,53.285391 q 0.2986439,0 0.4517947,0.490082 0.3063014,0.918905 0.4364795,0.918905 0.099548,0 0.2067535,-0.153151 2.1517677,-3.162563 3.9819191,-4.502632 0.773411,-0.566657 1.508534,-0.566657 0.972508,0 1.171604,0.06126 0.08423,0.02297 0.08423,0.191438 0,0.137836 -0.176123,0.34459 -4.9237958,5.651261 -5.8656727,7.351234 -0.3216166,0.581973 -1.4855621,0.581973 -0.3828768,0 -0.8040413,-0.199096 -0.1761233,-0.09189 -0.6126029,-1.171603 -0.5513426,-1.363041 -0.5513426,-2.389151 0,-0.375219 0.5360275,-0.620261 0.7351235,-0.336931 1.1026853,-0.336931 z"
+         style="fill:_GCCB_;fill-opacity:1;stroke-width:0.39206591"
+         id="path815" />
     </g>
   </g>
 </svg>

@@ -11,11 +11,12 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="_ARROWH_"
    height="_ARROWH_"
-   viewBox="0 0 4.2333333 4.2333333"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="arrow-bg-right-d.svg">
+   sodipodi:docname="arrow-bg-right-d.svg"
+   style="shape-rendering:crispEdges">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,22 +26,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="31.959187"
-     inkscape:cx="7.9595222"
-     inkscape:cy="7.9566142"
-     inkscape:document-units="mm"
+     inkscape:zoom="15.25"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     units="px" />
+     inkscape:window-width="1023"
+     inkscape:window-height="671"
+     inkscape:window-x="203"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     showborder="false" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -57,23 +60,23 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(131.69759,-128.34964)">
+     transform="translate(131.69758,-116.58298)">
     <rect
-       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:0.25423747;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.8"
+       style="opacity:1;fill:_GC_;fill-opacity:0.4;stroke:_BORD_;stroke-width:0.96089751;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.4"
        id="rect819"
-       width="3.9790959"
-       height="3.9790959"
-       x="-131.57047"
-       y="128.47676" />
+       width="15.039103"
+       height="15.039103"
+       x="-131.21713"
+       y="117.06343" />
     <g
        aria-label="⏷"
-       transform="matrix(0,0.97783455,1.0226679,0,0,0)"
-       style="font-style:normal;font-weight:normal;font-size:3.76468444px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARRR_;fill-opacity:0.4;stroke:none;stroke-width:0.09411711"
+       transform="matrix(0,0.97783454,1.0226679,0,0,0)"
+       style="font-style:normal;font-weight:normal;font-size:14.22872829px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARR_;fill-opacity:0.4;stroke:none;stroke-width:0.35571823"
        id="text817">
       <path
-         d="m 134.70469,-127.99774 q 0.0723,0 0.0723,0.0562 0,0.008 -0.008,0.0241 l -1.30107,2.44955 q -0.0241,0.0482 -0.0482,0.0482 -0.0241,0 -0.0482,-0.0482 l -1.30107,-2.44152 q 0,-0.0161 0,-0.0321 0,-0.0562 0.0803,-0.0562 z"
-         style="font-size:8.03132725px;fill:_GCARR_;fill-opacity:0.4;stroke-width:0.09411711"
-         id="path2671" />
+         d="m 132.24851,-125.82773 q 0.27319,0 0.27319,0.21249 0,0.0303 -0.0304,0.0911 l -4.91744,9.25816 q -0.0911,0.18213 -0.18213,0.18213 -0.0911,0 -0.18213,-0.18213 l -4.91745,-9.2278 q 0,-0.0607 0,-0.12142 0,-0.21249 0.30355,-0.21249 z"
+         style="font-size:30.35462189px;fill:_GCARR_;fill-opacity:0.4;stroke-width:0.35571823"
+         id="path815" />
     </g>
   </g>
 </svg>

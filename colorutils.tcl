@@ -94,29 +94,28 @@ namespace eval ::colorutils {
     return [rgbToHexStr [list $rnew $gnew $bnew]]
   }
 
-  proc opaqueblend { fg bg fga } {
+  proc opaqueblend { fg bg fga {sz 4} } {
     variable vars
 
     # caching winfo rgb does not help
     lassign [winfo rgb . $fg] rf gf bf
     lassign [winfo rgb . $bg] rb gb bb
 
-    # fga is 0.9, we want 0.9 of fg, 0.1 of bg
     set bga [expr {65535-$fga}]
     set rn [expr {($rb * $bga + $rf * $fga) / 65535}]
     set gn [expr {($gb * $bga + $gf * $fga) / 65535}]
     set bn [expr {($bb * $bga + $bf * $fga) / 65535}]
-    return [rgbToHexStr [list $rn $gn $bn]]
+    return [rgbToHexStr [list $rn $gn $bn] $sz]
   }
 
-  proc lightenColor { col } {
+  proc lightenColor { col {sz 4} } {
     # 0.8 * 65535 = 52428
-    return [opaqueblend $col #ffffff 52428]
+    return [opaqueblend $col #ffffff 52428 $sz]
   }
 
-  proc darkenColor { col } {
+  proc darkenColor { col {sz 4} } {
     # 0.9 * 65535 = 58982
-    return [opaqueblend $col #000000 58982]
+    return [opaqueblend $col #000000 58982 $sz]
   }
 
   # blend with the background
@@ -373,4 +372,4 @@ namespace eval ::colorutils {
   }
 }
 
-package provide colorutils 4.4
+package provide colorutils 4.5

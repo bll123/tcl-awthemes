@@ -2,20 +2,23 @@
 
 package require Tk
 
+set ap [file dirname [info script]]
+if { $ap ni $::auto_path } {
+  lappend ::auto_path $ap
+}
 if { 1 } {
   set ap [file normalize [file join [file dirname [info script]] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
   }
-  unset ap
 }
+unset ap
 
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"
+  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] "
+  puts "    \[-background <color>] \[-highlightcolor <color>] \[-notksvg]"
   exit 1
 }
-
-lappend ::auto_path [file dirname [info script]]
 
 set theme [lindex $::argv 0]
 
@@ -23,6 +26,7 @@ set ::notksvg false
 set fontscale 1.0 ; # default
 set sf 1.0
 set gc {}
+set nbg {}
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
@@ -36,6 +40,10 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     incr idx
     set gc [lindex $::argv $idx]
   }
+  if { [lindex $::argv $idx] eq "-background" } {
+    incr idx
+    set nbg [lindex $::argv $idx]
+  }
   if { [lindex $::argv $idx] eq "-fontscale" } {
     incr idx
     set fontscale [lindex $::argv $idx]
@@ -45,19 +53,34 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   }
 }
 
-# now do the requires so that -notksvg has an effect.
-package require colorutils
-package require awthemes
-
-if { $gc ne {} } {
-  ::themeutils::setThemeColors $theme \
-      graphics.color $gc
+# now do the require so that -notksvg has an effect.
+catch { package require awthemes }
+set ::havethemeutils false
+if { ! [catch {package present awthemes}] } {
+  set ::havethemeutils true
 }
-::themeutils::setThemeColors $theme \
-    scale.factor $sf
+
+catch { package require checkButtonToggle }
+set ::havecbt false
+if { ! [catch {package present checkButtonToggle}] } {
+  set ::havecbt true
+}
+
+if { $havethemeutils } {
+  if { $gc ne {} } {
+    ::themeutils::setThemeColors $theme \
+        graphics.color $gc
+  }
+  ::themeutils::setThemeColors $theme \
+      scale.factor $sf
+}
 
 if { ! $::notksvg } {
   catch { package require tksvg }
+}
+set havetksvg false
+if { ! [catch {package present tksvg}] } {
+  set havetksvg true
 }
 
 set fn data/bll-tecra/tkscale.txt
@@ -94,13 +117,9 @@ if { 1 } {
   if { [file exists $fn] } {
     source $fn
     themeloader::loadTheme $theme
+    puts "loaded $theme"
     set loaded true
   }
-}
-
-set havetksvg false
-if { ! [catch {package present tksvg}] } {
-  set havetksvg true
 }
 
 set ttheme $theme
@@ -110,9 +129,22 @@ if { ($havetksvg && $theme eq "black") ||
 }
 if { [file exists $ttheme.tcl] && ! $loaded } {
   source $ttheme.tcl
+  puts "loaded $ttheme.tcl"
+  set loaded true
+}
+set tfn [file join $env(HOME) s ballroomdj code themes $ttheme.tcl]
+if { [file exists $tfn] && ! $loaded } {
+  source $tfn
+  puts "loaded $tfn"
+  set loaded true
 }
 
 ttk::style theme use $theme
+
+if { $nbg ne {} &&
+    [info commands ::ttk::theme::${theme}::setBackground] ne {} } {
+  ::ttk::theme::${theme}::setBackground $nbg
+}
 
 set val 55
 set valb $theme
@@ -174,8 +206,6 @@ ttk::style configure TFrame -borderwidth 0
 ttk::notebook .nb
 pack .nb -side left -fill both -expand true
 ttk::frame .one
-ttk::labelframe .lfn -text " Normal "
-ttk::labelframe .lfd -text " Disabled "
 .nb add .one -text $theme
 ttk::frame .two
 .nb add .two -text {Text w/scroll}
@@ -190,15 +220,18 @@ ttk::frame .six
 ttk::frame .seven
 .nb add .seven -text {Inactive} -state disabled
 
+ttk::labelframe .lfn -text " Normal "
+ttk::labelframe .lfd -text " Disabled "
 foreach {k} {n d} {
   set s !disabled
   if { $k eq "d" } {
     set s disabled
   }
-  ttk::frame .bf$k
+  set row 0
   ttk::label .lb$k -text $theme -state $s
   ttk::button .b$k -text $theme -state $s
-  pack .lb$k .b$k -in .bf$k -side left -padx 3p
+  grid .lb$k .b$k -in .lf$k -sticky w -padx 3p -pady 3p
+  incr row
 
   ttk::combobox .combo$k -values \
       [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
@@ -208,62 +241,80 @@ foreach {k} {n d} {
       -height 5 \
       -font TkDefaultFont
   option add *TCombobox*Listbox.font TkDefaultFont
+  grid .combo$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
 
-  ttk::frame .cbf$k
   ttk::checkbutton .cboff$k -text off -variable off -state $s
   ttk::checkbutton .cbon$k -text on -variable on -state $s
-  pack .cboff$k .cbon$k -in .cbf$k -side left -padx 3p
+  grid .cboff$k .cbon$k -in .lf$k -sticky w -padx 3p -pady 3p
+  incr row
+  if { $::havecbt } {
+    ttk::checkbutton .cbtoff$k -text off -variable off -state $s \
+        -style Toggle.TCheckbutton
+    ttk::checkbutton .cbton$k -text on -variable on -state $s \
+        -style Toggle.TCheckbutton
+    grid .cbtoff$k .cbton$k -in .lf$k -sticky w -padx 3p -pady 3p
+    incr row
+  }
 
   ttk::separator .sep$k
+  grid .sep$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 5
+  incr row
 
-  ttk::frame .rbf$k
   ttk::radiobutton .rboff$k -text off -variable on -value 0 -state $s
   ttk::radiobutton .rbon$k -text on -variable on -value 1 -state $s
-  pack .rboff$k .rbon$k -in .rbf$k -side left -padx 3p
+  grid .rboff$k .rbon$k -in .lf$k -sticky w -padx 3p -pady 3p
+  incr row
 
-  pack .bf$k .combo$k .cbf$k .sep$k .rbf$k \
-      -in .lf$k -side top -anchor w -padx 3p -pady 3p
-  pack configure .sep$k -fill x -expand true
+  grid columnconfigure .lf$k 4 -weight 1
 
-  ttk::frame .hf$k
   ttk::scale .sc$k \
       -from 0 \
       -to 100 \
       -variable val \
+      -orient horizontal \
       -length [expr {round(100*$scalefactor)}]
   .sc$k state $s
+  grid .sc$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
+  incr row
+
   ttk::progressbar .pb$k \
+      -orient horizontal \
       -mode determinate \
       -variable val \
       -length [expr {round(100*$scalefactor)}]
   .pb$k state $s
-  ttk::entry .ent$k -textvariable valb \
-      -width 15 \
-      -state $k \
-      -font TkDefaultFont
-  ttk::spinbox .sbox$k -textvariable val \
-      -width 5 \
-      -from 1 -to 100 -increment 0.1 \
-      -state $k \
-      -font TkDefaultFont
-  pack .sc$k .pb$k .ent$k .sbox$k \
-      -in .hf$k -side top -anchor w -padx 3p -pady 3p
-
-  ttk::frame .vf$k
   ttk::scale .scv$k \
       -orient vertical \
       -from 0 -to 100 \
       -variable val \
       -length [expr {round(100*$scalefactor)}]
   .scv$k state $s
-  ttk::progressbar .pbv$k -orient vertical \
+  ttk::progressbar .pbv$k \
+      -orient vertical \
       -mode determinate \
       -variable val \
       -length [expr {round(100*$scalefactor)}]
   .pbv$k state $s
-  pack .scv$k .pbv$k -in .vf$k -side right -padx 3p -pady 3p
+  grid .pb$k .scv$k .pbv$k -in .lf$k -sticky w -padx 3p -pady 3p
+  incr row
+  grid configure .pb$k -columnspan 2
+  grid configure .scv$k -rowspan 3 -column 2
+  grid configure .pbv$k -rowspan 3 -column 3
 
-  pack .hf$k .vf$k -in .lf$k -side left -anchor e
+  ttk::entry .ent$k -textvariable valb \
+      -width 15 \
+      -state $k \
+      -font TkDefaultFont
+  incr row
+  grid .ent$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2 -row $row
+
+  ttk::spinbox .sbox$k -textvariable val \
+      -width 5 \
+      -from 1 -to 100 -increment 0.1 \
+      -state $k \
+      -font TkDefaultFont
+  grid .sbox$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
+  incr row
 }
 pack .lfn .lfd -in .one -side left -padx 3p -pady 3p -expand 1 -fill both
 ttk::sizegrip  .sg
@@ -390,7 +441,10 @@ if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
   ::ttk::theme::${theme}::setMenuColors .menubar.dis.m
 }
 
-pack .menubar.file .menubar.edit .menubar.dis -side left
+ttk::button .menubar.tba -text {Toolbutton A} -style Toolbutton
+ttk::button .menubar.tbb -text {Toolbutton B} -style Toolbutton -state disabled
+
+pack .menubar.file .menubar.edit .menubar.dis .menubar.tba .menubar.tbb -side left
 
 ttk::scrollbar .sblbox1 -command [list .lbox1 yview]
 ttk::scrollbar .sblbox2 -command [list .lbox2 yview]
@@ -415,3 +469,53 @@ pack .lbox1 -in .six -padx 3p -pady 3p -expand true -fill both -side left
 pack .sblbox1 -in .six -padx 0 -pady 3p -fill y -side left
 pack .lbox2 -in .six -padx 3p -pady 3p -expand true -fill both -side left
 pack .sblbox2 -in .six -padx 0 -pady 3p -fill y -side left
+
+# until released, have this off.
+if { 0 && $::tcl_platform(os) eq "Darwin" } {
+  # unmute
+  set imgdata {
+     iVBORw0KGgoAAAANSUhEUgAAABwAAAAZCAYAAAAiwE4nAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+     AAAbrwAAG68BXhqRHAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAMoSURB
+     VEiJtZVPbFRVFIe/c+97pWClxT8Y40DBaKILQWwloQzNuCBsmpBIajTERKkzICZUmILRjeNGpUxH
+     MYHEmaaEEBaGEEQNITGSQt8ILlgZggY2agUTiFCpte28uccFxbCgM9Ox81ve8zvnu+e+c98V/ocS
+     Lal5Ou/vLKodBnn582DPyXI5plrYG7FdEZ07OoTqRqDRoWsryfOqgXW171hhQndcYdG94lvaehYW
+     Letv/tlw8MiF1OTdsRl3GF+d3Gic+X46GICzEkHJLFgwen5TdPvj1QIlEe1JIXIIqJ/O9Hr7jkXg
+     FtvQe0bRMYsNutqSzTMCbo1tbYhHe44qvA9IKa8t8piqZIteMet7Zj1wxYocS8VSHoCXaEn47r75
+     EeeK9yzkiddUCPUAsKySzfXnM+e6Vm1/ylj7VSFkQA2dOH78PRzdBmQkHk3+ALKykmJllAnF/9jT
+     wiVR3ecX6jKTdeEFRN/GydOIxuvvn1hqZgkGwIGhj64J2qEiWybrCu2gn6jjTau6D3h4/C9/XdX3
+     cDplg75ARHYD3b4nB0VYNWmKDYqcRkzHrAMBBPcN0Gbnjt8A+cmoeVbgLNBSE6CO3boEmPFbfjPo
+     ZWPME6LusgrNNQFmz2cLgEN9H7iuqg84IzdFaawJ8LVYqh7w1BbHgIdQuS6OOcBETYB1buRJoDDy
+     yC+/gjwquGsIEYSrtfmGznsJ+G7+cKQRtNVZOQMsV+XirAMTq3e9ANptkM+sZ14EuXi7U9ainDII
+     J2YL9tbKdx9UcV8L8mFBJa8qKeDTxitL1gELi9YdLfkjhtsPrYTuS6CljDWTC9JJgM7OTtt0dckh
+     0MW5IN0ejybPCjKcDdIbyh5p/2DvsO+NxYBjZVucUtMfzScQfT407pXEmmQ3yPJQzXtQ4fO0f3D/
+     aC5IbxD4ANByfnUyIHNsq+dMq6rsBn1nIN/7c8XAO3WyQTqF6qvAeCljf37PF0y4zcARhL25oG/v
+     ndiMpzSX7zvsjGsT+K3k7mCZKptzQ+mdd6+XHZrpNDVMx4Hnppb+G5pSqvoe9g/2Dss/DWsQOQyM
+     GOTbSvL+BWexMdZ81ssiAAAAAElFTkSuQmCC
+  }
+  set img [image create photo -data $imgdata -format png]
+
+  foreach {k} {n d} {
+    set s !disabled
+    if { $k eq "d" } {
+      set s disabled
+    }
+    ttk::frame .dbf$k
+
+    ttk::button .dbi$k -text unmute -image $img -state $s -style ImageButton
+    set layout [ttk::style layout TButton]
+    regsub {Button.button} $layout RoundedRectButton.button rrlayout
+    ttk::style layout RR.TButton $rrlayout
+    ttk::button .dbrr$k -text $theme -state $s -style RR.TButton
+    regsub {Button.button} $layout DisclosureButton.button disclayout
+    ttk::style layout Disc.TButton $disclayout
+    ttk::button .dbdisc$k -state $s -style Disc.TButton
+    regsub {Button.button} $layout GradientButton.button glayout
+    ttk::style layout Gradient.TButton $glayout
+    ttk::button .dbg$k -text $theme -state $s -style Gradient.TButton
+    regsub {Button.button} $layout HelpButton.button hlayout
+    ttk::style layout Help.TButton $hlayout
+    ttk::button .dbhelp$k -state $s -style Help.TButton
+    grid .dbi$k .dbrr$k .dbdisc$k .dbg$k .dbhelp$k -in .dbf$k -sticky w -padx 3p -pady 3p
+    grid .dbf$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 5
+  }
+}

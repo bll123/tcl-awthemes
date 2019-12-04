@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.066668"
-   height="17.066668"
+   width="17"
+   height="17"
    id="svg4152"
    version="1.1"
-   inkscape:version="0.92.1 r15371"
-   viewBox="0 0 64 64"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   viewBox="0 0 17 17"
    sodipodi:docname="cb-un.svg">
   <defs
      id="defs4154" />
@@ -25,18 +25,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="26.218934"
-     inkscape:cx="8.5379886"
-     inkscape:cy="8.4885959"
+     inkscape:zoom="13.882353"
+     inkscape:cx="8.5"
+     inkscape:cy="8.5"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="1002"
+     inkscape:window-width="1015"
      inkscape:window-height="708"
      inkscape:window-x="221"
      inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true"
+     showborder="false" />
   <metadata
      id="metadata4157">
     <rdf:RDF>
@@ -47,10 +53,10 @@
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title></dc:title>
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
@@ -69,14 +75,15 @@
   <g
      id="layer1"
      inkscape:label="Layer 1"
-     inkscape:groupmode="layer">
+     inkscape:groupmode="layer"
+     transform="translate(-0.12256804,-47.194799)">
     <rect
-       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:3.49840903;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0.92784673;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
-       width="60.577419"
-       height="60.621414"
-       x="1.8717725"
-       y="1.8241789"
-       ry="10.698651" />
+       width="16.072153"
+       height="16.072153"
+       x="0.58649141"
+       y="47.658722"
+       ry="2.8364625" />
   </g>
 </svg>

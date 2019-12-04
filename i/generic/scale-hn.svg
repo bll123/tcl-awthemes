@@ -14,9 +14,9 @@
    viewBox="0 0 30 14"
    version="1.1"
    id="svg8"
-   sodipodi:docname="scale-hn.svg"
+   sodipodi:docname="scale-hn-base.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   shape-rendering="crispEdges">
+   style="shape-rendering:crispEdges">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,9 +26,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="17.766667"
-     inkscape:cx="-2.3921197"
-     inkscape:cy="7"
+     inkscape:zoom="17.933333"
+     inkscape:cx="15.030598"
+     inkscape:cy="6.9316984"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -42,7 +42,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      units="px"
-     showguides="false" />
+     showguides="false"
+     inkscape:pagecheckerboard="true"
+     showborder="false" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -59,18 +61,18 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-97.353814,-139.48844)">
+     transform="translate(-97.323216,-139.42014)">
     <rect
-       style="opacity:1;fill:_GC_;fill-opacity:1;stroke:_BORD_;stroke-width:1.14740717;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_GC_;fill-opacity:1;stroke:_BORD_;stroke-width:1.14806557;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
-       width="12.82503"
-       height="28.879307"
-       x="140.02139"
-       y="-126.77623"
+       width="12.851934"
+       height="28.851934"
+       x="139.99417"
+       y="-126.74918"
        ry="0"
        transform="rotate(90)" />
     <g
-       transform="matrix(5.3235555,0,0,4.3896019,-424.41414,-474.63315)"
+       transform="matrix(5.3185097,0,0,4.3988103,-423.91876,-475.94979)"
        id="g3071">
       <rect
          transform="rotate(90)"

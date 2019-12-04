@@ -10,8 +10,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="14"
-   height="27.999998"
-   viewBox="0 0 14 27.999998"
+   height="30"
+   viewBox="0 0 14 30"
    version="1.1"
    id="svg8"
    sodipodi:docname="slider-vn-base.svg"
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="19.210362"
-     inkscape:cx="6.9975422"
-     inkscape:cy="18.179957"
+     inkscape:zoom="15.785715"
+     inkscape:cx="7.000009"
+     inkscape:cy="14"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -42,7 +42,8 @@
      fit-margin-bottom="0"
      units="px"
      showguides="false"
-     showborder="false" />
+     showborder="false"
+     inkscape:pagecheckerboard="true" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -59,14 +60,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-104.35382,-132.48844)">
+     transform="translate(-104.35381,-130.48844)">
     <rect
-       style="opacity:1;fill:#8080ff;fill-opacity:1;stroke:#8000ff;stroke-width:1.00361502;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#8080ff;fill-opacity:1;stroke:#8000ff;stroke-width:1.03812647;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815"
-       width="12.996385"
-       height="26.996384"
-       x="-117.85201"
-       y="-159.98663"
+       width="12.961873"
+       height="28.961874"
+       x="-117.83475"
+       y="-159.96938"
        ry="0"
        transform="scale(-1)" />
   </g>

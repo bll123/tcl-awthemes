@@ -11,7 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
-   viewBox="0 0 4.2333333 4.2333333"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -25,21 +25,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="33.125"
-     inkscape:cx="8"
+     inkscape:zoom="15.25"
+     inkscape:cx="8.0655738"
      inkscape:cy="8"
-     inkscape:document-units="mm"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1325"
-     inkscape:window-height="740"
-     inkscape:window-x="41"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1023"
+     inkscape:window-height="594"
+     inkscape:window-x="159"
+     inkscape:window-y="71"
+     inkscape:window-maximized="0"
      units="px"
      inkscape:pagecheckerboard="true" />
   <metadata
@@ -61,14 +61,13 @@
      transform="translate(131.69759,-128.34964)">
     <g
        aria-label="⏷"
-       transform="matrix(0,1.1213995,1.1661998,0,18.655533,-19.294116)"
-       style="font-style:normal;font-weight:normal;font-size:3.307621px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARR_;fill-opacity:1;stroke:none;stroke-width:0.08269052"
+       transform="matrix(0,1.0351751,0.96602014,0,0,0)"
+       style="font-style:normal;font-weight:normal;font-size:12.09316635px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCARR_;fill-opacity:1;stroke:none;stroke-width:0.30232921"
        id="text817">
       <path
-         inkscape:connector-curvature="0"
-         d="m 134.6679,-128.24434 q 0.0635,0 0.0635,0.0494 0,0.007 -0.007,0.0212 l -1.14312,2.15216 q -0.0212,0.0423 -0.0423,0.0423 -0.0212,0 -0.0423,-0.0423 l -1.14312,-2.1451 q 0,-0.0141 0,-0.0282 0,-0.0494 0.0706,-0.0494 z"
-         style="font-size:7.0562582px;fill:_GCARR_;fill-opacity:1;stroke-width:0.08269052"
-         id="path815" />
+         d="m 135.8314,-132.18937 q 0.23219,0 0.23219,0.18059 0,0.0258 -0.0258,0.0774 l -4.1794,7.86862 q -0.0774,0.15479 -0.15479,0.15479 -0.0774,0 -0.1548,-0.15479 l -4.17939,-7.84282 q 0,-0.0516 0,-0.1032 0,-0.18059 0.25798,-0.18059 z"
+         style="font-size:25.79875755px;fill:_GCARR_;fill-opacity:1;stroke-width:0.30232921"
+         id="path9" />
     </g>
   </g>
 </svg>

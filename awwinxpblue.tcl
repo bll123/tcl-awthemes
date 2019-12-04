@@ -2,7 +2,7 @@
 #
 #
 
-package provide winxpblue 7.0
+package provide winxpblue 7.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -74,7 +74,6 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(${prefix}text.fg) $colors(base.darkest)
     set colors(${prefix}tab.use.topbar) false
     set colors(${prefix}base.tab.border) $colors(base.bg)
-    set colors(${prefix}base.tab.box) $colors(base.bg)
     set colors(${prefix}base.tab.bg.active) $colors(base.tab.bg.inactive)
     set colors(${prefix}base.tab.bg.inactive) #f0f0eb
     set colors(${prefix}tab.image.border) {3 4 3 4}

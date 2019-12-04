@@ -11,7 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
-   viewBox="0 0 4.2333334 4.2333336"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -25,10 +25,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="14.75"
-     inkscape:cx="8"
+     inkscape:zoom="14.9375"
+     inkscape:cx="8.334728"
      inkscape:cy="8"
-     inkscape:document-units="mm"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
@@ -62,15 +62,15 @@
      transform="translate(131.69759,-128.34961)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:3.08724761px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.24616608;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="-124.45624"
-       y="-136.81638"
+       style="font-style:normal;font-weight:normal;font-size:11.43843269px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.91205972;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       x="-135.56848"
+       y="-126.65952"
        id="text817"
-       transform="matrix(0,-1.0767523,0.92871871,0,0,0)"><tspan
+       transform="matrix(0,-1.1051221,0.90487739,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan815"
-         x="-124.45624"
-         y="-136.81638"
-         style="font-size:6.58612871px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.24616608;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⏷</tspan></text>
+         x="-135.56848"
+         y="-126.65952"
+         style="font-size:24.4019928px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.91205972;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⏷</tspan></text>
   </g>
 </svg>

@@ -11,7 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
-   viewBox="0 0 4.2333334 4.2333336"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -25,10 +25,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="14.75"
-     inkscape:cx="8"
+     inkscape:zoom="15.875"
+     inkscape:cx="7.9370079"
      inkscape:cy="8"
-     inkscape:document-units="mm"
+     inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
@@ -36,9 +36,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1031"
-     inkscape:window-height="414"
+     inkscape:window-height="552"
      inkscape:window-x="152"
-     inkscape:window-y="178"
+     inkscape:window-y="40"
      inkscape:window-maximized="0"
      units="px"
      inkscape:pagecheckerboard="true"
@@ -51,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -62,15 +62,15 @@
      transform="translate(131.69759,-128.34961)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:3.08724761px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.24616608;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       x="-123.634"
-       y="143.19005"
+       style="font-style:normal;font-weight:normal;font-size:11.43843365px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       x="-124.11995"
+       y="160.7244"
        id="text817"
-       transform="scale(1.0767523,0.92871871)"><tspan
+       transform="scale(1.1051221,0.90487738)"><tspan
          sodipodi:role="line"
          id="tspan815"
-         x="-123.634"
-         y="143.19005"
-         style="font-size:6.58612871px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.24616608;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⏷</tspan></text>
+         x="-124.11995"
+         y="160.7244"
+         style="font-size:24.4019928px;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">⏷</tspan></text>
   </g>
 </svg>
