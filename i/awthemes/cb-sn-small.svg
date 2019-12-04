@@ -78,7 +78,7 @@
      inkscape:groupmode="layer"
      transform="translate(-0.12256807,-49.194801)">
     <rect
-       style="fill:#252a2c;fill-opacity:1;stroke:#000000;stroke-width:0.81868827;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0.81868827;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
        width="14.181312"
        height="14.181312"
@@ -88,11 +88,11 @@
     <g
        aria-label="✔"
        transform="scale(0.94783288,1.0550383)"
-       style="font-style:normal;font-weight:normal;font-size:15.68263435px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.39206588"
+       style="font-style:normal;font-weight:normal;font-size:15.68263435px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:_GCCB_;fill-opacity:1;stroke:none;stroke-width:0.39206588"
        id="text9056">
       <path
          d="m 4.9484569,53.285402 q 0.2986439,0 0.4517946,0.490083 0.3063015,0.918904 0.4364796,0.918904 0.099548,0 0.2067535,-0.153151 2.1517677,-3.162562 3.9819184,-4.502631 0.773412,-0.566658 1.508535,-0.566658 0.972507,0 1.171603,0.06126 0.08423,0.02297 0.08423,0.191438 0,0.137836 -0.176123,0.344589 -4.9237961,5.651262 -5.8656731,7.351235 -0.3216165,0.581973 -1.485562,0.581973 -0.3828769,0 -0.8040414,-0.199096 Q 4.2822512,57.711458 3.8457716,56.631746 3.294429,55.268704 3.294429,54.242594 q 0,-0.375219 0.5360276,-0.62026 0.7351235,-0.336932 1.1026852,-0.336932 z"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.39206588"
+         style="fill:_GCCB_;fill-opacity:1;stroke-width:0.39206588"
          id="path815" />
     </g>
   </g>
