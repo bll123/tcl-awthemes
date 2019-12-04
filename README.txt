@@ -3,6 +3,8 @@ The following files are needed:
   awthemes.tcl, colorutils.tcl, pkgIndex.tcl,
   awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl,
   i/
+Demonstration scripts:
+  demottk.tcl, demoscaled.tcl
 
 Try:
   # application scaling
@@ -11,6 +13,20 @@ Try:
   tclsh demottk.tcl winxpblue -ttkscale 2.0
   # user with high dpi, smaller font
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
+  # scaled styling
+  tclsh demoscaled.tcl winxpblue
+
+7.5 (2019-12-4)
+   - reworked all .svg files.
+   - cleaned up notebook colors.
+   - fixed scaling issue with scaled style scaling.
+   - fixed combobox scaling.
+   - fixed scrollbar arrows.
+   - scaled combobox listbox scrollbar.
+
+7.4 (2019-12-3)
+   - added hasImage routine for use by checkButtonToggle
+   - Fix menu highlight color
 
 7.3 (2019-12-2)
    - fix spinbox scaled styling

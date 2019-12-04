@@ -76,7 +76,7 @@
 #   - fixed scrollbar arrows.
 #   - scaled combobox listbox scrollbar.
 # 7.4 (2019-12-3)
-#   - added getColor routine for use by checkButtonToggle
+#   - added hasImage routine for use by checkButtonToggle
 #   - Fix menu highlight color
 # 7.3 (2019-12-2)
 #   - fix spinbox scaled styling
