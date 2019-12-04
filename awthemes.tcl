@@ -2424,7 +2424,7 @@ namespace eval ::ttk::awthemes {
         ! [dict exists $vars(cache.listbox) $w] } {
       regsub {\.popdown\.f\.l$} $w {} cbw
       set style [$cbw cget -style]
-      if { [dict exists $vars(registered.combobox) $style] != -1 } {
+      if { [dict exists $vars(registered.combobox) $style] } {
         set pfx [dict get $vars(registered.combobox) $style]
         set sb $cbw.popdown.f.sb
         set sborient [string totitle [$sb cget -orient]]
