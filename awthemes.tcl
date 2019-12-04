@@ -1825,7 +1825,7 @@ namespace eval ::ttk::awthemes {
     ]
   }
 
-  proc _setStyledColors { {pfx {}} {scale {}} } {
+  proc _setStyledColors { {pfx {}} {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
