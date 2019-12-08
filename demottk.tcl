@@ -23,6 +23,7 @@ if { [llength $::argv] < 1 } {
 set theme [lindex $::argv 0]
 
 set ::notksvg false
+set ::noflex false
 set fontscale 1.0 ; # default
 set sf 1.0
 set gc {}
@@ -51,6 +52,9 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-notksvg" } {
     set ::notksvg true
   }
+  if { [lindex $::argv $idx] eq "-noflex" } {
+    set ::noflex true
+  }
 }
 
 # now do the require so that -notksvg has an effect.
@@ -64,6 +68,20 @@ catch { package require checkButtonToggle }
 set ::havecbt false
 if { ! [catch {package present checkButtonToggle}] } {
   set ::havecbt true
+}
+
+set ::haveflex false
+set menucmd menu
+set topmenuargs {}
+set menuargs {}
+if { ! $::noflex } {
+  catch { package require flexmenu }
+  if { ! [catch {package present flexmenu}] } {
+    set ::haveflex true
+    set menucmd ::flexmenu
+    set topmenuargs [list -type menubar]
+    set menuargs [list -mode frame]
+  }
 }
 
 if { $havethemeutils } {
@@ -153,26 +171,30 @@ set on 1
 
 . configure -background [ttk::style lookup TFrame -background]
 
-menu .mb -font MenuFont
-. configure -menu .mb
+$menucmd .mb -font MenuFont {*}$topmenuargs {*}$menuargs
+if { $::haveflex } {
+  pack .mb -in . -side top -fill x -anchor nw -pady 0 -padx 0 -expand false
+} else {
+  . configure -menu .mb
+}
 
-menu .mb.example -tearoff 0 -font MenuFont
-.mb.example add command -label Menu-1
-.mb.example add command -label Menu-2
-.mb add cascade -label Example -menu .mb.example
+$menucmd .mb_example -tearoff 0 -font MenuFont {*}$menuargs
+.mb_example add command -label Menu-1
+.mb_example add command -label Menu-2
+.mb add cascade -label Example -menu .mb_example
 
-menu .mb.b -tearoff 0 -font MenuFont
-.mb add cascade -label {not in use} -menu .mb.b
+$menucmd .mb_b -tearoff 0 -font MenuFont {*}$menuargs
+.mb add cascade -label {not in use} -menu .mb_b
 
-menu .mb.widgets -tearoff 0 -font MenuFont
-.mb.widgets add checkbutton -label checkA
-.mb.widgets add checkbutton -label checkB
-.mb.widgets add radiobutton -label radioA
-.mb.widgets add radiobutton -label radioB
-.mb.widgets add command -label widgets-2
-.mb add cascade -label widgets -menu .mb.widgets
+$menucmd .mb_widgets -tearoff 0 -font MenuFont {*}$menuargs
+.mb_widgets add checkbutton -label checkA
+.mb_widgets add checkbutton -label checkB
+.mb_widgets add radiobutton -label radioA -value 0
+.mb_widgets add radiobutton -label radioB -value 1
+.mb_widgets add command -label widgets-2
+.mb add cascade -label widgets -menu .mb_widgets
 
-foreach {w} {.mb .mb.example .mb.widgets} {
+foreach {w} {.mb .mb_example .mb_widgets} {
   if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
     ::ttk::theme::${theme}::setMenuColors $w
   } else {
@@ -408,37 +430,37 @@ ttk::frame .menubar -borderwidth 0 -takefocus 0
 pack .menubar -in .five -side top -fill x
 
 ttk::menubutton .menubar.file -text File \
-    -underline 0 -menu .menubar.file.m
+    -underline 0 -menu .menubar_file_m
 ttk::menubutton .menubar.edit -text Edit \
-    -underline 0 -menu .menubar.edit.m
+    -underline 0 -menu .menubar_edit_m
 ttk::menubutton .menubar.dis -text Disabled \
-    -underline 0 -menu .menubar.dis.m -state disabled
+    -underline 0 -menu .menubar_dis_m -state disabled
 
-menu .menubar.file.m -tearoff 0  -font MenuFont
-.menubar.file.m add command -label "Exit" \
+$menucmd .menubar_file_m -tearoff 0  -font MenuFont {*}$menuargs
+.menubar_file_m add command -label "Exit" \
     -underline 1 -command exit
 if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
-  ::ttk::theme::${theme}::setMenuColors .menubar.file.m
+  ::ttk::theme::${theme}::setMenuColors .menubar_file_m
 }
 
-menu .menubar.edit.m -tearoff 0  -font MenuFont
-.menubar.edit.m add command -label "Cut" \
+$menucmd .menubar_edit_m -tearoff 0  -font MenuFont {*}$menuargs
+.menubar_edit_m add command -label "Cut" \
     -underline 2 \
-    -command {event generate [focus] <<Cut>>}
-.menubar.edit.m add command -label "Copy" \
+    -command {puts cut}
+.menubar_edit_m add command -label "Copy" \
     -underline 0 \
-    -command {event generate [focus] <<Copy>>}
-.menubar.edit.m add command -label "Paste" \
-    -command {event generate [focus] <<Paste>>}
+    -command {puts copy}
+.menubar_edit_m add command -label "Paste" \
+    -command {puts paste}
 if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
-  ::ttk::theme::${theme}::setMenuColors .menubar.edit.m
+  ::ttk::theme::${theme}::setMenuColors .menubar_edit_m
 }
 
-menu .menubar.dis.m -tearoff 0 -font MenuFont
-.menubar.dis.m add command -label "xyzzy"
-.menubar.dis.m add command -label "plugh"
+$menucmd .menubar_dis_m -tearoff 0 -font MenuFont {*}$menuargs
+.menubar_dis_m add command -label "xyzzy"
+.menubar_dis_m add command -label "plugh"
 if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
-  ::ttk::theme::${theme}::setMenuColors .menubar.dis.m
+  ::ttk::theme::${theme}::setMenuColors .menubar_dis_m
 }
 
 ttk::button .menubar.tba -text {Toolbutton A} -style Toolbutton

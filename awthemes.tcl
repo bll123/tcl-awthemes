@@ -68,6 +68,8 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.6 (2019-12-7)
+#   - better grip design
 # 7.5 (2019-12-4)
 #   - reworked all .svg files.
 #   - cleaned up notebook colors.
@@ -75,8 +77,9 @@
 #   - fixed combobox scaling.
 #   - fixed scrollbar arrows.
 #   - scaled combobox listbox scrollbar.
+#   - added hasImage routine
 # 7.4 (2019-12-3)
-#   - added hasImage routine for use by checkButtonToggle
+#   - added getColor routine for use by checkButtonToggle
 #   - Fix menu highlight color
 # 7.3 (2019-12-2)
 #   - fix spinbox scaled styling
@@ -207,7 +210,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.5
+package provide awthemes 7.6
 
 package require Tk
 # set ::notksvg to true for testing purposes

@@ -16,6 +16,9 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+7.6 (2019-12-7)
+   - better grip design
+
 7.5 (2019-12-4)
    - reworked all .svg files.
    - cleaned up notebook colors.
