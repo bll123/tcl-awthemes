@@ -1,9 +1,9 @@
-package ifneeded awthemes 7.6 \
+package ifneeded awthemes 7.7 \
     [list source [file join $dir awthemes.tcl]]
 package ifneeded colorutils 4.5 \
     [list source [file join $dir colorutils.tcl]]
 
-package ifneeded awdark 7.1 \
+package ifneeded awdark 7.2 \
     [list source [file join $dir awdark.tcl]]
 package ifneeded awlight 7.1 \
     [list source [file join $dir awlight.tcl]]

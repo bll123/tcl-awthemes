@@ -2,21 +2,25 @@
 
 package require Tk
 
-set ap [file dirname [info script]]
+set iscript [info script]
+if { [file type $iscript] eq "link" } { set iscript [file link $iscript] }
+set ap [file dirname $iscript]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
 }
 if { 1 } {
-  set ap [file normalize [file join [file dirname [info script]] .. code]]
+  set ap [file normalize [file join [file dirname $iscript] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
   }
 }
 unset ap
+unset iscript
 
 if { [llength $::argv] < 1 } {
   puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] "
-  puts "    \[-background <color>] \[-highlightcolor <color>] \[-notksvg]"
+  puts "    \[-background <color>] \[-highlightcolor <color>] "
+  puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip]"
   exit 1
 }
 
@@ -24,6 +28,8 @@ set theme [lindex $::argv 0]
 
 set ::notksvg false
 set ::noflex false
+set ::nocbt false
+set ::sizegrip false
 set fontscale 1.0 ; # default
 set sf 1.0
 set gc {}
@@ -55,6 +61,12 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-noflex" } {
     set ::noflex true
   }
+  if { [lindex $::argv $idx] eq "-nocbt" } {
+    set ::nocbt true
+  }
+  if { [lindex $::argv $idx] eq "-sizegrip" } {
+    set ::sizegrip true
+  }
 }
 
 # now do the require so that -notksvg has an effect.
@@ -64,10 +76,12 @@ if { ! [catch {package present awthemes}] } {
   set ::havethemeutils true
 }
 
-catch { package require checkButtonToggle }
 set ::havecbt false
-if { ! [catch {package present checkButtonToggle}] } {
-  set ::havecbt true
+if { ! $::nocbt } {
+  catch { package require checkButtonToggle }
+  if { ! [catch {package present checkButtonToggle}] } {
+    set ::havecbt true
+  }
 }
 
 set ::haveflex false
@@ -131,7 +145,7 @@ if { $origfontsz != $newfontsz } {
 
 set loaded false
 if { 1 } {
-  set fn [file join $::env(HOME) s ballroomdj code themes themeloader.tcl]
+  set fn [file join .. code themes themeloader.tcl]
   if { [file exists $fn] } {
     source $fn
     themeloader::loadTheme $theme
@@ -339,6 +353,183 @@ foreach {k} {n d} {
   incr row
 }
 pack .lfn .lfd -in .one -side left -padx 3p -pady 3p -expand 1 -fill both
+
+if { ! $::notksvg && $::sizegrip } {
+  set sgdata {
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+  <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+  <svg
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:svg="http://www.w3.org/2000/svg"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     width="18"
+     height="18"
+     viewBox="0 0 18 18"
+     version="1.1"
+     id="svg8"
+     inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+     sodipodi:docname="sizegrip-base.svg">
+    <defs
+       id="defs2">
+      <linearGradient
+         inkscape:collect="always"
+         id="linearGradient838">
+        <stop
+           style="stop-color:#ffffff;stop-opacity:1"
+           offset="0"
+           id="stop834" />
+        <stop
+           style="stop-color:#0000ff;stop-opacity:1"
+           offset="1"
+           id="stop836" />
+      </linearGradient>
+      <linearGradient
+         inkscape:collect="always"
+         xlink:href="#linearGradient838"
+         id="linearGradient840"
+         x1="3.7895701"
+         y1="295.77591"
+         x2="4.0541534"
+         y2="296.04047"
+         gradientUnits="userSpaceOnUse"
+         gradientTransform="translate(-2.8763581e-8,5.0434905e-6)" />
+      <linearGradient
+         inkscape:collect="always"
+         xlink:href="#linearGradient838"
+         id="linearGradient848"
+         x1="3.1750002"
+         y1="295.0546"
+         x2="3.4395835"
+         y2="295.31915"
+         gradientUnits="userSpaceOnUse"
+         gradientTransform="translate(0.61456997,0.72132033)" />
+    </defs>
+    <sodipodi:namedview
+       id="base"
+       pagecolor="#ffffff"
+       bordercolor="#666666"
+       borderopacity="1.0"
+       inkscape:pageopacity="0.0"
+       inkscape:pageshadow="2"
+       inkscape:zoom="19.833333"
+       inkscape:cx="9.0000002"
+       inkscape:cy="9.0000002"
+       inkscape:document-units="px"
+       inkscape:current-layer="layer1"
+       showgrid="true"
+       inkscape:window-width="1214"
+       inkscape:window-height="532"
+       inkscape:window-x="86"
+       inkscape:window-y="25"
+       inkscape:window-maximized="0"
+       scale-x="1.1"
+       units="px"
+       inkscape:pagecheckerboard="true"
+       fit-margin-top="0"
+       fit-margin-left="-0.1"
+       fit-margin-right="0"
+       fit-margin-bottom="0"
+       inkscape:snap-nodes="false"
+       showguides="false">
+      <inkscape:grid
+         type="xygrid"
+         id="grid843"
+         originx="-1.6121707"
+         originy="0.26814652" />
+    </sodipodi:namedview>
+    <metadata
+       id="metadata5">
+      <rdf:RDF>
+        <cc:Work
+           rdf:about="">
+          <dc:format>image/svg+xml</dc:format>
+          <dc:type
+             rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+          <dc:title></dc:title>
+        </cc:Work>
+      </rdf:RDF>
+    </metadata>
+    <g
+       inkscape:label="Layer 1"
+       inkscape:groupmode="layer"
+       id="layer1"
+       transform="translate(-1.6121707,-293.47064)">
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827"
+         cx="17.398338"
+         cy="309.25586"
+         r="1.9999994" />
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827-3"
+         cx="-12.711312"
+         cy="309.25586"
+         transform="scale(-1,1)"
+         r="1.9999994" />
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827-6"
+         cx="17.398474"
+         cy="304.56882"
+         r="1.9999994" />
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827-3-7"
+         cx="8.0244226"
+         cy="309.25574"
+         r="1.9999994" />
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827-3-5"
+         cx="12.711312"
+         cy="304.56894"
+         r="1.9999994" />
+      <circle
+         style="opacity:1;fill:_SZGRIP_;fill-opacity:1;stroke:_SZGRIP_;stroke-width:0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0;paint-order:normal"
+         id="path827-3-3"
+         cx="17.398474"
+         cy="299.88174"
+         r="1.9999994" />
+    </g>
+  </svg>
+  }
+
+  set elsizegrip false
+  set sgimg {}
+  if { [tk windowingsystem] eq "aqua" &&
+      ! $elsizegrip } {
+    # aqua doesn't have a good sizegrip
+    regsub -all _SZGRIP_ $sgdata
+        [::colorutils::rgbToHexStr $::sysvars::v(darwin.appearance) 2]
+        sgdata
+    set sgimg [image create photo -data $sgdata -format svg]
+    ttk::style element create new.sizegrip image $sgimg
+    set elsizegrip true
+  }
+  if { ! $elsizegrip &&
+      ([info commands ::ttk::theme::${theme}::hasImage] eq {} ||
+       ! [::ttk::theme::${theme}::hasImage sizegrip]) } {
+    set tcol #000000
+    # for dark themes, set tcol to a bright yellow
+    regsub -all _SZGRIP_ $sgdata $tcol sgdata
+    set sgimg [image create photo -data $sgdata -format svg]
+    ttk::style element create new.sizegrip image $sgimg
+    set elsizegrip true
+  }
+  if { $elsizegrip } {
+    set sglayout [ttk::style layout TSizegrip]
+    regsub {Sizegrip\.sizegrip} $sglayout new.sizegrip sglayout
+    ttk::style layout TSizegrip $sglayout
+  }
+}
+
 ttk::sizegrip  .sg
 pack .sg -in .one -side right -anchor se
 

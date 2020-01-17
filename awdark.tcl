@@ -2,7 +2,7 @@
 #
 #
 
-package provide awdark 7.1
+package provide awdark 7.2
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -59,6 +59,9 @@ namespace eval ::ttk::theme::awdark {
   proc setDerivedColors { prefix } {
     variable colors
 
+    set colors(${prefix}base.border) $colors(base.darkest)
+    set colors(${prefix}base.border.disabled) \
+        [::colorutils::disabledColor $colors(base.dark) $colors(base.bg) 0.8]
     set colors(${prefix}base.arrow) $colors(base.lightest)
     set colors(${prefix}base.button.bg) $colors(base.dark)
     set colors(${prefix}base.entry.bg) $colors(base.darker)

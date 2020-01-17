@@ -2,17 +2,20 @@
 
 package require Tk
 
-set ap [file normalize [file dirname [info script]]]
+set iscript [info script]
+if { [file type $iscript] eq "link" } { set iscript [file link $iscript] }
+set ap [file normalize [file dirname $iscript]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
 }
 if { 1 } {
-  set ap [file normalize [file join [file dirname [info script]] .. code]]
+  set ap [file normalize [file join [file dirname $iscript] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
   }
 }
 unset ap
+unset iscript
 
 if { [llength $::argv] < 1 } {
   puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"

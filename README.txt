@@ -16,6 +16,10 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+7.7 (2020-1-17)
+   - fix crash when tksvg not present.
+   - improve awdark border colors.
+
 7.6 (2019-12-7)
    - better grip design
 

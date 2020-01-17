@@ -68,6 +68,9 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.7 (2020-1-17)
+#   - fix crash when tksvg not present.
+#   - improve awdark border colors.
 # 7.6 (2019-12-7)
 #   - better grip design
 # 7.5 (2019-12-4)
@@ -210,7 +213,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.6
+package provide awthemes 7.7
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -219,15 +222,18 @@ if { ! [info exists ::notksvg] || ! $::notksvg } {
 }
 
 try {
-  set ap [file normalize [file dirname [info script]]]
+  set iscript [info script]
+  if { [file type $iscript] eq "link" } { set iscript [file link $iscript] }
+  set ap [file normalize [file dirname $iscript]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
   }
-  set ap [file normalize [file join [file dirname [info script]] .. code]]
+  set ap [file normalize [file join [file dirname $iscript] .. code]]
   if { $ap ni $::auto_path } {
     lappend ::auto_path $ap
   }
   unset ap
+  unset iscript
   package require colorutils
 } on error {err res} {
   puts stderr "ERROR: colorutils package is required"
@@ -268,7 +274,9 @@ namespace eval ::ttk::awthemes {
     set colors(scale.factor) 1.0
     set vars(theme.name) $theme
 
-    set d [file dirname [info script]]
+    set iscript [info script]
+    if { [file type $iscript] eq "link" } { set iscript [file link $iscript] }
+    set d [file dirname $iscript]
     set vars(image.dir.generic) [file join $d i generic]
     if { $imagedir eq {} } {
       set imagedir $theme
@@ -1413,8 +1421,12 @@ namespace eval ::ttk::awthemes {
 
     ttk::style configure ${pfx}TCombobox \
         -borderwidth 1 \
-        -arrowsize $wid \
         -relief none
+    if { [info exists images(combo-arrow-down-n)] } {
+      set wid [image width $images(combo-arrow-down-n${sfx})]
+      ttk::style configure ${pfx}TCombobox \
+          -arrowsize $wid
+    }
   }
 
   proc _createEntry { {pfx {}} {sfx {}} {scale 1.0} } {
