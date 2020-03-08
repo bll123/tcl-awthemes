@@ -69,8 +69,7 @@
 #     afterwards, it must be configured when the scrollbar is created.
 #
 # 7.8 (2020-308)
-#   - set listbox and text widget border color, highlight color, highlight
-#     background color.
+#   - set listbox and text widget highlight color, highlight background color.
 # 7.7 (2020-1-17)
 #   - fix crash when tksvg not present.
 #   - improve awdark border colors.
