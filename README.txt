@@ -16,6 +16,9 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+7.8 (2020-3-8)
+   - fix highlight background/color for text/label widgets.
+
 7.7 (2020-1-17)
    - fix crash when tksvg not present.
    - improve awdark border colors.

@@ -560,10 +560,10 @@ text .text \
     -yscrollcommand [list .sbv set] \
     -wrap none \
     -relief flat \
-    -borderwidth 0 \
     -height 10 \
     -width 50 \
-    -highlightthickness 0 \
+    -borderwidth 1 \
+    -highlightthickness 1 \
     -font TextFont
 if { [info commands ::ttk::theme::${theme}::setTextColors] ne {} } {
   ::ttk::theme::${theme}::setTextColors .text
@@ -665,12 +665,14 @@ set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp
 listbox .lbox1 \
     -listvariable ::lbox \
     -yscrollcommand [list .sblbox1 set] \
-    -highlightthickness 0 \
+    -borderwidth 1 \
+    -highlightthickness 1 \
     -font TextFont
 listbox .lbox2 \
     -listvariable ::lbox \
     -yscrollcommand [list .sblbox2 set] \
-    -highlightthickness 0 \
+    -borderwidth 1 \
+    -highlightthickness 1 \
     -font TextFont
 .lbox2 configure -state disabled
 

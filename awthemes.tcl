@@ -68,6 +68,9 @@
 #   Also note that the styling for the scrollbar cannot be configured
 #     afterwards, it must be configured when the scrollbar is created.
 #
+# 7.8 (2020-308)
+#   - set listbox and text widget border color, highlight color, highlight
+#     background color.
 # 7.7 (2020-1-17)
 #   - fix crash when tksvg not present.
 #   - improve awdark border colors.
@@ -213,7 +216,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.7
+package provide awthemes 7.8
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -2311,6 +2314,8 @@ namespace eval ::ttk::awthemes {
     $w configure -selectforeground $colors(curr.text.select.fg)
     $w configure -borderwidth 1p
     $w configure -relief solid
+    $w configure -highlightcolor $colors(curr.base.focus)
+    $w configure -highlightbackground $colors(curr.base.bg)
   }
 
   proc setTextColors { w {useflag {}} } {
@@ -2337,6 +2342,8 @@ namespace eval ::ttk::awthemes {
     $w configure -selectbackground $colors(curr.text.select.bg)
     $w configure -inactiveselectbackground $colors(curr.text.select.bg.inactive)
     $w configure -borderwidth 1p
+    $w configure -highlightcolor $colors(curr.base.focus)
+    $w configure -highlightbackground $colors(curr.base.bg)
   }
 
   proc scaledStyle { {pfx {}} {f1 {}} {f2 {}} {theme {}} } {
