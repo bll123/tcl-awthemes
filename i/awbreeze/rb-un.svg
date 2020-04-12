@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="15.000001"
-   height="15"
+   width="17.941566"
+   height="17.941565"
    id="svg4152"
    version="1.1"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 15.000001 15"
-   sodipodi:docname="rb-sn-small.svg">
+   viewBox="0 0 17.941566 17.941565"
+   sodipodi:docname="rb-un.svg">
   <defs
      id="defs4154" />
   <sodipodi:namedview
@@ -25,14 +25,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.733333"
-     inkscape:cx="7.5"
-     inkscape:cy="7.4999995"
+     inkscape:zoom="24.691267"
+     inkscape:cx="8.9302831"
+     inkscape:cy="8.9707827"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
-     inkscape:window-width="1013"
+     inkscape:window-width="1015"
      inkscape:window-height="708"
      inkscape:window-x="241"
      inkscape:window-y="4"
@@ -76,18 +76,12 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     transform="translate(0.45843729,-48.791062)">
+     transform="translate(0.22293663,-46.472074)">
     <circle
+       style="fill:_BG_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4485"
-       cx="7.041563"
-       cy="56.291061"
-       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0.98968762;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       r="7.0051565" />
-    <circle
-       style="fill:_GC_;fill-opacity:1;stroke-width:0.23195803"
-       id="path4500"
-       cx="7.041563"
-       cy="56.41687"
-       r="4.4565225" />
+       cx="8.7478466"
+       cy="55.442856"
+       r="8.5" />
   </g>
 </svg>

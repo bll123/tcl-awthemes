@@ -12,6 +12,8 @@
 # don't force Tk to be required
 #package require Tk
 
+package provide colorutils 4.6
+
 namespace eval ::colorutils {
   variable vars
 
@@ -60,7 +62,7 @@ namespace eval ::colorutils {
 
   # adjust the color 'col'
   # based on the difference between 'oldcol' and 'newcol'
-  proc adjustColor { col oldcol newcol } {
+  proc adjustColor { col oldcol newcol {sz 4} } {
     lassign [winfo rgb . $col] rc gc bc
     lassign [winfo rgb . $oldcol] ro go bo
     lassign [winfo rgb . $newcol] rn gn bn
@@ -68,7 +70,7 @@ namespace eval ::colorutils {
     # handle white and black.
     if { ($rc == 0 && $gc == 0 && $bc == 0) ||
         ($rc == 65535 && $gc == 65535 && $bc == 65535) } {
-      return [rgbToHexStr [list $rc $gc $bc]]
+      return [rgbToHexStr [list $rc $gc $bc] $sz]
     }
 
     # 0.3 * 65535 = 19661
@@ -82,16 +84,15 @@ namespace eval ::colorutils {
     set rorig [expr {((65535 * $rc) - $ro * $bga) / $fga}]
     set gorig [expr {((65535 * $gc) - $go * $bga) / $fga}]
     set borig [expr {((65535 * $bc) - $bo * $bga) / $fga}]
-    # this seems to work, don't know if it is right.
-    if { $rorig < 0 } { set rorig [expr {-$rorig}] }
-    if { $gorig < 0 } { set gorig [expr {-$gorig}] }
-    if { $borig < 0 } { set borig [expr {-$borig}] }
+    while { $rorig < 0 } { set rorig [expr {$rorig+65535}] }
+    while { $gorig < 0 } { set gorig [expr {$gorig+65535}] }
+    while { $borig < 0 } { set borig [expr {$borig+65535}] }
 
     # and then blend it back together with the new background.
     set rnew [expr {($rn * $bga + $rorig * $fga) / 65535}]
     set gnew [expr {($gn * $bga + $gorig * $fga) / 65535}]
     set bnew [expr {($bn * $bga + $borig * $fga) / 65535}]
-    return [rgbToHexStr [list $rnew $gnew $bnew]]
+    return [rgbToHexStr [list $rnew $gnew $bnew] $sz]
   }
 
   proc opaqueblend { fg bg fga {sz 4} } {
@@ -119,9 +120,9 @@ namespace eval ::colorutils {
   }
 
   # blend with the background
-  proc disabledColor { col bg {perc 0.6} } {
+  proc disabledColor { col bg {perc 0.6} {sz 4} } {
     set val [expr {round(65535.0*$perc)}]
-    return [opaqueblend $col $bg $val]
+    return [opaqueblend $col $bg $val $sz]
   }
 
   proc getLightDarkColors { c } {
@@ -371,5 +372,3 @@ namespace eval ::colorutils {
         [expr {round($b * 65535.0)}]];
   }
 }
-
-package provide colorutils 4.5

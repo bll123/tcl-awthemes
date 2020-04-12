@@ -1,7 +1,7 @@
 
 The following files are needed:
   awthemes.tcl, colorutils.tcl, pkgIndex.tcl,
-  awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl,
+  awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl, awbreeze.tcl,
   i/
 Demonstration scripts:
   demottk.tcl, demoscaled.tcl
@@ -15,6 +15,26 @@ Try:
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
   # scaled styling
   tclsh demoscaled.tcl winxpblue
+
+7.9 (2020-4-12)
+   - winxpblue: fixed minor focus color issues (entry, combobox).
+   - fixed incorrect scrollbar background color.
+   - button: added state {active focus} (for breeze).
+   - entry: added ability to set graphics.
+   - notebook: added hover, disabled graphics.
+   - combobox: graphics will be set if entry graphics are present.
+   - combobox: readonly graphics will be set to button graphics if
+     both entry and button graphics are present (breeze theme).
+   - menubutton: option to use button graphics for menubuttons (breeze).
+   - toolbutton: option to use button graphics for toolbuttons (breeze).
+   - 'setListBoxColors': remove borderwidth and relief settings.
+   - spinbox: graphics will be set if entry graphics are present.
+   - internal code cleanup: various theme settings have been renamed.
+   - added breeze theme (based on Maximilian Lika's breeze theme 0.8).
+   - add new helper routines to ::themeutils to set the background color
+     and to set the focus/highlight color.
+   - awdark/awlight: no tksvg: Fixed some grip/slider colors.
+   - fix user color overrides
 
 7.8 (2020-3-8)
    - fix highlight background/color for text/label widgets.

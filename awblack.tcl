@@ -2,7 +2,7 @@
 #
 #
 
-package provide black 7.0
+package provide black 7.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -21,7 +21,7 @@ namespace eval ::ttk::theme::black {
     variable colors
 
       array set colors {
-          anchor.button         w
+          arrow.height          16
           base.bg               #424242
           base.bg.disabled      #424242
           base.dark             #222222
@@ -31,47 +31,46 @@ namespace eval ::ttk::theme::black {
           base.focus            #000000
           base.lighter          #626262
           base.lightest         #ffffff
-          focusthickness.checkbutton  1
-          focusthickness.notebooktab  1
+          button.anchor         w
+          button.padding        {5 1}
+          checkbutton.focusthickness  1
+          checkbutton.padding   {4 1 1 1}
+          combobox.height       23
+          entry.padding         {1 0}
           graphics.border       #222222
           graphics.color        #424242
           graphics.color.arrow      #000000
           graphics.grip         #000000
           graphics.sizegrip     #000000
-          height.arrow          16
-          height.combobox       23
           highlight.active.bg   #4a6984
           highlight.active.fg   #ffffff
           highlight.darkhighlight     #424242
-          padding.button        {5 1}
-          padding.checkbutton   {4 1 1 1}
-          padding.entry         {1 0}
-          padding.menubutton    {5 1}
-          padding.notebooktab   {4 2 4 2}
-          relief.menubutton     raised
-          scrollbar.grip        true
-          text.select.bg        #4a6984
-          text.select.fg        #ffffff
-          width.menubutton      -8
+          menubutton.padding    {5 1}
+          menubutton.relief     raised
+          menubutton.width      -8
+          notebook.tab.focusthickness  1
+          notebook.tab.padding   {4 2 4 2}
+          highlight.text.select.bg        #4a6984
+          highlight.text.select.fg        #ffffff
       }
   }
 
-  proc setDerivedColors { prefix } {
+  proc setDerivedColors { } {
     variable colors
 
-    set colors(${prefix}base.border) $colors(base.darkest)
-    set colors(${prefix}base.border.dark) $colors(base.darkest)
-    set colors(${prefix}base.button.border) $colors(base.darkest)
-    set colors(${prefix}base.entry.bg) $colors(base.lightest)
-    set colors(${prefix}base.hover) $colors(base.lighter)
-    set colors(${prefix}base.trough) $colors(base.darker)
-    set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
-    set colors(${prefix}text.fg) $colors(base.darkest)
+    set colors(base.border) $colors(base.darkest)
+    set colors(base.border.dark) $colors(base.darkest)
+    set colors(base.button.border) $colors(base.darkest)
+    set colors(base.entry.field.bg) $colors(base.lightest)
+    set colors(base.hover) $colors(base.lighter)
+    set colors(base.trough) $colors(base.darker)
+    set colors(radiobutton.padding) $colors(checkbutton.padding)
+    set colors(text.fg) $colors(base.darkest)
     #
-    set colors(${prefix}base.entry.bg.disabled) $colors(base.entry.bg)
-    set colors(${prefix}text.bg) $colors(base.entry.bg)
+    set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
+    set colors(text.bg) $colors(base.entry.field.bg)
     #
-    set colors(${prefix}base.entry.fg) $colors(text.fg)
+    set colors(base.entry.fg) $colors(text.fg)
   }
 
   proc init { } {

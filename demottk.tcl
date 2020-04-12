@@ -19,7 +19,7 @@ unset iscript
 
 if { [llength $::argv] < 1 } {
   puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] "
-  puts "    \[-background <color>] \[-highlightcolor <color>] "
+  puts "    \[-background <color>] \[-focuscolor <color>] "
   puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip]"
   exit 1
 }
@@ -43,7 +43,7 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     incr idx
     set sf [lindex $::argv $idx]
   }
-  if { [lindex $::argv $idx] eq "-highlightcolor" } {
+  if { [lindex $::argv $idx] eq "-focuscolor" } {
     incr idx
     set gc [lindex $::argv $idx]
   }
@@ -100,11 +100,13 @@ if { ! $::noflex } {
 
 if { $havethemeutils } {
   if { $gc ne {} } {
-    ::themeutils::setThemeColors $theme \
-        graphics.color $gc
+    ::themeutils::setHighlightColor $theme $gc
   }
   ::themeutils::setThemeColors $theme \
       scale.factor $sf
+}
+if { $havethemeutils && $nbg ne {} } {
+  ::themeutils::setBackgroundColor $theme $nbg
 }
 
 if { ! $::notksvg } {
@@ -172,11 +174,6 @@ if { [file exists $tfn] && ! $loaded } {
 }
 
 ttk::style theme use $theme
-
-if { $nbg ne {} &&
-    [info commands ::ttk::theme::${theme}::setBackground] ne {} } {
-  ::ttk::theme::${theme}::setBackground $nbg
-}
 
 set val 55
 set valb $theme
@@ -258,6 +255,7 @@ ttk::frame .seven
 
 ttk::labelframe .lfn -text " Normal "
 ttk::labelframe .lfd -text " Disabled "
+.lfd state disabled
 foreach {k} {n d} {
   set s !disabled
   if { $k eq "d" } {
@@ -276,8 +274,17 @@ foreach {k} {n d} {
       -state $s \
       -height 5 \
       -font TkDefaultFont
+  ttk::combobox .comboro$k -values \
+      [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
+      -textvariable valb \
+      -width 15 \
+      -height 5 \
+      -font TkDefaultFont
+  .comboro$k state [list readonly $s]
   option add *TCombobox*Listbox.font TkDefaultFont
-  grid .combo$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
+  grid .combo$k .comboro$k -in .lf$k -sticky w -padx 3p -pady 3p
+  grid configure .combo$k -columnspan 2
+  grid configure .comboro$k -columnspan 2 -column 2
 
   ttk::checkbutton .cboff$k -text off -variable off -state $s
   ttk::checkbutton .cbon$k -text on -variable on -state $s
@@ -293,7 +300,7 @@ foreach {k} {n d} {
   }
 
   ttk::separator .sep$k
-  grid .sep$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 5
+  grid .sep$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
   incr row
 
   ttk::radiobutton .rboff$k -text off -variable on -value 0 -state $s
@@ -321,7 +328,8 @@ foreach {k} {n d} {
   .pb$k state $s
   ttk::scale .scv$k \
       -orient vertical \
-      -from 0 -to 100 \
+      -from 100 \
+      -to 0 \
       -variable val \
       -length [expr {round(100*$scalefactor)}]
   .scv$k state $s
@@ -655,9 +663,10 @@ if { [info commands ::ttk::theme::${theme}::setMenuColors] ne {} } {
 }
 
 ttk::button .menubar.tba -text {Toolbutton A} -style Toolbutton
-ttk::button .menubar.tbb -text {Toolbutton B} -style Toolbutton -state disabled
+ttk::button .menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
 
-pack .menubar.file .menubar.edit .menubar.dis .menubar.tba .menubar.tbb -side left
+pack .menubar.file .menubar.edit .menubar.dis \
+    .menubar.tba .menubar.tbc -side left
 
 ttk::scrollbar .sblbox1 -command [list .lbox1 yview]
 ttk::scrollbar .sblbox2 -command [list .lbox2 yview]
@@ -665,15 +674,17 @@ set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp
 listbox .lbox1 \
     -listvariable ::lbox \
     -yscrollcommand [list .sblbox1 set] \
-    -borderwidth 1 \
-    -highlightthickness 1 \
-    -font TextFont
+    -borderwidth 1p \
+    -highlightthickness 1p \
+    -font TextFont \
+    -relief sunken
 listbox .lbox2 \
     -listvariable ::lbox \
     -yscrollcommand [list .sblbox2 set] \
-    -borderwidth 1 \
-    -highlightthickness 1 \
-    -font TextFont
+    -borderwidth 1p \
+    -highlightthickness 1p \
+    -font TextFont \
+    -relief sunken
 .lbox2 configure -state disabled
 
 if { [info commands ::ttk::theme::${theme}::setListboxColors] ne {} } {
@@ -731,6 +742,6 @@ if { 0 && $::tcl_platform(os) eq "Darwin" } {
     ttk::style layout Help.TButton $hlayout
     ttk::button .dbhelp$k -state $s -style Help.TButton
     grid .dbi$k .dbrr$k .dbdisc$k .dbg$k .dbhelp$k -in .dbf$k -sticky w -padx 3p -pady 3p
-    grid .dbf$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 5
+    grid .dbf$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
   }
 }

@@ -2,7 +2,7 @@
 #
 #
 
-package provide winxpblue 7.1
+package provide winxpblue 7.2
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -21,9 +21,9 @@ namespace eval ::ttk::theme::winxpblue {
     variable colors
 
       array set colors {
-          anchor.button         w
-          base.bg               #ece9d8
+          arrow.height          16
           base.bg.disabled      #ece9d8
+          base.bg               #ece9d8
           base.dark             #bab5ab
           base.darker           #9e9a91
           base.darkest          #000000
@@ -31,62 +31,60 @@ namespace eval ::ttk::theme::winxpblue {
           base.focus            #c1d2ee
           base.lighter          #ffffff
           base.lightest         #ffffff
-          focusthickness.checkbutton  1
-          focusthickness.notebooktab  1
+          button.anchor         w
+          button.padding        {3 3}
+          checkbutton.focusthickness  1
+          checkbutton.padding   {8 1 1 1}
+          combobox.height       23
+          entry.padding         {2 0}
           graphics.border       #9e9a91
-          graphics.color        #ece9d8
           graphics.color.arrow  #003c74
+          graphics.color        #ece9d8
           graphics.grip         #9e9a91
           graphics.sizegrip     #003c74
-          height.arrow          16
-          height.combobox       23
           highlight.active.bg   #4a6984
           highlight.active.fg   #ffffff
           highlight.darkhighlight     #4a6984
-          padding.button        {3 3}
-          padding.checkbutton   {8 1 1 1}
-          padding.entry         {2 0}
-          padding.menubutton    {5 1}
-          padding.notebooktab   {4 2 4 2}
-          relief.menubutton     none
-          scrollbar.grip        false
-          text.select.bg        #4a6984
-          text.select.fg        #ffffff
-          width.menubutton      {}
+          menubutton.padding    {5 1}
+          menubutton.relief     none
+          menubutton.width      {}
+          notebook.tab.focusthickness  1
+          notebook.tab.padding   {4 2 4 2}
+          highlight.text.select.bg  #4a6984
+          highlight.text.select.fg  #ffffff
       }
   }
 
-  proc setDerivedColors { prefix } {
+  proc setDerivedColors { } {
     variable colors
 
-    set colors(${prefix}button.image.border) {4 9}
-    set colors(${prefix}button.image.padding) {5 2}
-    set colors(${prefix}base.slider.border) $colors(base.bg)
-    set colors(${prefix}base.button.active) #c1d2ee
-    set colors(${prefix}base.button.border) $colors(base.bg)
-    set colors(${prefix}base.button.pressed) $colors(base.lighter)
-    set colors(${prefix}base.entry.bg) $colors(base.lightest)
-    set colors(${prefix}base.hover) #c1d2ee
-    set colors(${prefix}base.active) #c1d2ee
-    set colors(${prefix}base.trough) $colors(base.lightest)
-    set colors(${prefix}base.labelframe) $colors(base.darker)
-    set colors(${prefix}padding.radiobutton) $colors(padding.checkbutton)
-    set colors(${prefix}text.fg) $colors(base.darkest)
-    set colors(${prefix}tab.use.topbar) false
-    set colors(${prefix}base.tab.border) $colors(base.bg)
-    set colors(${prefix}base.tab.bg.active) $colors(base.tab.bg.inactive)
-    set colors(${prefix}base.tab.bg.inactive) #f0f0eb
-    set colors(${prefix}tab.image.border) {3 4 3 4}
-    set colors(${prefix}graphics.color.scrollbar.border) #c1d2ee
-    set colors(${prefix}graphics.color.scrollbar)        #c1d2ee
+    set colors(base.active) #c1d2ee
+    set colors(base.button.active) #c1d2ee
+    set colors(base.button.border) $colors(base.bg)
+    set colors(base.button.pressed) $colors(base.lighter)
+    set colors(base.entry.field.bg) $colors(base.lightest)
+    set colors(base.hover) #c1d2ee
+    set colors(base.slider.border) $colors(base.bg)
+    set colors(base.tab.bg.active) $colors(base.tab.bg.inactive)
+    set colors(base.tab.bg.inactive) #f0f0eb
+    set colors(base.tab.border) $colors(base.bg)
+    set colors(base.trough) $colors(base.lightest)
+    set colors(button.image.border) {4 9}
+    set colors(button.image.padding) {5 2}
+    set colors(radiobutton.padding) $colors(checkbutton.padding)
+    set colors(tab.image.border) {3 4 3 4}
+    set colors(tab.use.topbar) false
+    set colors(text.fg) $colors(base.darkest)
     #
-    set colors(${prefix}base.entry.bg.disabled) $colors(base.entry.bg)
-    set colors(${prefix}text.bg) $colors(base.entry.bg)
+    set colors(base.combobox.focus) $colors(base.entry.field.bg)
+    set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
+    set colors(base.entry.focus) $colors(base.entry.field.bg)
+    set colors(text.bg) $colors(base.entry.field.bg)
     #
-    set colors(${prefix}base.entry.fg) $colors(text.fg)
+    set colors(base.entry.fg) $colors(text.fg)
     #
-    set colors(${prefix}tree.select.bg) $colors(base.bg)
-    set colors(${prefix}tree.select.fg) $colors(base.fg)
+    set colors(tree.select.bg) $colors(base.bg)
+    set colors(tree.select.fg) $colors(base.fg)
   }
 
   proc init { } {
@@ -95,5 +93,3 @@ namespace eval ::ttk::theme::winxpblue {
 
   init
 }
-
-
