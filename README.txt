@@ -19,14 +19,14 @@ Try:
 7.9 (2020-4-12)
    - winxpblue: fixed minor focus color issues (entry, combobox).
    - fixed incorrect scrollbar background color.
-   - button: added state {active focus} (for breeze).
+   - button: added state {active focus}.
    - entry: added ability to set graphics.
    - notebook: added hover, disabled graphics.
    - combobox: graphics will be set if entry graphics are present.
    - combobox: readonly graphics will be set to button graphics if
      both entry and button graphics are present (breeze theme).
-   - menubutton: option to use button graphics for menubuttons (breeze).
-   - toolbutton: option to use button graphics for toolbuttons (breeze).
+   - menubutton: option to use button graphics for menubuttons.
+   - toolbutton: option to use button graphics for toolbuttons.
    - 'setListBoxColors': remove borderwidth and relief settings.
    - spinbox: graphics will be set if entry graphics are present.
    - internal code cleanup: various theme settings have been renamed.

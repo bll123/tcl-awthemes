@@ -101,14 +101,14 @@
 # 7.9
 #   - winxpblue: fixed minor focus color issues (entry, combobox).
 #   - fixed incorrect scrollbar background color.
-#   - button: added state {active focus} (for breeze).
+#   - button: added state {active focus}.
 #   - entry: added ability to set graphics.
 #   - notebook: added hover, disabled graphics.
 #   - combobox: graphics will be set if entry graphics are present.
 #   - combobox: readonly graphics will be set to button graphics if
 #     both entry and button graphics are present (breeze theme).
-#   - menubutton: option to use button graphics for menubuttons (breeze).
-#   - toolbutton: option to use button graphics for toolbuttons (breeze).
+#   - menubutton: option to use button graphics for menubuttons.
+#   - toolbutton: option to use button graphics for toolbuttons.
 #   - 'setListBoxColors': remove borderwidth and relief settings.
 #   - spinbox: graphics will be set if entry graphics are present.
 #   - internal code cleanup: various theme settings have been renamed.
@@ -1553,14 +1553,14 @@ namespace eval ::ttk::awthemes {
     }
 
     if { $vars(have.tksvg) && [info exists images(labelframe-n)] } {
-      ttk::style element create Labelframe.border image \
+      ttk::style element create ${pfx}Labelframe.border image \
           [list $images(labelframe-n) \
           disabled $images(labelframe-d)] \
           -border 4 \
           -sticky news
     }
 
-    ttk::style configure TLabelframe \
+    ttk::style configure ${pfx}TLabelframe \
         -borderwidth 1 \
         -relief groove
   }
@@ -1656,7 +1656,7 @@ namespace eval ::ttk::awthemes {
 
   proc _createPanedwindow { {pfx {}} {sfx {}} {scale 1.0} } {
     variable currtheme
-    ttk::style configure Sash \
+    ttk::style configure ${pfx}Sash \
         -sashthickness 10
   }
 
