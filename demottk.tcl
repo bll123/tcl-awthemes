@@ -151,19 +151,18 @@ if { 1 } {
   if { [file exists $fn] } {
     source $fn
     themeloader::loadTheme $theme
-    puts "loaded $theme"
+    puts "themeloader: loaded $theme"
     set loaded true
   }
 }
 
 set ttheme $theme
-if { ($havetksvg && $theme eq "black") ||
-    ($havetksvg && $theme eq "winxpblue") } {
+if { ($havetksvg && [file exists aw${theme}.tcl] } {
   set ttheme aw${theme}
 }
 if { [file exists $ttheme.tcl] && ! $loaded } {
   source $ttheme.tcl
-  puts "loaded $ttheme.tcl"
+  puts "loaded via source $ttheme.tcl"
   set loaded true
 }
 set tfn [file join $env(HOME) s ballroomdj code themes $ttheme.tcl]
