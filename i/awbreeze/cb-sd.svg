@@ -61,7 +61,7 @@
      id="layer1"
      transform="translate(3.0067514,-281.99322)">
     <rect
-       style="opacity:1.0;fill:_BG_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1.0;fill:_BG_;fill-opacity:1;stroke:_BORDD_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect814"
        width="16.999146"
        height="16.999146"
@@ -69,7 +69,7 @@
        y="282.34964"
        ry="2.2197328" />
     <rect
-       style="fill:_BORDDARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_BORDD_;fill-opacity:1;stroke:_BORDD_;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815-3"
        width="10.999999"
        height="10.999999"

@@ -157,7 +157,7 @@ if { 1 } {
 }
 
 set ttheme $theme
-if { ($havetksvg && [file exists aw${theme}.tcl] } {
+if { $havetksvg && [file exists aw${theme}.tcl] } {
   set ttheme aw${theme}
 }
 if { [file exists $ttheme.tcl] && ! $loaded } {
