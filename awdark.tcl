@@ -2,7 +2,7 @@
 #
 #
 
-package provide awdark 7.3
+package provide awdark 7.4
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -21,6 +21,9 @@ namespace eval ::ttk::theme::awdark {
     variable colors
 
     array set colors {
+        style.checkbutton     roundedrect-check
+        style.radiobutton     circle-circle-hlbg
+        style.treeview        triangle-solid
         arrow.height          16
         base.bg               #33393b
         base.bg.disabled      #2d3234

@@ -2,7 +2,7 @@
 #
 #
 
-package provide winxpblue 7.2
+package provide winxpblue 7.3
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -20,7 +20,19 @@ namespace eval ::ttk::theme::winxpblue {
   proc setBaseColors { } {
     variable colors
 
+      # #ccccc2 -> #bab5ab
+      # #cdcac3 -> #bab5ab
+      # #21a12a accent color
+      # #e59700 highlight color
       array set colors {
+          style.arrow           chevron
+          style.button          roundedrect-accent-gradient
+          style.checkbutton     square-check-gradient
+          style.combobox        -
+          style.menubutton      -
+          style.notebook        roundedtop-light-accent
+          style.radiobutton     circle-circle-gradient
+          style.treeview        -
           arrow.height          16
           base.bg.disabled      #ece9d8
           base.bg               #ece9d8
@@ -29,7 +41,7 @@ namespace eval ::ttk::theme::winxpblue {
           base.darkest          #000000
           base.fg               #000000
           base.focus            #c1d2ee
-          base.lighter          #ffffff
+          base.lighter          #f0f0ea
           base.lightest         #ffffff
           button.anchor         w
           button.padding        {3 3}
@@ -58,21 +70,21 @@ namespace eval ::ttk::theme::winxpblue {
   proc setDerivedColors { } {
     variable colors
 
-    set colors(base.active) #c1d2ee
-    set colors(base.button.active) #c1d2ee
+    set colors(accent.color) #21a12a
+    set colors(graphics.highlight) #e59700
+    set colors(base.active) $colors(base.focus)
+    set colors(base.button.active) $colors(base.focus)
     set colors(base.button.border) $colors(base.bg)
     set colors(base.button.pressed) $colors(base.lighter)
     set colors(base.entry.field.bg) $colors(base.lightest)
-    set colors(base.hover) #c1d2ee
+    set colors(base.hover) $colors(base.focus)
     set colors(base.slider.border) $colors(base.bg)
-    set colors(base.tab.bg.active) $colors(base.tab.bg.inactive)
-    set colors(base.tab.bg.inactive) #f0f0eb
+    set colors(base.tab.bg.inactive) $colors(base.lighter)
+    set colors(base.tab.bg.active) $colors(base.bg)
     set colors(base.tab.border) $colors(base.bg)
-    set colors(base.trough) $colors(base.lightest)
-    set colors(button.image.border) {4 9}
-    set colors(button.image.padding) {5 2}
+    set colors(base.trough) $colors(base.lighter)
+    set colors(scale.trough) $colors(base.lighter)
     set colors(radiobutton.padding) $colors(checkbutton.padding)
-    set colors(tab.image.border) {3 4 3 4}
     set colors(tab.use.topbar) false
     set colors(text.fg) $colors(base.darkest)
     #

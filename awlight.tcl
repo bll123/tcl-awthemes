@@ -2,7 +2,7 @@
 #
 #
 
-package provide awlight 7.2
+package provide awlight 7.3
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -21,6 +21,9 @@ namespace eval ::ttk::theme::awlight {
     variable colors
 
     array set colors {
+        style.checkbutton     roundedrect-check
+        style.radiobutton     circle-circle-hlbg
+        style.treeview        triangle-solid
         arrow.height          16
         base.bg.disabled      #cacaca
         base.bg               #e8e8e7
@@ -77,6 +80,7 @@ namespace eval ::ttk::theme::awlight {
     set colors(base.entry.fg) $colors(text.fg)
     #
     set colors(base.trough) $colors(base.entry.field.bg)
+    set colors(scale.trough) $colors(base.entry.field.bg)
     #
     set colors(graphics.color.cb) #000000
     set colors(graphics.color.spin.bg) $colors(base.bg)

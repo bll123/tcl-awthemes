@@ -2,7 +2,7 @@
 #
 #
 
-package provide breeze 1.0
+package provide breeze 1.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -27,7 +27,23 @@ namespace eval ::ttk::theme::breeze {
       # #757778 - dark border color
       # #bbbcbe - disabled graphics color
       # #c0c2c4 - border color
+      #
+      # the combobox style must be set to -, otherwise the awthemes
+      # default (solid-bg) is used.
       array set colors {
+          style.arrow           chevron
+          style.button          roundedrect-flat
+          style.checkbutton     roundedrect-square
+          style.combobox        -
+          style.entry           roundedrect
+          style.labelframe      square
+          style.menubutton      chevron
+          style.notebook        roundedtop-dark
+          style.radiobutton     circle-circle
+          style.scale           circle
+          style.scrollbar-grip  none
+          style.progressbar     rounded-line
+          style.treeview        chevron
           arrow.height          16
           base.bg.disabled      #e7e8ea
           base.bg               #eff0f1
@@ -73,13 +89,9 @@ namespace eval ::ttk::theme::breeze {
     set colors(base.slider.border) $colors(base.bg)
     set colors(base.trough) $colors(base.dark)
     set colors(button.has.focus) false
-    set colors(button.image.border) {6}
-    set colors(button.image.padding) {6 4}
     set colors(button.relief) none
     set colors(combobox.image.border) 6
     set colors(combobox.image.padding) {8 8}
-    set colors(entry.image.border) 6
-    set colors(entry.image.padding) {5 8}
     # derive the alternate graphics color.
     set colors(graphics.color.alternate) \
         [::colorutils::disabledColor $colors(graphics.color) $colors(base.bg) 0.5 2]
@@ -89,14 +101,10 @@ namespace eval ::ttk::theme::breeze {
     set colors(parent.theme) default
     set colors(radiobutton.padding) $colors(checkbutton.padding)
     set colors(scrollbar.has.arrows) false
-    set colors(scrollbar.has.grip) false
     set colors(slider.image.border) {4 0}
-    set colors(tab.image.border) {4}
-    set colors(tab.image.padding) {3 2}
     set colors(text.fg) $colors(base.darkest)
     set colors(toolbutton.image.padding) {10 8}
     set colors(toolbutton.use.button.image) true
-    set colors(trough.image.border) {5 0}
     #
     set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
     set colors(text.bg) $colors(base.entry.field.bg)

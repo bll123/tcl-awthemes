@@ -21,6 +21,8 @@ namespace eval ::ttk::theme::black {
     variable colors
 
       array set colors {
+          style.checkbutton     square-x
+          style.radiobutton     octagon-circle
           arrow.height          16
           base.bg               #424242
           base.bg.disabled      #424242

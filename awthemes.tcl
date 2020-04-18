@@ -98,6 +98,20 @@
 #
 # Change History
 #
+# 8.0
+#   - menu radiobuttons and menu checkbuttons are now dynamically generated
+#     and any corresponding .svg files have been removed.
+#     This also fixes menu radio/check button sizing issues for themes
+#     other than awdark and awlight.
+#   - treeview arrows default to inheriting from standard arrows.
+#   - The themes have been reworked such that each widget has different
+#     styles that can be applied.  All widget styles are now found in
+#     the i/awthemes/ directory, and individual theme directories are no
+#     longer needed.  A theme's style may be overridden by the user.
+#   - style: slider/rect-bord: cleaned up some sizing issues
+#     (awdark/awlight)
+#   - style: arrow/solid-bg: cleaned up some sizing issues (awdark/awlight)
+#   - fix: disabled trough display.
 # 7.9
 #   - winxpblue: fixed minor focus color issues (entry, combobox).
 #   - fixed incorrect scrollbar background color.
@@ -264,7 +278,7 @@
 #   - initial coding
 #
 
-package provide awthemes 7.9
+package provide awthemes 8.0
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -328,7 +342,7 @@ namespace eval ::ttk::awthemes {
     set iscript [info script]
     if { [file type $iscript] eq "link" } { set iscript [file link $iscript] }
     set d [file dirname $iscript]
-    set vars(image.dir.generic) [file join $d i generic]
+    set vars(image.dir.awthemes) [file join $d i awthemes]
     if { $imagedir eq {} } {
       set imagedir $theme
     }
@@ -345,46 +359,134 @@ namespace eval ::ttk::awthemes {
       set vars(have.tksvg) true
     }
 
-    # order is important
+    # The rb/cb pad/small images are not listed here, as they
+    # are dynamically generated.
+    set vars(image.list) {
+        arrow-down-d
+        arrow-down-n
+        arrow-left-d
+        arrow-left-n
+        arrow-right-d
+        arrow-right-n
+        arrow-up-d
+        arrow-up-n
+        button-a
+        button-af
+        button-d
+        button-f
+        button-n
+        button-p
+        cb-sa
+        cb-sd
+        cb-sn
+        cb-ua
+        cb-ud
+        cb-un
+        combo-arrow-down-a
+        combo-arrow-down-d
+        combo-arrow-down-n
+        empty
+        entry-a
+        entry-d
+        entry-f
+        entry-n
+        labelframe-d
+        labelframe-n
+        mb-arrow-down-a
+        mb-arrow-down-d
+        mb-arrow-down-n
+        notebook-tab-a
+        notebook-tab-d
+        notebook-tab-h
+        notebook-tab-i
+        rb-sa
+        rb-sd
+        rb-sn
+        rb-ua
+        rb-ud
+        rb-un
+        sb-slider-ha
+        sb-slider-hd
+        sb-slider-h-grip
+        sb-slider-hn
+        sb-slider-hp
+        sb-slider-va
+        sb-slider-vd
+        sb-slider-v-grip
+        sb-slider-vn
+        sb-slider-vp
+        scale-ha
+        scale-hd
+        scale-hn
+        scale-hp
+        scale-trough-hd
+        scale-trough-hn
+        scale-trough-vd
+        scale-trough-vn
+        scale-va
+        scale-vd
+        scale-vn
+        scale-vp
+        sizegrip
+        slider-hd
+        slider-hn
+        slider-vd
+        slider-vn
+        spin-arrow-down-d
+        spin-arrow-down-n
+        spin-arrow-up-d
+        spin-arrow-up-n
+        tree-arrow-down-n
+        tree-arrow-right-n
+        trough-hn
+        trough-hd
+        trough-vn
+        trough-vd
+    }
+
+    # order is important!!
     # vertical scale defaults to match horizontal scales in order to
     # support symmetrical scale handles.
+    # scale fallbacks are for symettrical handles
     set vars(fallback.images) {
-      arrow-bg-down-d       arrow-bg-down-n
-      arrow-bg-left-d       arrow-bg-left-n
-      arrow-bg-right-d      arrow-bg-right-n
-      arrow-bg-up-d         arrow-bg-up-n
-      mb-arrow-down-n       arrow-bg-down-n
+      arrow-down-d          arrow-down-n
+      arrow-left-d          arrow-left-n
+      arrow-right-d         arrow-right-n
+      arrow-up-d            arrow-up-n
+      mb-arrow-down-n       arrow-down-n
       mb-arrow-down-d       mb-arrow-down-n
       mb-arrow-down-a       mb-arrow-down-n
       combo-arrow-down-n    mb-arrow-down-n
       combo-arrow-down-a    mb-arrow-down-a
       combo-arrow-down-d    mb-arrow-down-d
-      spin-arrow-bg-down-d  arrow-bg-down-d
-      spin-arrow-bg-down-n  arrow-bg-down-n
-      spin-arrow-bg-up-d    arrow-bg-up-d
-      spin-arrow-bg-up-n    arrow-bg-up-n
+      spin-arrow-down-d     arrow-down-d
+      spin-arrow-down-n     arrow-down-n
+      spin-arrow-up-d       arrow-up-d
+      spin-arrow-up-n       arrow-up-n
+      tree-arrow-right-n    arrow-right-n
+      tree-arrow-down-n     arrow-down-n
       cb-sa                 cb-sn
       cb-sd                 cb-sn
+      cb-sn-pad             cb-sn
       cb-sn-small           cb-sn
       cb-ua                 cb-un
       cb-ud                 cb-un
+      cb-un-pad             cb-un
       cb-un-small           cb-un
       rb-sa                 rb-sn
       rb-sd                 rb-sn
+      rb-sn-pad             rb-sn
       rb-sn-small           rb-sn
       rb-ua                 rb-un
       rb-ud                 rb-un
+      rb-un-pad             rb-un
       rb-un-small           rb-un
-      menu-cb-sn-pad        cb-sn-small
-      menu-cb-un-pad        cb-un-small
-      menu-rb-sn-pad        rb-sn-small
-      menu-rb-un-pad        rb-un-small
       scale-ha              scale-hn
       scale-hd              scale-hn
       scale-hp              scale-ha
       scale-vn              scale-hn
-      scale-va              scale-vn
-      scale-vd              scale-vn
+      scale-vd              scale-hd
+      scale-va              scale-ha
       scale-vp              scale-va
       slider-hd             slider-hn
       slider-vd             slider-vn
@@ -396,27 +498,43 @@ namespace eval ::ttk::awthemes {
       entry-a               entry-n
       entry-f               entry-a
       entry-d               entry-n
-      sb-slider-ha          sb-slider-hn
-      sb-slider-hd          slider-hd
       sb-slider-hn          slider-hn
+      sb-slider-hd          slider-hd
+      sb-slider-ha          sb-slider-hn
       sb-slider-hp          sb-slider-ha
-      sb-slider-va          sb-slider-vn
-      sb-slider-vd          slider-vd
       sb-slider-vn          slider-vn
+      sb-slider-vd          slider-vd
+      sb-slider-va          sb-slider-vn
       sb-slider-vp          sb-slider-va
       notebook-tab-a        notebook-tab-i
       notebook-tab-h        notebook-tab-a
       notebook-tab-d        notebook-tab-i
+      trough-hd             trough-hn
+      trough-vd             trough-vn
       scale-trough-hn       trough-hn
-      scale-trough-hd       trough-hn
+      scale-trough-hd       trough-hd
       scale-trough-vn       trough-vn
-      scale-trough-vd       trough-vn
+      scale-trough-vd       trough-vd
       labelframe-d          labelframe-n
     }
 
+    # default styles.
+    # the theme will override the style with the theme specific styles.
+    foreach {st sn} $::themeutils::vars(names.styles) {
+      set colors(style.$st) $sn
+    }
+
     _setThemeBaseColors $theme
+
     set colors(base.bg.latest) $colors(base.bg)
     set colors(graphics.color.latest) $colors(graphics.color)
+
+    # override styles with user defined styles.
+    foreach {st sn} $::themeutils::vars(names.styles) {
+      if { [info exists colors(user.style.$st)] } {
+        set colors(style.$st) $colors(user.style.$st)
+      }
+    }
 
     # override base colors with any user.* colors
     # these are set by the ::themeutils package
@@ -454,6 +572,14 @@ namespace eval ::ttk::awthemes {
     }
 
     ::ttk::theme::${theme}::setBaseColors
+  }
+
+  proc _assignDerivedColors { theme } {
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::${theme} $var $var
+    }
+
+
   }
 
   proc _setDerivedColors { theme } {
@@ -523,6 +649,56 @@ namespace eval ::ttk::awthemes {
     }
   }
 
+  proc _loadImageData { theme basedir } {
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::$theme $var $var
+    }
+    namespace upvar ::ttk::theme::$theme imgtype imgtype
+
+    if { ! [file isdirectory $basedir] } {
+      return
+    }
+
+    foreach {st sn} $::themeutils::vars(names.styles) {
+      # if the override is for no graphics, skip this style type
+      if { $colors(style.$st) eq "none" } {
+        continue
+      }
+      if { $colors(style.$st) eq "-" || $colors(style.$st) eq "default" } {
+        continue
+      }
+
+      # Check and see if the style type directory and the specific style
+      # directory exist.  If not, skip.
+      set styletypedir [file join $basedir $st]
+      if { ! [file isdirectory $styletypedir] } {
+        continue
+      }
+      set styledir [file join $styletypedir $colors(style.$st)]
+      if { ! [file isdirectory $styledir] } {
+        continue
+      }
+
+      foreach {fn} [glob -directory $styledir *.svg] {
+        if { [string match *-base* $fn] } { continue }
+        set origi [file rootname [file tail $fn]]
+        if { ! [info exists imgtype($origi)] } {
+          set imgtype($origi) svg
+          set imgdata($origi) [_readFile $fn]
+        }
+      }
+
+      set fn [file join $styledir settings.tcl]
+      if { [file exists $fn] } {
+        try {
+          source $fn
+        } on error {err res} {
+          puts stderr "load $fn: $res"
+        }
+      }
+    }
+  }
+
   proc _setImageData { theme } {
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$theme $var $var
@@ -530,33 +706,16 @@ namespace eval ::ttk::awthemes {
     namespace upvar ::ttk::theme::$theme imgtype imgtype
 
     if { $vars(have.tksvg) } {
-      # load theme specific .svg files
-      if { [file exists $vars(image.dir)] } {
-        foreach {fn} [glob -directory $vars(image.dir) *.svg] {
-          if { [string match *-base* $fn] } { continue }
-          set origi [file rootname [file tail $fn]]
-          set imgtype($origi) svg
-          set imgdata($origi) [_readFile $fn]
-        }
-      }
-      _copyDerivedImageData $theme
-      # load generic .svg files
-      if { [file exists $vars(image.dir.generic)] } {
-        foreach {fn} [glob -directory $vars(image.dir.generic) *.svg] {
-          if { [string match *-base* $fn] } { continue }
-          set origi [file rootname [file tail $fn]]
-          if { ! [info exists imgtype($origi)] } {
-            set imgtype($origi) svg
-            set imgdata($origi) [_readFile $fn]
-          }
-        }
-      }
+      # load .svg files
+      # this will also load the various settings for each style.
+      _loadImageData $theme $vars(image.dir.awthemes)
+
       _copyDerivedImageData $theme
 
       # convert all the svg colors to theme specific colors
 
       # the scrollbar in some themes has a different color
-      foreach {n} {slider-h-grip slider-v-grip
+      foreach {n} {sb-slider-h-grip sb-slider-v-grip
           sb-slider-ha sb-slider-hn sb-slider-hp
           sb-slider-va sb-slider-vn sb-slider-vp
           } {
@@ -571,11 +730,11 @@ namespace eval ::ttk::awthemes {
       }
 
       # the scale trough in some themes has a different color
-      foreach {n} {slider-h-grip slider-v-grip
-          scale-trough-hn scale-trough-vn
+      foreach {n} {sb-slider-h-grip sb-slider-v-grip
+          scale-trough-hn scale-trough-hd scale-trough-vn scale-trough-vd
           } {
         foreach {oc nc} [list \
-            _DARK_    $colors(scale.trough) \
+            _TROUGH_    $colors(scale.trough) \
             ] {
           if { [info exists imgdata($n)] } {
             set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
@@ -597,8 +756,8 @@ namespace eval ::ttk::awthemes {
 
       # handle spin and combo arrows separately, as they may
       # have different bg/arrow colors.
-      foreach {n} {spin-arrow-bg-down-d spin-arrow-bg-down-n
-          spin-arrow-bg-up-d spin-arrow-bg-up-n
+      foreach {n} {spin-arrow-down-d spin-arrow-down-n
+          spin-arrow-up-d spin-arrow-up-n
           combo-arrow-down-a combo-arrow-down-d combo-arrow-down-n
           mb-arrow-down-a mb-arrow-down-d mb-arrow-down-n
           tree-arrow-down-n tree-arrow-right-n } {
@@ -614,6 +773,15 @@ namespace eval ::ttk::awthemes {
       }
 
       foreach {n} [array names imgdata] {
+        # special handling for radio buttons so that the width
+        # can be set for the padded version.
+        if { [regexp {^[rc]b-} $n] } {
+          regexp {\sheight="(\d+)"} $imgdata($n) all value
+          if { [regexp {pad} $n] } {
+            set value [expr {round(double($value)*1.4)}]
+          }
+          regsub -all _MAINWIDTH_ $imgdata($n) $value imgdata($n)
+        }
         foreach {oc nc} [list \
             _ARROWH_      $colors(arrow.height) \
             _CBOXH_       $colors(combobox.height) \
@@ -621,19 +789,23 @@ namespace eval ::ttk::awthemes {
           set c [regsub -all "=\"$oc\"" $imgdata($n) "=\"$nc\"" imgdata($n)]
         }
         foreach {oc nc} [list \
+            _ACCENT_    $colors(accent.color) \
             _BG_        $colors(base.bg) \
             _FG_        $colors(base.fg) \
             _DARK_      $colors(base.dark) \
+            _LIGHT_     $colors(base.lighter) \
             _GC_        $colors(graphics.color) \
             _GCALT_     $colors(graphics.color.alternate) \
             _GCARR_     $colors(graphics.color.arrow) \
             _GCCB_      $colors(graphics.color.cb) \
+            _GCHL_      $colors(graphics.highlight) \
             _FIELDBG_   $colors(base.entry.field.bg) \
             _BORD_      $colors(graphics.border) \
             _BORDDARK_  $colors(base.border.dark) \
             _BORDD_     $colors(base.border.disabled) \
             _GRIP_      $colors(graphics.grip) \
             _SZGRIP_    $colors(graphics.sizegrip) \
+            _TROUGH_    $colors(base.trough) \
             ] {
           set c [regsub -all :$oc $imgdata($n) :$nc imgdata($n)]
         }
@@ -794,9 +966,9 @@ namespace eval ::ttk::awthemes {
           }
         }
 
-        if { ! [info exists imgdata(menu-cb-sn-pad)] } {
+        if { ! [info exists imgdata(cb-sn-pad)] } {
           # cb-sn-pad
-          set imgdata(menu-cb-sn-pad) {
+          set imgdata(cb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -810,9 +982,9 @@ namespace eval ::ttk::awthemes {
              AAAAAElFTkSuQmCC
           }
         }
-        if { ! [info exists imgdata(menu-cb-un-pad)] } {
+        if { ! [info exists imgdata(cb-un-pad)] } {
           # cb-un-pad
-          set imgdata(menu-cb-un-pad) {
+          set imgdata(cb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -822,9 +994,9 @@ namespace eval ::ttk::awthemes {
              zdLr6ZA5FywBTvxU2HXNnWbpkDwA1ec6OAmodXwAAAAASUVORK5CYII=
           }
         }
-        if { ! [info exists imgdata(menu-rb-sn-pad)] } {
+        if { ! [info exists imgdata(rb-sn-pad)] } {
           # rb-sn-pad
-          set imgdata(menu-rb-sn-pad) {
+          set imgdata(rb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -839,9 +1011,9 @@ namespace eval ::ttk::awthemes {
              QmCC
           }
         }
-        if { ! [info exists imgdata(menu-rb-un-pad)] } {
+        if { ! [info exists imgdata(rb-un-pad)] } {
           # rb-un-pad
-          set imgdata(menu-rb-un-pad) {
+          set imgdata(rb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -1123,9 +1295,9 @@ namespace eval ::ttk::awthemes {
           }
         }
 
-        if { ! [info exists imgdata(menu-cb-sn-pad)] } {
+        if { ! [info exists imgdata(cb-sn-pad)] } {
           # cb-sn-pad
-          set imgdata(menu-cb-sn-pad) {
+          set imgdata(cb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -1138,9 +1310,9 @@ namespace eval ::ttk::awthemes {
              0Wi8ttvtt263a2iaVnhTKaUKguDndrtN4zj+BPgDk/mTpWV8DuoAAAAASUVORK5CYII=
           }
         }
-        if { ! [info exists imgdata(menu-cb-un-pad)] } {
+        if { ! [info exists imgdata(cb-un-pad)] } {
           # cb-un-pad
-          set imgdata(menu-cb-un-pad) {
+          set imgdata(cb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -1150,9 +1322,9 @@ namespace eval ::ttk::awthemes {
              8N7L/DZ5nh/KsmzruqY0TRdvGmNUZr71fd+IyBkAHkinWoV3DyNgAAAAAElFTkSuQmCC
           }
         }
-        if { ! [info exists imgdata(menu-rb-sn-pad)] } {
+        if { ! [info exists imgdata(rb-sn-pad)] } {
           # rb-sn-pad
-          set imgdata(menu-rb-sn-pad) {
+          set imgdata(rb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -1168,9 +1340,9 @@ namespace eval ::ttk::awthemes {
              AAAASUVORK5CYII=
           }
         }
-        if { ! [info exists imgdata(menu-rb-un-pad)] } {
+        if { ! [info exists imgdata(rb-un-pad)] } {
           # rb-un-pad
-          set imgdata(menu-rb-un-pad) {
+          set imgdata(rb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
              dENvcHlyaWdodABDQyBBdHRyaWJ1dGlvbi1TaGFyZUFsaWtlIGh0dHA6Ly9jcmVhdGl2ZWNvbW1v
@@ -1393,30 +1565,35 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    ttk::style element create ${pfx}Checkbutton.indicator image \
-        [list $images(cb-un${sfx}) \
-        {hover selected !disabled} $images(cb-sa${sfx}) \
-        {hover !selected !disabled} $images(cb-ua${sfx}) \
-        {!selected disabled} $images(cb-ud${sfx}) \
-        {selected disabled} $images(cb-sd${sfx}) \
-        {selected !disabled} $images(cb-sn${sfx})]
+    # the non-tksvg awdark and awlight themes define cb-un
+    if { [info exists images(cb-un)] } {
+      ttk::style element create ${pfx}Checkbutton.indicator image \
+          [list $images(cb-un${sfx}) \
+          {hover selected !disabled} $images(cb-sa${sfx}) \
+          {hover !selected !disabled} $images(cb-ua${sfx}) \
+          {!selected disabled} $images(cb-ud${sfx}) \
+          {selected disabled} $images(cb-sd${sfx}) \
+          {selected !disabled} $images(cb-sn${sfx})]
 
-    ttk::style layout ${pfx}TCheckbutton [list \
-      Checkbutton.focus -side left -sticky w -children [list \
-        ${pfx}Checkbutton.indicator -side left -sticky {} \
-        Checkbutton.padding -sticky nswe -children { \
-          Checkbutton.label -sticky nswe \
-        } \
+      ttk::style layout ${pfx}TCheckbutton [list \
+        Checkbutton.focus -side left -sticky w -children [list \
+          ${pfx}Checkbutton.indicator -side left -sticky {} \
+          Checkbutton.padding -sticky nswe -children { \
+            Checkbutton.label -sticky nswe \
+          } \
+        ]
       ]
-    ]
+    }
 
     ttk::style configure ${pfx}TCheckbutton \
         -borderwidth 1 \
         -relief none
 
-    ttk::style element create ${pfx}Menu.Checkbutton.indicator image \
-        [list $images(cb-un-small${sfx}) \
-        {selected !disabled} $images(cb-sn-small${sfx})]
+    if { [info exists images(cb-un-small)] } {
+      ttk::style element create ${pfx}Menu.Checkbutton.indicator image \
+          [list $images(cb-un-small${sfx}) \
+          {selected !disabled} $images(cb-sn-small${sfx})]
+    }
 
     ttk::style layout ${pfx}Menu.TCheckbutton [list \
       Checkbutton.padding -sticky nswe -children [list \
@@ -1675,12 +1852,14 @@ namespace eval ::ttk::awthemes {
       }
 
       ttk::style element create ${pfx}Horizontal.Progressbar.pbar image \
-          $images(slider-hn${sfx}) \
+          [list $images(slider-hn${sfx}) \
+          disabled $images(slider-hd${sfx})] \
           -border $imgbord \
           -padding 0
       set imgbord [list [lindex $imgbord 1] [lindex $imgbord 0]]
       ttk::style element create ${pfx}Vertical.Progressbar.pbar image \
-          $images(slider-vn${sfx}) \
+          [list $images(slider-vn${sfx}) \
+          disabled $images(slider-vd${sfx})] \
           -border $imgbord \
           -padding 0
       if { [info exists images(trough-hn)] } {
@@ -1689,13 +1868,15 @@ namespace eval ::ttk::awthemes {
           lappend imgbord [expr {round(double($sz)*$sf)}]
         }
         ttk::style element create ${pfx}Horizontal.Progressbar.trough image \
-            $images(trough-hn${sfx}) \
+            [list $images(trough-hn${sfx}) \
+            disabled $images(trough-hd${sfx})] \
             -border $imgbord
       }
       if { [info exists images(trough-vn)] } {
         set imgbord [list [lindex $imgbord 1] [lindex $imgbord 0]]
         ttk::style element create ${pfx}Vertical.Progressbar.trough image \
-            $images(trough-vn${sfx}) \
+            [list $images(trough-vn${sfx}) \
+            disabled $images(trough-vd${sfx})] \
             -border $imgbord
       }
 
@@ -1716,7 +1897,7 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}TProgressbar \
-        -borderwidth 1 \
+        -borderwidth 0 \
         -pbarrelief none
   }
 
@@ -1727,13 +1908,15 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    ttk::style element create ${pfx}Radiobutton.indicator image \
-        [list $images(rb-un$sfx) \
-        {hover selected !disabled} $images(rb-sa$sfx) \
-        {hover !selected !disabled} $images(rb-ua$sfx) \
-        {!selected disabled} $images(rb-ud$sfx) \
-        {selected disabled} $images(rb-sd$sfx) \
-        {selected !disabled} $images(rb-sn$sfx)]
+    if { [info exists images(rb-un)] } {
+      ttk::style element create ${pfx}Radiobutton.indicator image \
+          [list $images(rb-un$sfx) \
+          {hover selected !disabled} $images(rb-sa$sfx) \
+          {hover !selected !disabled} $images(rb-ua$sfx) \
+          {!selected disabled} $images(rb-ud$sfx) \
+          {selected disabled} $images(rb-sd$sfx) \
+          {selected !disabled} $images(rb-sn$sfx)]
+    }
 
     ttk::style layout ${pfx}TRadiobutton [list \
       Radiobutton.focus -side left -sticky w -children [list \
@@ -1748,9 +1931,11 @@ namespace eval ::ttk::awthemes {
         -borderwidth 1 \
         -relief none
 
-    ttk::style element create ${pfx}Menu.Radiobutton.indicator image \
-        [list $images(rb-un-small${sfx}) \
-        {selected} $images(rb-sn-small${sfx})]
+    if { [info exists images(rb-un-small)] } {
+      ttk::style element create ${pfx}Menu.Radiobutton.indicator image \
+          [list $images(rb-un-small${sfx}) \
+          {selected} $images(rb-sn-small${sfx})]
+    }
 
     ttk::style layout ${pfx}Menu.TRadiobutton [list \
       Radiobutton.padding -sticky nswe -children [list \
@@ -1851,15 +2036,17 @@ namespace eval ::ttk::awthemes {
       set sf [expr {$vars(scale.factor)*$colors(scale.factor)*$scale}]
       if { $colors(scrollbar.has.arrows) } {
         ttk::style element create ${pfx}Vertical.Scrollbar.uparrow image \
-            [list $images(arrow-bg-up-n${sfx}) \
-            disabled  $images(arrow-bg-up-d${sfx})]
+            [list $images(arrow-up-n${sfx}) \
+            disabled  $images(arrow-up-d${sfx})]
         ttk::style element create ${pfx}Vertical.Scrollbar.downarrow image \
-            [list $images(arrow-bg-down-n${sfx}) \
-            disabled  $images(arrow-bg-down-d${sfx})]
+            [list $images(arrow-down-n${sfx}) \
+            disabled  $images(arrow-down-d${sfx})]
       }
-      if { $colors(scrollbar.has.grip) && [info exists images(slider-v-grip)] } {
+      set hasgrip false
+      if { [info exists images(sb-slider-v-grip)] } {
         ttk::style element create ${pfx}Vertical.Scrollbar.grip image \
-            [list $images(slider-v-grip${sfx})] -sticky {}
+            [list $images(sb-slider-v-grip${sfx})] -sticky {}
+        set hasgrip true
       }
 
       set imgbord {}
@@ -1906,7 +2093,7 @@ namespace eval ::ttk::awthemes {
         ] \
       ]
       set grip {}
-      if { $colors(scrollbar.has.grip) } {
+      if { $hasgrip } {
         set grip "-children { [list ${pfx}Vertical.Scrollbar.grip -sticky {}] }"
       }
       regsub {_GRIP_} $vlayout $grip vlayout
@@ -1914,15 +2101,15 @@ namespace eval ::ttk::awthemes {
 
       if { $colors(scrollbar.has.arrows) } {
         ttk::style element create ${pfx}Horizontal.Scrollbar.leftarrow image \
-            [list $images(arrow-bg-left-n${sfx}) \
-            disabled  $images(arrow-bg-left-d${sfx})]
+            [list $images(arrow-left-n${sfx}) \
+            disabled  $images(arrow-left-d${sfx})]
         ttk::style element create ${pfx}Horizontal.Scrollbar.rightarrow image \
-            [list $images(arrow-bg-right-n${sfx}) \
-            disabled  $images(arrow-bg-right-d${sfx})]
+            [list $images(arrow-right-n${sfx}) \
+            disabled  $images(arrow-right-d${sfx})]
       }
-      if { $colors(scrollbar.has.grip) && [info exists images(slider-h-grip)] } {
+      if { $hasgrip && [info exists images(sb-slider-h-grip)] } {
         ttk::style element create ${pfx}Horizontal.Scrollbar.grip image \
-            [list $images(slider-h-grip${sfx})] -sticky {}
+            [list $images(sb-slider-h-grip${sfx})] -sticky {}
       }
 
       set imgbord {}
@@ -1952,7 +2139,7 @@ namespace eval ::ttk::awthemes {
         ] \
       ]
       set grip {}
-      if { $colors(scrollbar.has.grip) } {
+      if { $hasgrip } {
         set grip "-children { [list ${pfx}Horizontal.Scrollbar.grip -sticky {}] }"
       }
       regsub {_GRIP_} $hlayout $grip hlayout
@@ -1987,13 +2174,13 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { $vars(have.tksvg) && [info exists images(spin-arrow-bg-down-n)] } {
+    if { $vars(have.tksvg) && [info exists images(spin-arrow-down-n)] } {
       ttk::style element create ${pfx}Spinbox.uparrow image \
-          [list $images(spin-arrow-bg-up-n${sfx}) \
-          disabled  $images(spin-arrow-bg-up-d${sfx})]
+          [list $images(spin-arrow-up-n${sfx}) \
+          disabled  $images(spin-arrow-up-d${sfx})]
       ttk::style element create ${pfx}Spinbox.downarrow image \
-          [list $images(spin-arrow-bg-down-n${sfx}) \
-          disabled  $images(spin-arrow-bg-down-d${sfx})]
+          [list $images(spin-arrow-down-n${sfx}) \
+          disabled  $images(spin-arrow-down-d${sfx})]
 
       if { $pfx ne {} } {
         set layout [ttk::style layout TSpinbox]
@@ -2057,10 +2244,10 @@ namespace eval ::ttk::awthemes {
       }
 
       ttk::style element create ${pfx}Toolbutton.border image \
-          [list $images(tree-arrow-empty${sfx}) \
+          [list $images(empty${sfx}) \
           {pressed !disabled} $images(button-af${sfx}) \
           {active !disabled} $images(button-a${sfx}) \
-          disabled $images(tree-arrow-empty${sfx})] \
+          disabled $images(empty${sfx})] \
           -sticky nsew \
           -border $imgbord \
           -padding $imgpad
@@ -2084,7 +2271,7 @@ namespace eval ::ttk::awthemes {
       ttk::style element create ${pfx}Treeitem.indicator image \
           [list $images(tree-arrow-right-n${sfx}) \
           user1 $images(tree-arrow-down-n${sfx}) \
-          user2 $images(tree-arrow-empty${sfx})] \
+          user2 $images(empty${sfx})] \
           -sticky w
 
       if { $pfx ne {} } {
@@ -2645,15 +2832,15 @@ namespace eval ::ttk::awthemes {
         set type [$w type $i]
         if { $type eq "checkbutton" } {
           $w entryconfigure $i \
-              -image $images(menu-cb-un-pad) \
-              -selectimage $images(menu-cb-sn-pad) \
+              -image $images(cb-un-pad) \
+              -selectimage $images(cb-sn-pad) \
               -compound left \
               -hidemargin 1
         }
         if { $type eq "radiobutton" } {
           $w entryconfigure $i \
-              -image $images(menu-rb-un-pad) \
-              -selectimage $images(menu-rb-sn-pad) \
+              -image $images(rb-un-pad) \
+              -selectimage $images(rb-sn-pad) \
               -compound left \
               -hidemargin 1
         }
@@ -2737,55 +2924,32 @@ namespace eval ::ttk::awthemes {
       set pfx $pfx.
     }
 
-    foreach {n} {cb-un cb-ud cb-sn cb-sd cb-ua cb-sa
-        arrow-bg-up-d arrow-bg-down-d arrow-bg-right-d arrow-bg-left-d
-        arrow-bg-up-n arrow-bg-down-n arrow-bg-right-n arrow-bg-left-n
-        button-n button-a button-af button-d button-f button-p
-        combo-arrow-down-n combo-arrow-down-a combo-arrow-down-d
-        entry-n entry-a entry-d entry-f
-        mb-arrow-down-n mb-arrow-down-d mb-arrow-down-a
-        labelframe-n labelframe-d
-        notebook-tab-i notebook-tab-a notebook-tab-h notebook-tab-d
-        rb-un rb-ud rb-sn rb-sd rb-ua rb-sa
-        sb-slider-ha sb-slider-hd sb-slider-hn sb-slider-hp
-        sb-slider-va sb-slider-vd sb-slider-vn sb-slider-vp
-        scale-va scale-vd scale-vn scale-vp
-        scale-ha scale-hd scale-hn scale-hp
-        scale-trough-hn scale-trough-hd scale-trough-vn scale-trough-vd
-        sizegrip
-        slider-h-grip slider-v-grip
-        slider-vn slider-vd slider-hn slider-hd
-        spin-arrow-bg-down-d spin-arrow-bg-down-n
-        spin-arrow-bg-up-n spin-arrow-bg-up-d
-        tree-arrow-right-n tree-arrow-down-n tree-arrow-empty
-        trough-hn trough-vn
-        } {
-      if { $sfx ne {} && [info exists imgdata($n)] } {
+    foreach {n} [array names imgdata] {
+      if { $sfx ne {} } {
         set imgdata($n${sfx}) $imgdata($n)
         set imgtype($n${sfx}) $imgtype($n)
       }
-
-      _mkimage $n${sfx} $sf
-    }
-
-    foreach {n} {menu-cb-un-pad menu-cb-sn-pad menu-rb-un-pad menu-rb-sn-pad
-        cb-un-small cb-sn-small rb-un-small rb-sn-small} {
-      if { $sfx ne {} && [info exists imgdata($n)] } {
-        set imgdata($n${sfx}) $imgdata($n)
-        set imgtype($n${sfx}) $imgtype($n)
+      set scale $sf
+      if { [regexp {small$} $n] || [regexp {pad$} $n] } {
+        set scale [expr {$sf * 0.8}]
       }
-      _mkimage $n${sfx} 0.9
+      _mkimage $n${sfx} $scale
     }
 
     ttk::style theme settings $vars(theme.name) {
-      if { $vars(have.tksvg) } {
+      # arrows are used for scrollbars and spinboxes and possibly
+      # the combobox.
+      # the non-tksvg awdark and awlight themes define arrow-up-n
+      if { [info exists images(arrow-up-n)] } {
         foreach {dir} {up down left right} {
-          ttk::style element create ${pfx}${dir}arrow image \
-              [list $images(arrow-bg-${dir}-n${sfx}) \
-              disabled $images(arrow-bg-${dir}-d${sfx}) \
-              pressed $images(arrow-bg-${dir}-n${sfx}) \
-              active $images(arrow-bg-${dir}-n${sfx})] \
-              -border 4 -sticky news
+          if { [info exists images(arrow-${dir}-n${sfx})] } {
+            ttk::style element create ${pfx}${dir}arrow image \
+                [list $images(arrow-${dir}-n${sfx}) \
+                disabled $images(arrow-${dir}-d${sfx}) \
+                pressed $images(arrow-${dir}-n${sfx}) \
+                active $images(arrow-${dir}-n${sfx})] \
+                -border 4 -sticky news
+          }
         }
       }
 
@@ -2906,6 +3070,40 @@ namespace eval ::themeutils {
   proc init {} {
     variable vars
 
+    # style type, default style name.
+    #   - a style name of "-" or "default" means to use the default
+    #     The default will be (a) the fallback image, or (b) no graphics
+    #     if no graphics are defined.
+    #   - a style name of "none" means to use no graphics.
+    #   - to make sure one of the awthemes defaults below is not used,
+    #     set the style to "-" or "default".
+    set vars(names.styles) {
+        arrow           solid-bg
+        button          -
+        checkbutton     -
+        combobox        solid-bg
+        empty           empty
+        entry           -
+        labelframe      -
+        menubutton      solid
+        notebook        -
+        radiobutton     -
+        scrollbar       -
+        scrollbar-grip  circle
+        scale           rect-bord-circle
+        sizegrip        circle
+        progressbar     rect-bord
+        spinbox         -
+        treeview        triangle-open
+        trough          rect-bord
+    }
+
+    # base.* colors will be adjusted to match the background color when
+    # the background color is changed.
+
+    # graphics.colors.* and highlight.* colors will also be adjusted when
+    # the graphics color is changed.
+
     set vars(names.colors.base) {
         arrow.height
         base.bg
@@ -2939,6 +3137,7 @@ namespace eval ::themeutils {
         scale.factor
         }
     set vars(names.colors.derived) {
+        accent.color                      graphics.color            color
         base.active                       base.bg                   color
         base.arrow                        base.darkest              color
         base.arrow.disabled               base.arrow                0.6
@@ -2986,6 +3185,7 @@ namespace eval ::themeutils {
         graphics.color.spin.arrow         graphics.color.arrow      color
         graphics.color.spin.bg            graphics.color            color
         graphics.color.spin.border        base.darker               color
+        graphics.highlight                accent.color              color
         highlight.tab                     graphics.color            color
         highlight.tab.selected            graphics.color            color
         highlight.text.select.bg          highlight.active.bg       color
@@ -3001,12 +3201,12 @@ namespace eval ::themeutils {
         progressbar.color                 graphics.color            color
         radiobutton.focusthickness        checkbutton.focusthickness color
         radiobutton.padding               checkbutton.padding       color
-        scale.trough                      base.dark                 color
+        scale.trough                      base.trough               color
         scrollbar.has.arrows              true                      static
         scrollbar.has.grip                true                      static
-        slider.image.border               {4 0}                     static
-        spinbox.image.border              6                         static
-        spinbox.image.padding             {4 4}                     static
+        slider.image.border               {0 0}                     static
+        spinbox.image.border              0                         static
+        spinbox.image.padding             {0 0}                     static
         spinbox.padding                   entry.padding             color
         tab.image.border                  {2 2 2 1}                 static
         tab.image.padding                 0                         static
@@ -3015,7 +3215,7 @@ namespace eval ::themeutils {
         text.fg                           base.fg                   color
         toolbutton.image.padding          {0 0}                     static
         toolbutton.use.button.image       false                     static
-        trough.image.border               {5 0}                     static
+        trough.image.border               {0 0}                     static
     }
   }
 
