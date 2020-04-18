@@ -16,6 +16,24 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+
+
+8.0 (2020-4-18)
+   - menu radiobuttons and menu checkbuttons are now dynamically generated
+     and any corresponding .svg files have been removed.
+     This also fixes menu radio/check button sizing issues for themes
+     other than awdark and awlight.
+   - treeview arrows default to inheriting from standard arrows.
+   - The themes have been reworked such that each widget has different
+     styles that can be applied.  All widget styles are now found in
+     the i/awthemes/ directory, and individual theme directories are no
+     longer needed.  A theme's style may be overridden by the user.
+   - style: slider/rect-bord: cleaned up some sizing issues
+     (awdark/awlight)
+   - style: arrow/solid-bg: cleaned up some sizing issues (awdark/awlight)
+   - fix: disabled progressbar display.
+   - fix: disabled trough display.
+
 7.9 (2020-4-12)
    - winxpblue: fixed minor focus color issues (entry, combobox).
    - fixed incorrect scrollbar background color.
