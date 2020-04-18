@@ -34,6 +34,7 @@ set fontscale 1.0 ; # default
 set sf 1.0
 set gc {}
 set nbg {}
+set srect false
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
@@ -66,6 +67,9 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   }
   if { [lindex $::argv $idx] eq "-sizegrip" } {
     set ::sizegrip true
+  }
+  if { [lindex $::argv $idx] eq "-stylerect" } {
+    set srect true
   }
 }
 
@@ -108,6 +112,14 @@ if { $havethemeutils } {
 if { $havethemeutils && $nbg ne {} } {
   ::themeutils::setBackgroundColor $theme $nbg
 }
+if { $havethemeutils && $srect } {
+  ::themeutils::setThemeColors $theme \
+      style.progressbar rect \
+      style.scale rect \
+      style.trough rect \
+      style.scrollbar-grip none
+}
+
 
 if { ! $::notksvg } {
   catch { package require tksvg }
@@ -263,7 +275,7 @@ foreach {k} {n d} {
   set row 0
   ttk::label .lb$k -text $theme -state $s
   ttk::button .b$k -text $theme -state $s
-  grid .lb$k .b$k -in .lf$k -sticky w -padx 3p -pady 3p
+  grid .lb$k .b$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
   incr row
 
   ttk::combobox .combo$k -values \
@@ -359,6 +371,12 @@ foreach {k} {n d} {
   grid .sbox$k -in .lf$k -sticky w -padx 3p -pady 3p -columnspan 2
   incr row
 }
+set tag {(with tksvg)}
+if { $::notksvg } {
+  set tag {(without tksvg)}
+}
+.lbn configure -text "$theme $tag"
+
 pack .lfn .lfd -in .one -side left -padx 3p -pady 3p -expand 1 -fill both
 
 if { ! $::notksvg && $::sizegrip } {
