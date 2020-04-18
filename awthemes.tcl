@@ -111,6 +111,7 @@
 #   - style: slider/rect-bord: cleaned up some sizing issues
 #     (awdark/awlight)
 #   - style: arrow/solid-bg: cleaned up some sizing issues (awdark/awlight)
+#   - fix: disabled progressbar display.
 #   - fix: disabled trough display.
 # 7.9
 #   - winxpblue: fixed minor focus color issues (entry, combobox).
@@ -3203,7 +3204,6 @@ namespace eval ::themeutils {
         radiobutton.padding               checkbutton.padding       color
         scale.trough                      base.trough               color
         scrollbar.has.arrows              true                      static
-        scrollbar.has.grip                true                      static
         slider.image.border               {0 0}                     static
         spinbox.image.border              0                         static
         spinbox.image.padding             {0 0}                     static
