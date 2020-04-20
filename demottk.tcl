@@ -18,9 +18,11 @@ unset ap
 unset iscript
 
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] "
-  puts "    \[-background <color>] \[-focuscolor <color>] "
-  puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip]"
+  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] "
+  puts "    \[-fontscale <scale-factor>] "
+  puts "    \[-background <color>] \[-focuscolor <color>] \[-foreground <color>]"
+  puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-stylerect]"
+  puts "    \[-group group -groupcolor color]"
   exit 1
 }
 
@@ -34,15 +36,14 @@ set fontscale 1.0 ; # default
 set sf 1.0
 set gc {}
 set nbg {}
+set nfg {}
 set srect false
+set group {}
+set groupcolor {}
 for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
   if { [lindex $::argv $idx] eq "-ttkscale" } {
     incr idx
     tk scaling [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-scale" } {
-    incr idx
-    set sf [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-focuscolor" } {
     incr idx
@@ -52,9 +53,21 @@ for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     incr idx
     set nbg [lindex $::argv $idx]
   }
+  if { [lindex $::argv $idx] eq "-foreground" } {
+    incr idx
+    set nfg [lindex $::argv $idx]
+  }
   if { [lindex $::argv $idx] eq "-fontscale" } {
     incr idx
     set fontscale [lindex $::argv $idx]
+  }
+  if { [lindex $::argv $idx] eq "-group" } {
+    incr idx
+    set group [lindex $::argv $idx]
+  }
+  if { [lindex $::argv $idx] eq "-groupcolor" } {
+    incr idx
+    set groupcolor [lindex $::argv $idx]
   }
   if { [lindex $::argv $idx] eq "-notksvg" } {
     set ::notksvg true
@@ -102,15 +115,17 @@ if { ! $::noflex } {
   }
 }
 
-if { $havethemeutils } {
-  if { $gc ne {} } {
-    ::themeutils::setHighlightColor $theme $gc
-  }
-  ::themeutils::setThemeColors $theme \
-      scale.factor $sf
+if { $havethemeutils && $gc ne {} } {
+  ::themeutils::setHighlightColor $theme $gc
 }
 if { $havethemeutils && $nbg ne {} } {
   ::themeutils::setBackgroundColor $theme $nbg
+}
+if { $havethemeutils && $nfg ne {} } {
+  ::themeutils::setThemeColors $theme fg.fg $nfg
+}
+if { $havethemeutils && $group ne {} && $groupcolor ne {} } {
+  ::themeutils::setThemeGroupColor $theme $group $groupcolor
 }
 if { $havethemeutils && $srect } {
   ::themeutils::setThemeColors $theme \
@@ -155,6 +170,7 @@ if { $origfontsz != $newfontsz } {
   set appscale [expr {double($newfontsz)/double($origfontsz)}]
   ::themeutils::setThemeColors $theme \
       scale.factor $appscale
+  set scalefactor [expr {$scalefactor * $appscale}]
 }
 
 set loaded false

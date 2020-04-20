@@ -24,15 +24,15 @@ namespace eval ::ttk::theme::black {
           style.checkbutton     square-x
           style.radiobutton     octagon-circle
           arrow.height          16
-          base.bg               #424242
-          base.bg.disabled      #424242
-          base.dark             #222222
-          base.darker           #121212
-          base.darkest          #000000
-          base.fg               #ffffff
-          base.focus            #000000
-          base.lighter          #626262
-          base.lightest         #ffffff
+          bg.bg               #424242
+          bg.bg.disabled      #424242
+          bg.dark             #222222
+          bg.darker           #121212
+          bg.darkest          #000000
+          fg.fg               #ffffff
+          focus.color            #000000
+          bg.lighter          #626262
+          bg.lightest         #ffffff
           button.anchor         w
           button.padding        {5 1}
           checkbutton.focusthickness  1
@@ -44,35 +44,35 @@ namespace eval ::ttk::theme::black {
           graphics.color.arrow      #000000
           graphics.grip         #000000
           graphics.sizegrip     #000000
-          highlight.active.bg   #4a6984
-          highlight.active.fg   #ffffff
+          selectbg.bg   #4a6984
+          selectfg.fg   #ffffff
           highlight.darkhighlight     #424242
           menubutton.padding    {5 1}
           menubutton.relief     raised
           menubutton.width      -8
           notebook.tab.focusthickness  1
           notebook.tab.padding   {4 2 4 2}
-          highlight.text.select.bg        #4a6984
-          highlight.text.select.fg        #ffffff
+          selectbg.bg        #4a6984
+          selectfg.fg        #ffffff
       }
   }
 
   proc setDerivedColors { } {
     variable colors
 
-    set colors(base.border) $colors(base.darkest)
-    set colors(base.border.dark) $colors(base.darkest)
-    set colors(base.button.border) $colors(base.darkest)
-    set colors(base.entry.field.bg) $colors(base.lightest)
-    set colors(base.hover) $colors(base.lighter)
-    set colors(base.trough) $colors(base.darker)
+    set colors(bg.border) $colors(bg.darkest)
+    set colors(bg.border.dark) $colors(bg.darkest)
+    set colors(bg.button.border) $colors(bg.darkest)
+    set colors(entrybg.bg) $colors(bg.lightest)
+    set colors(bg.hover) $colors(bg.lighter)
+    set colors(trough.color) $colors(bg.darker)
     set colors(radiobutton.padding) $colors(checkbutton.padding)
-    set colors(text.fg) $colors(base.darkest)
+    set colors(entryfg.fg) $colors(bg.darkest)
     #
-    set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
-    set colors(text.bg) $colors(base.entry.field.bg)
+    set colors(entrybg.bg.disabled) $colors(entrybg.bg)
+    set colors(entrybg.bg) $colors(entrybg.bg)
     #
-    set colors(base.entry.fg) $colors(text.fg)
+    set colors(bg.entry.fg) $colors(entryfg.fg)
   }
 
   proc init { } {

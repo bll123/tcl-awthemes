@@ -67,17 +67,17 @@
        x="3.6960874"
        y="281.29053"
        ry="3.142844"
-       style="fill:_GCALT_;fill-opacity:1;stroke:_GC_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:_LIGHT_;fill-opacity:1;stroke:_BORD_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       style="opacity:1;fill:_GCALT_;fill-opacity:1;stroke:_GC_;stroke-width:0.9995057;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_LIGHT_;fill-opacity:1;stroke:_BORD_;stroke-width:0.9995057;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1093"
-       width="11.000495"
-       height="6.0004945"
+       width="11.000"
+       height="6.000"
        x="3.6958828"
        y="297.29028"
        ry="0" />
     <rect
-       style="opacity:1;fill:_GCALT_;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:_LIGHT_;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1093-3"
        width="10"
        height="8.5227261"

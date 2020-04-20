@@ -2,7 +2,7 @@
 #
 #
 
-package provide winxpblue 7.3
+package provide winxpblue 7.4
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -34,15 +34,15 @@ namespace eval ::ttk::theme::winxpblue {
           style.radiobutton     circle-circle-gradient
           style.treeview        -
           arrow.height          16
-          base.bg.disabled      #ece9d8
-          base.bg               #ece9d8
-          base.dark             #bab5ab
-          base.darker           #9e9a91
-          base.darkest          #000000
-          base.fg               #000000
-          base.focus            #c1d2ee
-          base.lighter          #f0f0ea
-          base.lightest         #ffffff
+          bg.bg.disabled      #ece9d8
+          bg.bg               #ece9d8
+          bg.dark             #bab5ab
+          bg.darker           #9e9a91
+          bg.darkest          #000000
+          fg.fg               #000000
+          focus.color            #c1d2ee
+          bg.lighter          #f0f0ea
+          bg.lightest         #ffffff
           button.anchor         w
           button.padding        {3 3}
           checkbutton.focusthickness  1
@@ -54,16 +54,16 @@ namespace eval ::ttk::theme::winxpblue {
           graphics.color        #ece9d8
           graphics.grip         #9e9a91
           graphics.sizegrip     #003c74
-          highlight.active.bg   #4a6984
-          highlight.active.fg   #ffffff
+          selectbg.bg   #4a6984
+          selectfg.fg   #ffffff
           highlight.darkhighlight     #4a6984
           menubutton.padding    {5 1}
           menubutton.relief     none
           menubutton.width      {}
           notebook.tab.focusthickness  1
           notebook.tab.padding   {4 2 4 2}
-          highlight.text.select.bg  #4a6984
-          highlight.text.select.fg  #ffffff
+          selectbg.bg  #4a6984
+          selectfg.fg  #ffffff
       }
   }
 
@@ -72,31 +72,31 @@ namespace eval ::ttk::theme::winxpblue {
 
     set colors(accent.color) #21a12a
     set colors(graphics.highlight) #e59700
-    set colors(base.active) $colors(base.focus)
-    set colors(base.button.active) $colors(base.focus)
-    set colors(base.button.border) $colors(base.bg)
-    set colors(base.button.pressed) $colors(base.lighter)
-    set colors(base.entry.field.bg) $colors(base.lightest)
-    set colors(base.hover) $colors(base.focus)
-    set colors(base.slider.border) $colors(base.bg)
-    set colors(base.tab.bg.inactive) $colors(base.lighter)
-    set colors(base.tab.bg.active) $colors(base.bg)
-    set colors(base.tab.border) $colors(base.bg)
-    set colors(base.trough) $colors(base.lighter)
-    set colors(scale.trough) $colors(base.lighter)
+    set colors(bg.active) $colors(focus.color)
+    set colors(bg.button.active) $colors(focus.color)
+    set colors(bg.button.border) $colors(bg.bg)
+    set colors(bg.button.pressed) $colors(bg.lighter)
+    set colors(entrybg.bg) $colors(bg.lightest)
+    set colors(bg.hover) $colors(focus.color)
+    set colors(bg.slider.border) $colors(bg.bg)
+    set colors(bg.tab.inactive) $colors(bg.lighter)
+    set colors(bg.tab.active) $colors(bg.bg)
+    set colors(bg.tab.border) $colors(bg.bg)
+    set colors(trough.color) $colors(bg.lighter)
+    set colors(scale.trough) $colors(bg.lighter)
     set colors(radiobutton.padding) $colors(checkbutton.padding)
     set colors(tab.use.topbar) false
-    set colors(text.fg) $colors(base.darkest)
+    set colors(entryfg.fg) $colors(bg.darkest)
     #
-    set colors(base.combobox.focus) $colors(base.entry.field.bg)
-    set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
-    set colors(base.entry.focus) $colors(base.entry.field.bg)
-    set colors(text.bg) $colors(base.entry.field.bg)
+    set colors(focus.combobox) $colors(entrybg.bg)
+    set colors(entrybg.bg.disabled) $colors(entrybg.bg)
+    set colors(focus.entry) $colors(entrybg.bg)
+    set colors(entrybg.bg) $colors(entrybg.bg)
     #
-    set colors(base.entry.fg) $colors(text.fg)
+    set colors(bg.entry.fg) $colors(entryfg.fg)
     #
-    set colors(tree.select.bg) $colors(base.bg)
-    set colors(tree.select.fg) $colors(base.fg)
+    set colors(tree.select.bg) $colors(bg.bg)
+    set colors(tree.select.fg) $colors(fg.fg)
   }
 
   proc init { } {

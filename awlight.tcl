@@ -2,7 +2,7 @@
 #
 #
 
-package provide awlight 7.3
+package provide awlight 7.4
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -25,15 +25,15 @@ namespace eval ::ttk::theme::awlight {
         style.radiobutton     circle-circle-hlbg
         style.treeview        triangle-solid
         arrow.height          16
-        base.bg.disabled      #cacaca
-        base.bg               #e8e8e7
-        base.dark             #cacaca
-        base.darker           #8b8391
-        base.darkest          #000000
-        base.fg               #000000
-        base.focus            #1a497c
-        base.lighter          #f0f0f0
-        base.lightest         #ffffff
+        bg.bg.disabled      #cacaca
+        bg.bg               #e8e8e7
+        bg.dark             #cacaca
+        bg.darker           #8b8391
+        bg.darkest          #000000
+        fg.fg               #000000
+        focus.color            #1a497c
+        bg.lighter          #f0f0f0
+        bg.lightest         #ffffff
         button.anchor         {}
         button.padding        {5 3}
         checkbutton.focusthickness  4
@@ -45,45 +45,45 @@ namespace eval ::ttk::theme::awlight {
         graphics.color.arrow  #ffffff
         graphics.grip         #ffffff
         graphics.sizegrip     #1a497c
-        highlight.active.bg   #1a497c
-        highlight.active.fg   #ffffff
+        selectbg.bg   #1a497c
+        selectfg.fg   #ffffff
         highlight.darkhighlight   #1a497c
         menubutton.padding    {5 2}
         menubutton.relief     none
         menubutton.width      {}
         notebook.tab.focusthickness  5
         notebook.tab.padding   {1 0 1 0}
-        highlight.text.select.bg        #1a497c
-        highlight.text.select.fg        #ffffff
+        selectbg.bg        #1a497c
+        selectfg.fg        #ffffff
     }
   }
 
   proc setDerivedColors { } {
     variable colors
 
-    set colors(base.arrow.disabled) $colors(base.darker)
-    set colors(base.button.bg) $colors(base.dark)
-    set colors(base.entry.box) $colors(base.dark)
-    set colors(base.entry.field.bg) $colors(base.lightest)
-    set colors(base.entry.field.bg.disabled) $colors(base.bg.disabled)
-    set colors(base.tab.bg.active) $colors(base.dark)
-    set colors(base.tab.bg.disabled) $colors(base.dark)
-    set colors(base.tab.bg.inactive) $colors(base.dark)
-    set colors(base.tab.bg.selected) $colors(base.dark)
-    set colors(base.tab.border) $colors(base.bg)
-    set colors(highlight.tab) $colors(base.darkest)
-    set colors(tab.inactive) $colors(base.darker)
+    set colors(bg.arrow.disabled) $colors(bg.darker)
+    set colors(bg.button.bg) $colors(bg.dark)
+    set colors(bg.entry.box) $colors(bg.dark)
+    set colors(entrybg.bg) $colors(bg.lightest)
+    set colors(entrybg.bg.disabled) $colors(bg.bg.disabled)
+    set colors(bg.tab.active) $colors(bg.dark)
+    set colors(bg.tab.disabled) $colors(bg.dark)
+    set colors(bg.tab.inactive) $colors(bg.dark)
+    set colors(bg.tab.selected) $colors(bg.dark)
+    set colors(bg.tab.border) $colors(bg.bg)
+    set colors(graphics.color.tab.hover) $colors(graphics.color)
+    set colors(graphics.color.tab.inactive) $colors(bg.darker)
     set colors(tab.use.topbar) true
-    set colors(text.fg) $colors(base.darkest)
-    set colors(highlight.text.select.bg.inactive) $colors(base.darkest)
+    set colors(entryfg.fg) $colors(bg.darkest)
+    set colors(selectbg.bg.inactive) $colors(bg.darkest)
     #
-    set colors(base.entry.fg) $colors(text.fg)
+    set colors(bg.entry.fg) $colors(entryfg.fg)
     #
-    set colors(base.trough) $colors(base.entry.field.bg)
-    set colors(scale.trough) $colors(base.entry.field.bg)
+    set colors(trough.color) $colors(entrybg.bg)
+    set colors(scale.trough) $colors(entrybg.bg)
     #
     set colors(graphics.color.cb) #000000
-    set colors(graphics.color.spin.bg) $colors(base.bg)
+    set colors(graphics.color.spin.bg) $colors(bg.bg)
     set colors(graphics.color.spin.arrow) #000000
   }
 

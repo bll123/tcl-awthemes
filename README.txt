@@ -18,6 +18,15 @@ Try:
 
 
 
+8.1 (2020-4-20)
+   - rename all colors names so that they can be grouped properly
+   - fix: slider/trough display (padding).
+   - fix: incorrect combobox state coloring.
+   - fix background changes so that it only modifies the
+     properly associated background colors.
+   - added helper routine 'setThemeGroupColor'
+   - changed 'setHighlightColor' to also change the select background color.
+
 8.0 (2020-4-18)
    - menu radiobuttons and menu checkbuttons are now dynamically generated
      and any corresponding .svg files have been removed.

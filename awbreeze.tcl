@@ -2,7 +2,7 @@
 #
 #
 
-package provide breeze 1.1
+package provide breeze 1.2
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -45,15 +45,15 @@ namespace eval ::ttk::theme::breeze {
           style.progressbar     rounded-line
           style.treeview        chevron
           arrow.height          16
-          base.bg.disabled      #e7e8ea
-          base.bg               #eff0f1
-          base.dark             #c0c2c4
-          base.darker           #757778
-          base.darkest          #000000
-          base.fg               #000000
-          base.focus            #3daee9
-          base.lighter          #fcfcfc
-          base.lightest         #ffffff
+          bg.bg.disabled      #e7e8ea
+          bg.bg               #eff0f1
+          bg.dark             #c0c2c4
+          bg.darker           #757778
+          bg.darkest          #000000
+          fg.fg               #000000
+          focus.color            #3daee9
+          bg.lighter          #fcfcfc
+          bg.lightest         #ffffff
           button.anchor         {}
           button.padding        {8 4}
           checkbutton.focusthickness  1
@@ -65,8 +65,8 @@ namespace eval ::ttk::theme::breeze {
           graphics.color.arrow  #757778
           graphics.grip         #000000
           graphics.sizegrip     #3daee9
-          highlight.active.bg   #3daee9
-          highlight.active.fg   #ffffff
+          selectbg.bg   #3daee9
+          selectfg.fg   #ffffff
           highlight.darkhighlight     #eff0f1
           menubutton.padding    {8 4 4 4}
           menubutton.relief     raised
@@ -79,22 +79,22 @@ namespace eval ::ttk::theme::breeze {
   proc setDerivedColors { } {
     variable colors
 
-    set colors(base.border) $colors(base.dark)
-    set colors(base.button.active) $colors(base.bg)
-    set colors(base.button.border) $colors(base.bg)
-    set colors(base.button.pressed) $colors(base.bg)
-    set colors(base.entry.border) $colors(base.bg)
-    set colors(base.entry.field.bg) $colors(base.lighter)
-    set colors(base.fg.disabled) #bbccc3
-    set colors(base.slider.border) $colors(base.bg)
-    set colors(base.trough) $colors(base.dark)
+    set colors(bg.border) $colors(bg.dark)
+    set colors(bg.button.active) $colors(bg.bg)
+    set colors(bg.button.border) $colors(bg.bg)
+    set colors(bg.button.pressed) $colors(bg.bg)
+    set colors(bg.entry.border) $colors(bg.bg)
+    set colors(entrybg.bg) $colors(bg.lighter)
+    set colors(fg.fg.disabled) #bbccc3
+    set colors(bg.slider.border) $colors(bg.bg)
+    set colors(trough.color) $colors(bg.dark)
     set colors(button.has.focus) false
     set colors(button.relief) none
     set colors(combobox.image.border) 6
     set colors(combobox.image.padding) {8 8}
     # derive the alternate graphics color.
     set colors(graphics.color.alternate) \
-        [::colorutils::disabledColor $colors(graphics.color) $colors(base.bg) 0.5 2]
+        [::colorutils::disabledColor $colors(graphics.color) $colors(bg.bg) 0.5 2]
     set colors(scale.trough)  $colors(graphics.color)
     set colors(menubutton.image.padding) {7 3}
     set colors(menubutton.use.button.image) true
@@ -102,14 +102,14 @@ namespace eval ::ttk::theme::breeze {
     set colors(radiobutton.padding) $colors(checkbutton.padding)
     set colors(scrollbar.has.arrows) false
     set colors(slider.image.border) {4 0}
-    set colors(text.fg) $colors(base.darkest)
+    set colors(entryfg.fg) $colors(bg.darkest)
     set colors(toolbutton.image.padding) {10 8}
     set colors(toolbutton.use.button.image) true
     #
-    set colors(base.entry.field.bg.disabled) $colors(base.entry.field.bg)
-    set colors(text.bg) $colors(base.entry.field.bg)
+    set colors(entrybg.bg.disabled) $colors(entrybg.bg)
+    set colors(entrybg.bg) $colors(entrybg.bg)
     #
-    set colors(base.entry.fg) $colors(text.fg)
+    set colors(bg.entry.fg) $colors(entryfg.fg)
   }
 
   proc init { } {
