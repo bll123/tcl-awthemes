@@ -106,7 +106,7 @@
 #
 # Change History
 #
-# 9.0
+# 9.0 (2020-4-23)
 #   - added 'awtemplate.tcl' as an example to start a new theme.
 #   - simplified and regularized all images.
 #   - reworked color settings, made much easier to use.

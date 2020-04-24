@@ -16,7 +16,17 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
-
+9.0 (2020-4-23)
+   - added 'awtemplate.tcl' as an example to start a new theme.
+   - simplified and regularized all images.
+   - reworked color settings, made much easier to use.
+   - reworked all radiobuttons and checkbuttons.
+   - treeview: added selected arrow right and selected arrow down images.
+   - arrows: added solid, open triangle styles.
+   - progressbar: rounded-line: reduced width (breeze).
+   - various fixes and improvements to all themes.
+   - fix combobox listbox handler.
+   - fix combobox color mappings.
 
 8.1 (2020-4-20)
    - rename all colors names so that they can be grouped properly
