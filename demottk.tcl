@@ -144,7 +144,6 @@ if { $havethemeutils && $srect } {
   ::themeutils::setThemeColors $theme \
       style.progressbar rect \
       style.scale rect \
-      style.trough rect \
       style.scrollbar-grip none
 }
 

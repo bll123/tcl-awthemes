@@ -554,8 +554,10 @@ namespace eval ::ttk::awthemes {
       set colors(style.$st) $sn
     }
 
-    set colors(is.dark) false
     _setThemeBaseColors $theme
+    if { ! [info exists colors(is.dark)] } {
+      set colors(is.dark) false
+    }
 
     set colors(bg.bg.latest) $colors(bg.bg)
     set colors(graphics.color.latest) $colors(graphics.color)
@@ -895,12 +897,12 @@ namespace eval ::ttk::awthemes {
             _GC_        $colors(graphics.color) \
             _GCALT_     $colors(graphics.color.alternate) \
             _GCARR_     $colors(graphics.color.arrow) \
-            _GCBORD_    $colors(graphics.border) \
+            _GCBORD_    $colors(graphics.color.border) \
             _GCHL_      $colors(graphics.highlight) \
             _GCMB_      $colors(graphics.color.menubutton) \
             _GRIP_      $colors(graphics.grip) \
             _LIGHT_     $colors(bg.lighter) \
-            _SZGRIP_    $colors(graphics.sizegrip) \
+            _SZGRIP_    $colors(graphics.color.sizegrip) \
             _TROUGH_    $colors(trough.color) \
             ] {
           set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
@@ -2514,10 +2516,10 @@ namespace eval ::ttk::awthemes {
           -foreground [list disabled $colors(entryfg.disabled)] \
           -lightcolor [list \
               {disabled} $colors(entrybg.disabled) \
-              focus $colors(focus.combobox) \
+              focus $colors(focus.color.combobox) \
               ] \
           -darkcolor [list active $colors(graphics.color) \
-              focus $colors(focus.combobox)] \
+              focus $colors(focus.color.combobox)] \
           -arrowcolor [list disabled $colors(bg.arrow.disabled)] \
           -fieldbackground [list disabled $colors(entrybg.disabled)]
 
@@ -2536,7 +2538,7 @@ namespace eval ::ttk::awthemes {
           -foreground [list disabled $colors(entryfg.disabled)] \
           -lightcolor [list active $colors(bg.bg) \
               disabled $colors(entrybg.disabled) \
-              focus $colors(focus.entry)] \
+              focus $colors(focus.color.entry)] \
           -fieldbackground [list disabled $colors(entrybg.disabled)]
       if { $::tcl_platform(os) eq "Darwin" } {
         # mac os x has cross-platform incompatibilities
@@ -2869,7 +2871,9 @@ namespace eval ::ttk::awthemes {
       return
     }
 
-    _adjustThemeColor $currtheme graphics.color graphics.* \
+    _adjustThemeColor $currtheme graphics.color graphics.color* \
+        $colors(graphics.color.latest) $hcol
+    _adjustThemeColor $currtheme graphics.color focus.color* \
         $colors(graphics.color.latest) $hcol
 
     set colors(graphics.color) $hcol
@@ -3138,7 +3142,7 @@ namespace eval ::themeutils {
 
     set vars(names.colors.base) {
         bg.bg
-        focus.color
+        graphics.color
         fg.fg
         }
 
@@ -3211,17 +3215,18 @@ namespace eval ::themeutils {
         entry.image.padding             {0 0}                   static
         entry.padding                   {3 1}                   static
         fg.disabled                     {fg.fg 0.65}            disabled
+        focus.color.combobox            focus.color             color
+        focus.color.entry               focus.color             color
         focus.color                     graphics.color          color
-        focus.combobox                  focus.color             color
-        focus.entry                     focus.color             color
-        graphics.border                 {graphics.color 0.4}    black
         graphics.color.alternate        {graphics.color 0.7}    white
         graphics.color.arrow            #ffffff                 static
+        graphics.color.border           {graphics.color 0.4}    black
         graphics.color.menubutton       graphics.color          color
         graphics.color.pbar.border      {graphics.color.pbar 0.4} black
         graphics.color.pbar             graphics.color          color
         graphics.color.scrollbar.border {graphics.color.scrollbar 0.4} black
         graphics.color.scrollbar        graphics.color          color
+        graphics.color.sizegrip         graphics.color          color
         graphics.color.spin.arrow       graphics.color.arrow    color
         graphics.color.spin.bg          graphics.color          color
         graphics.color.spin.border      bg.darker               color
@@ -3231,7 +3236,6 @@ namespace eval ::themeutils {
         graphics.color.tab.selected     graphics.color          color
         graphics.grip                   graphics.color.arrow    color
         graphics.highlight              accent.color            color
-        graphics.sizegrip               graphics.color          color
         highlight.darkhighlight         {selectbg.bg 0.9}       black
         menubutton.image.padding        {0 0}                   static
         menubutton.padding              {3 0}                   static
