@@ -13,7 +13,7 @@
    height="17"
    id="svg4152"
    version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    viewBox="0 0 _MAINWIDTH_ 17"
    sodipodi:docname="cb-un.svg">
   <defs
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.882353"
-     inkscape:cx="8.5"
-     inkscape:cy="8.5"
+     inkscape:zoom="28.588235"
+     inkscape:cx="9.0421811"
+     inkscape:cy="8.5000002"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -78,11 +78,11 @@
      inkscape:groupmode="layer"
      transform="translate(-0.12256804,-47.194799)">
     <rect
-       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:0.92784673;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_CBBG_;fill-opacity:1;stroke:_CBBORD_;stroke-width:1.0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect9014"
-       width="16.072153"
-       height="16.072153"
-       x="0.58649141"
+       width="16"
+       height="16"
+       x="0.58649147"
        y="47.658722"
        ry="2.8364625" />
   </g>

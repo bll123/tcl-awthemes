@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="17.941566"
-   height="17.941565"
+   width="17"
+   height="17"
    id="svg4152"
    version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   viewBox="0 0 17.941566 17.941565"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   viewBox="0 0 17 17.000001"
    sodipodi:docname="rb-sn-base.svg">
   <defs
      id="defs4154" />
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="24.691267"
-     inkscape:cx="8.9302831"
-     inkscape:cy="8.9707827"
+     inkscape:zoom="25.940903"
+     inkscape:cx="8.5"
+     inkscape:cy="8.4999986"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -76,19 +76,19 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     transform="translate(0.22293663,-46.472074)">
-    <circle
+     transform="translate(-0.24775696,-46.942946)">
+    <ellipse
        style="fill:#eff0f1;fill-opacity:1;stroke:#3daee9;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4485"
-       cx="8.7478466"
-       cy="55.442856"
-       r="8.47"
-       />
+       cx="8.747757"
+       cy="55.442947"
+       rx="8.0000896"
+       ry="8.0000906" />
     <circle
-       style="fill:#3daee9;fill-opacity:1;stroke-width:0.27499998"
+       style="fill:#3daee9;fill-opacity:1;stroke-width:0.24999999"
        id="path4500"
-       cx="8.7478466"
-       cy="55.442856"
-       r="5.5" />
+       cx="8.747757"
+       cy="55.442947"
+       r="5" />
   </g>
 </svg>

@@ -61,7 +61,7 @@
      id="layer1"
      transform="translate(2.8038268,-279.79053)">
     <rect
-       style="fill:_BG_;opacity:1;fill-opacity:1;stroke:_BORD_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_BUTTONBG_;opacity:1;fill-opacity:1;stroke:_BUTTONBORD_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect814"
        width="23"
        height="23"

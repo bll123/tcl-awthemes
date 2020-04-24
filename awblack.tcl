@@ -2,7 +2,7 @@
 #
 #
 
-package provide black 7.1
+package provide awblack 7.2
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -20,59 +20,38 @@ namespace eval ::ttk::theme::black {
   proc setBaseColors { } {
     variable colors
 
-      array set colors {
-          style.checkbutton     square-x
-          style.radiobutton     octagon-circle
-          arrow.height          16
-          bg.bg               #424242
-          bg.bg.disabled      #424242
-          bg.dark             #222222
-          bg.darker           #121212
-          bg.darkest          #000000
-          fg.fg               #ffffff
-          focus.color            #000000
-          bg.lighter          #626262
-          bg.lightest         #ffffff
-          button.anchor         w
-          button.padding        {5 1}
-          checkbutton.focusthickness  1
-          checkbutton.padding   {4 1 1 1}
-          combobox.height       23
-          entry.padding         {1 0}
-          graphics.border       #222222
-          graphics.color        #424242
-          graphics.color.arrow      #000000
-          graphics.grip         #000000
-          graphics.sizegrip     #000000
-          selectbg.bg   #4a6984
-          selectfg.fg   #ffffff
-          highlight.darkhighlight     #424242
-          menubutton.padding    {5 1}
-          menubutton.relief     raised
-          menubutton.width      -8
-          notebook.tab.focusthickness  1
-          notebook.tab.padding   {4 2 4 2}
-          selectbg.bg        #4a6984
-          selectfg.fg        #ffffff
-      }
+    array set colors {
+        style.arrow           solid-bg
+        style.checkbutton     square-x
+        style.combobox        solid-bg
+        style.radiobutton     octagon-circle
+        style.menubutton      solid
+        style.treeview        solid
+        bg.bg                 #424242
+        fg.fg                 #ffffff
+        graphics.color        #424242
+        is.dark               true
+    }
   }
 
   proc setDerivedColors { } {
     variable colors
 
-    set colors(bg.border) $colors(bg.darkest)
-    set colors(bg.border.dark) $colors(bg.darkest)
-    set colors(bg.button.border) $colors(bg.darkest)
-    set colors(entrybg.bg) $colors(bg.lightest)
-    set colors(bg.hover) $colors(bg.lighter)
-    set colors(trough.color) $colors(bg.darker)
-    set colors(radiobutton.padding) $colors(checkbutton.padding)
-    set colors(entryfg.fg) $colors(bg.darkest)
-    #
-    set colors(entrybg.bg.disabled) $colors(entrybg.bg)
-    set colors(entrybg.bg) $colors(entrybg.bg)
-    #
-    set colors(bg.entry.fg) $colors(entryfg.fg)
+    set colors(checkbutton.padding) {4 0 0 3}
+    set colors(checkbutton.scale) 0.7
+    set colors(bg.button) $colors(bg.bg)
+    set colors(button.padding) {5 1}
+    set colors(entrybg.bg) #ffffff
+    set colors(entryfg.fg) #000000
+    set colors(focus.color) #000000
+    set colors(graphics.color.arrow) #000000
+    set colors(graphics.color.menubutton) #000000
+    set colors(menubutton.padding) {5 1}
+    set colors(menubutton.relief) raised
+    set colors(menubutton.width) -8
+    set colors(notebook.tab.focusthickness) 1
+    set colors(notebook.tab.padding) {4 2 4 2}
+    set colors(trough.color) $colors(bg.darkest)
   }
 
   proc init { } {

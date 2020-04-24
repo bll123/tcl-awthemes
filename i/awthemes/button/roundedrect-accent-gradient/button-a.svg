@@ -35,7 +35,7 @@
        inkscape:collect="always"
        id="linearGradient821">
       <stop
-         style="stop-color:_FIELDBG_;stop-opacity:1"
+         style="stop-color:_LIGHT_;stop-opacity:1"
          offset="0"
          id="stop817" />
       <stop
@@ -106,7 +106,7 @@
      id="layer1"
      transform="translate(2.9802322e-8,-276.85845)">
     <rect
-       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:_GCARR_;stroke-width:1.0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:_BUTTONBORD_;stroke-width:1.0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect815"
        width="13.05729"
        height="19.057289"
@@ -114,7 +114,7 @@
        y="277.3298"
        ry="3.7795279" />
     <rect
-       style="opacity:1;fill:_DARK_;fill-opacity:0;stroke:url(#linearGradient846);stroke-width:1.85959923;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:_BUTTONBG_;fill-opacity:0;stroke:url(#linearGradient846);stroke-width:1.85959923;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect836"
        width="10.2"
        height="16.40"

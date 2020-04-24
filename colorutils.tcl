@@ -12,7 +12,7 @@
 # don't force Tk to be required
 #package require Tk
 
-package provide colorutils 4.6
+package provide colorutils 4.7
 
 namespace eval ::colorutils {
   variable vars
@@ -84,6 +84,9 @@ namespace eval ::colorutils {
     set rorig [expr {((65535 * $rc) - $ro * $bga) / $fga}]
     set gorig [expr {((65535 * $gc) - $go * $bga) / $fga}]
     set borig [expr {((65535 * $bc) - $bo * $bga) / $fga}]
+    while { $rorig > 65535 } { set rorig [expr {$rorig-65535}] }
+    while { $gorig > 65535 } { set gorig [expr {$gorig-65535}] }
+    while { $borig > 65535 } { set borig [expr {$borig-65535}] }
     while { $rorig < 0 } { set rorig [expr {$rorig+65535}] }
     while { $gorig < 0 } { set gorig [expr {$gorig+65535}] }
     while { $borig < 0 } { set borig [expr {$borig+65535}] }
@@ -107,6 +110,11 @@ namespace eval ::colorutils {
     set gn [expr {($gb * $bga + $gf * $fga) / 65535}]
     set bn [expr {($bb * $bga + $bf * $fga) / 65535}]
     return [rgbToHexStr [list $rn $gn $bn] $sz]
+  }
+
+  proc opaqueBlendPerc { fg bg perc {sz 4} } {
+    set fga [expr {round(65535.0*$perc)}]
+    return [opaqueblend $fg $bg $fga $sz]
   }
 
   proc lightenColor { col {sz 4} } {

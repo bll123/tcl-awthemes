@@ -13,7 +13,7 @@
    height="17"
    id="svg4152"
    version="1.1"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    viewBox="0 0 17 17"
    sodipodi:docname="cb-sa-base.svg">
   <defs
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="13.882353"
-     inkscape:cx="8.5"
-     inkscape:cy="8.5"
+     inkscape:zoom="28.588236"
+     inkscape:cx="8.4999999"
+     inkscape:cy="8.4999999"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:document-units="px"
@@ -82,20 +82,19 @@
        id="rect9014"
        width="16.072153"
        height="16.072153"
-       x="0.58649141"
+       x="0.58649147"
        y="47.658722"
        ry="2.8364625" />
-    <text
-       xml:space="preserve"
+    <g
+       aria-label="✔"
+       transform="scale(0.94783288,1.0550383)"
        style="font-style:normal;font-weight:normal;font-size:17.42514992px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.4356288"
-       x="1.8054633"
-       y="59.043018"
-       id="text9056"
-       transform="scale(0.94783288,1.0550383)"><tspan
-         sodipodi:role="line"
-         id="tspan9054"
-         x="1.8054633"
-         y="59.043018"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.4356288">✔</tspan></text>
+       id="text9056">
+      <path
+         d="m 5.6597567,52.287369 q 0.3318266,0 0.5019941,0.544536 0.340335,1.021005 0.4849773,1.021005 0.1106089,0 0.2297261,-0.170167 2.3908531,-3.513959 4.4243548,-5.002924 0.859345,-0.62962 1.676149,-0.62962 1.080564,0 1.301782,0.06807 0.09359,0.02553 0.09359,0.212709 0,0.153151 -0.195693,0.382877 -5.4708844,6.27918 -6.5174144,8.168039 -0.3573517,0.646637 -1.6506245,0.646637 -0.4254187,0 -0.8933793,-0.221218 -0.1956926,-0.1021 -0.6806699,-1.301781 -0.612603,-1.514491 -0.612603,-2.654613 0,-0.41691 0.5955862,-0.689178 Q 5.234338,52.287369 5.64274,52.287369 Z"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.4356288"
+         id="path10"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
 </svg>

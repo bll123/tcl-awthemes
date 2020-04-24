@@ -18,15 +18,14 @@ unset ap
 unset iscript
 
 if { [llength $::argv] < 1 } {
-  puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] "
+  puts "Usage: demottk.tcl \[-ttkscale <scale-factor>] "
   puts "    \[-fontscale <scale-factor>] "
   puts "    \[-background <color>] \[-focuscolor <color>] \[-foreground <color>]"
   puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-stylerect]"
   puts "    \[-group group -groupcolor color]"
+  puts "    <theme> "
   exit 1
 }
-
-set theme [lindex $::argv 0]
 
 set ::notksvg false
 set ::noflex false
@@ -40,50 +39,64 @@ set nfg {}
 set srect false
 set group {}
 set groupcolor {}
-for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
-  if { [lindex $::argv $idx] eq "-ttkscale" } {
-    incr idx
-    tk scaling [lindex $::argv $idx]
+set theme {}
+for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
+  set a [lindex $::argv $idx]
+  switch -exact -- $a {
+    -ttkscale {
+      incr idx
+      tk scaling [lindex $::argv $idx]
+    }
+    -focuscolor {
+      incr idx
+      set gc [lindex $::argv $idx]
+    }
+    -background {
+      incr idx
+      set nbg [lindex $::argv $idx]
+    }
+    -foreground {
+      incr idx
+      set nfg [lindex $::argv $idx]
+    }
+    -fontscale {
+      incr idx
+      set fontscale [lindex $::argv $idx]
+    }
+    -group {
+      incr idx
+      set group [lindex $::argv $idx]
+    }
+    -groupcolor {
+      incr idx
+      set groupcolor [lindex $::argv $idx]
+    }
+    -notksvg {
+      set ::notksvg true
+    }
+    -noflex {
+      set ::noflex true
+    }
+    -nocbt {
+      set ::nocbt true
+    }
+    -sizegrip {
+      set ::sizegrip true
+    }
+    -stylerect {
+      set srect true
+    }
+    default {
+      if { ! [string match -* $a] } {
+        set theme $a
+      }
+    }
   }
-  if { [lindex $::argv $idx] eq "-focuscolor" } {
-    incr idx
-    set gc [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-background" } {
-    incr idx
-    set nbg [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-foreground" } {
-    incr idx
-    set nfg [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-fontscale" } {
-    incr idx
-    set fontscale [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-group" } {
-    incr idx
-    set group [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-groupcolor" } {
-    incr idx
-    set groupcolor [lindex $::argv $idx]
-  }
-  if { [lindex $::argv $idx] eq "-notksvg" } {
-    set ::notksvg true
-  }
-  if { [lindex $::argv $idx] eq "-noflex" } {
-    set ::noflex true
-  }
-  if { [lindex $::argv $idx] eq "-nocbt" } {
-    set ::nocbt true
-  }
-  if { [lindex $::argv $idx] eq "-sizegrip" } {
-    set ::sizegrip true
-  }
-  if { [lindex $::argv $idx] eq "-stylerect" } {
-    set srect true
-  }
+}
+
+if { $theme eq {} } {
+  puts stderr "no theme specified"
+  exit 1
 }
 
 # now do the require so that -notksvg has an effect.
@@ -596,6 +609,7 @@ if { $theme eq "aqua" } {
 }
 pack .sbv -in .two -side right -fill y -expand false
 pack .sbh -in .two -side bottom -fill x -expand false
+# change borderwidth to 1 for color testing
 text .text \
     -xscrollcommand [list .sbh set] \
     -yscrollcommand [list .sbv set] \
@@ -603,7 +617,7 @@ text .text \
     -relief flat \
     -height 10 \
     -width 50 \
-    -borderwidth 1 \
+    -borderwidth 0 \
     -highlightthickness 1 \
     -font TextFont
 if { [info commands ::ttk::theme::${theme}::setTextColors] ne {} } {
@@ -638,7 +652,7 @@ ttk::style configure Treeview \
     -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}] \
     -fieldbackground [ttk::style lookup TFrame -background] \
     -borderwidth 0 \
-    -relief none
+    -relief flat
 ttk::treeview .tv -columns {a b c}
 pack .tv -in .four -fill both -expand true
 .tv heading #0 -text #0
@@ -704,10 +718,11 @@ pack .menubar.file .menubar.edit .menubar.dis \
 ttk::scrollbar .sblbox1 -command [list .lbox1 yview]
 ttk::scrollbar .sblbox2 -command [list .lbox2 yview]
 set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
+# change borderwidth to 1 for color testing
 listbox .lbox1 \
     -listvariable ::lbox \
     -yscrollcommand [list .sblbox1 set] \
-    -borderwidth 1p \
+    -borderwidth 0 \
     -highlightthickness 1p \
     -font TextFont \
     -relief sunken

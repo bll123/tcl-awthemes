@@ -78,13 +78,13 @@
      inkscape:groupmode="layer"
      transform="translate(-0.24784642,-46.942856)">
     <circle
-       style="fill:_DARK_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:1.0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:_CBBG_;fill-opacity:1;stroke:_BORDDARK_;stroke-width:1.0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4485"
        cx="8.7478466"
        cy="55.442856"
        r="8.0" />
     <circle
-       style="fill:_GC_;fill-opacity:1;stroke-width:0.26500306"
+       style="fill:_GC_;fill-opacity:1;stroke-width:0"
        id="path4500"
        cx="8.6622648"
        cy="55.477901"

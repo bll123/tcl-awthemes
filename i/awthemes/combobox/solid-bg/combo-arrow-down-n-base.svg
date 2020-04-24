@@ -10,8 +10,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
-   height="27"
-   viewBox="0 0 16 27"
+   height="25"
+   viewBox="0 0 16 25"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -63,10 +63,10 @@
      id="layer1"
      transform="translate(131.70758,-105.59397)">
     <rect
-       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:0.42496574;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#000000;stroke-width:1.0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect819"
-       width="15.575034"
-       height="26.575035"
+       width="15"
+       height="24"
        x="-131.4951"
        y="105.80645" />
     <text

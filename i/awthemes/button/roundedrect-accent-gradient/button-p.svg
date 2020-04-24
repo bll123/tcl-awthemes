@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+!!<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
@@ -85,7 +85,7 @@
      id="layer1"
      transform="translate(8.9406967e-8,311.56676)">
     <rect
-       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:_GCARR_;stroke-width:1.0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:url(#linearGradient823);fill-opacity:1;stroke:_BUTTONBORD_;stroke-width:1.0;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect815"
        width="13.0"
        height="19.0"

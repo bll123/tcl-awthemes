@@ -2,7 +2,7 @@
 #
 #
 
-package provide winxpblue 7.4
+package provide winxpblue 7.5
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -24,6 +24,7 @@ namespace eval ::ttk::theme::winxpblue {
       # #cdcac3 -> #bab5ab
       # #21a12a accent color
       # #e59700 highlight color
+      # #003c74 blue color
       array set colors {
           style.arrow           chevron
           style.button          roundedrect-accent-gradient
@@ -33,70 +34,45 @@ namespace eval ::ttk::theme::winxpblue {
           style.notebook        roundedtop-light-accent
           style.radiobutton     circle-circle-gradient
           style.treeview        -
-          arrow.height          16
-          bg.bg.disabled      #ece9d8
-          bg.bg               #ece9d8
-          bg.dark             #bab5ab
-          bg.darker           #9e9a91
-          bg.darkest          #000000
-          fg.fg               #000000
-          focus.color            #c1d2ee
-          bg.lighter          #f0f0ea
-          bg.lightest         #ffffff
-          button.anchor         w
-          button.padding        {3 3}
-          checkbutton.focusthickness  1
-          checkbutton.padding   {8 1 1 1}
-          combobox.height       23
-          entry.padding         {2 0}
-          graphics.border       #9e9a91
-          graphics.color.arrow  #003c74
-          graphics.color        #ece9d8
-          graphics.grip         #9e9a91
-          graphics.sizegrip     #003c74
-          selectbg.bg   #4a6984
-          selectfg.fg   #ffffff
-          highlight.darkhighlight     #4a6984
-          menubutton.padding    {5 1}
-          menubutton.relief     none
-          menubutton.width      {}
-          notebook.tab.focusthickness  1
-          notebook.tab.padding   {4 2 4 2}
-          selectbg.bg  #4a6984
-          selectfg.fg  #ffffff
+          bg.bg                 #ece9d8
+          fg.fg                 #000000
+          graphics.color        #003c74
       }
   }
 
   proc setDerivedColors { } {
     variable colors
 
+    set colors(bg.lighter) #f0f0ea
+    set colors(bg.lightest) #fbfbf8
+
+    set colors(bg.active) $colors(bg.dark)
     set colors(accent.color) #21a12a
+    set colors(button.anchor) w
+    set colors(button.border) #003c74
+    set colors(button.padding) {3 2}
+    set colors(checkbutton.border) #003c74
+    set colors(checkbutton.padding) {8 0 0 3}
+    set colors(checkbutton.scale) 0.75
+    set colors(combobox.padding) {5 0}
+    set colors(entrybg.bg) #ffffff
+    set colors(entry.padding) {2 0}
+    set colors(focus.color) #003c74
+    set colors(graphics.color.arrow) #ffffff
+    set colors(graphics.color.pbar.border) $colors(bg.darkest)
+    set colors(graphics.color.pbar) #ece9d8
+    set colors(graphics.color.scrollbar.border) $colors(bg.darkest)
+    set colors(graphics.color.scrollbar) #ece9d8
+    set colors(graphics.grip) $colors(bg.darkest)
     set colors(graphics.highlight) #e59700
-    set colors(bg.active) $colors(focus.color)
-    set colors(bg.button.active) $colors(focus.color)
-    set colors(bg.button.border) $colors(bg.bg)
-    set colors(bg.button.pressed) $colors(bg.lighter)
-    set colors(entrybg.bg) $colors(bg.lightest)
-    set colors(bg.hover) $colors(focus.color)
-    set colors(bg.slider.border) $colors(bg.bg)
-    set colors(bg.tab.inactive) $colors(bg.lighter)
-    set colors(bg.tab.active) $colors(bg.bg)
-    set colors(bg.tab.border) $colors(bg.bg)
-    set colors(trough.color) $colors(bg.lighter)
-    set colors(scale.trough) $colors(bg.lighter)
-    set colors(radiobutton.padding) $colors(checkbutton.padding)
-    set colors(tab.use.topbar) false
-    set colors(entryfg.fg) $colors(bg.darkest)
-    #
-    set colors(focus.combobox) $colors(entrybg.bg)
-    set colors(entrybg.bg.disabled) $colors(entrybg.bg)
-    set colors(focus.entry) $colors(entrybg.bg)
-    set colors(entrybg.bg) $colors(entrybg.bg)
-    #
-    set colors(bg.entry.fg) $colors(entryfg.fg)
-    #
-    set colors(tree.select.bg) $colors(bg.bg)
-    set colors(tree.select.fg) $colors(fg.fg)
+    set colors(menubutton.padding) {3 1}
+    set colors(menubutton.relief) none
+    set colors(menubutton.width) {}
+    set colors(notebook.tab.focusthickness) 1
+    set colors(notebook.tab.padding) {4 2 4 2}
+    set colors(progressbar.color) #ece9d8
+    set colors(selectbg.bg) $colors(bg.darkest)
+    set colors(trough.color) $colors(bg.lightest)
   }
 
   proc init { } {

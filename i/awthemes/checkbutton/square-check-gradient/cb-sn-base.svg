@@ -10,12 +10,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="13"
-   height="13"
-   viewBox="0 0 13 13"
+   width="17"
+   height="17"
+   viewBox="0 0 17 17"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    sodipodi:docname="cb-sn-base.svg"
    style="shape-rendering:crispEdges">
   <defs
@@ -41,7 +41,7 @@
        x2="2.872113"
        y2="296.67389"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(4.0752498,0,0,4.113925,-0.10174979,-924.67265)" />
+       gradientTransform="matrix(5.4482956,0,0,5.5000015,-0.28145989,-1332.137)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -50,9 +50,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="19.769231"
-     inkscape:cx="6.5"
-     inkscape:cy="6.5"
+     inkscape:zoom="20.117646"
+     inkscape:cx="8.5000002"
+     inkscape:cy="8.4999989"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -84,24 +84,25 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0.13229173,-284.13224)">
+     transform="translate(0.13229197,-284.13223)">
     <rect
-       style="opacity:0.98999999;fill:url(#linearGradient825);fill-opacity:1;stroke:#003c74;stroke-width:1.28423464;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:url(#linearGradient825);fill-opacity:1;stroke:#003c74;stroke-width:1.33692312;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect814"
-       width="11.715765"
-       height="11.715765"
-       x="0.50982559"
-       y="284.77435" />
+       width="15.663077"
+       height="15.663077"
+       x="0.53616935"
+       y="284.80069" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:11.83159733px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#21a12a;fill-opacity:1;stroke:none;stroke-width:0.2957899"
-       x="1.4166934"
-       y="294.87854"
-       id="text817"><tspan
+       style="font-style:normal;font-weight:normal;font-size:19.16766357px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#21a12a;fill-opacity:1;stroke:none;stroke-width:0.47919154"
+       x="0.80740958"
+       y="284.24545"
+       id="text817"
+       transform="scale(0.9478328,1.0550384)"><tspan
          sodipodi:role="line"
          id="tspan815"
-         x="1.4166934"
-         y="294.87854"
-         style="fill:#21a12a;fill-opacity:1;stroke-width:0.2957899">✔</tspan></text>
+         x="0.80740958"
+         y="284.24545"
+         style="fill:#21a12a;fill-opacity:1;stroke-width:0.47919154">✔</tspan></text>
   </g>
 </svg>
