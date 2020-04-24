@@ -1,8 +1,16 @@
 
 The following files are needed:
-  awthemes.tcl, colorutils.tcl, pkgIndex.tcl,
-  awblack.tcl, awdark.tcl, awlight.tcl, awwinxpblue.tcl, awbreeze.tcl,
-  i/
+  awthemes.tcl            - main
+  colorutils.tcl          - color utilities
+  pkgIndex.tcl            - package index
+  awblack.tcl             - scalable black theme
+  awdark.tcl              - awdark theme
+  awlight.tcl             - awlight theme
+  awwinxpblue.tcl         - scalable winxpblue theme
+  awbreeze.tcl            - scalable breeze theme
+  awtemplate.tcl          - example file to start a new theme
+  i/                      - images
+
 Demonstration scripts:
   demottk.tcl, demoscaled.tcl
 
