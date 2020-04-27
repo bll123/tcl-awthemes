@@ -63,16 +63,16 @@
     <rect
        style="opacity:1;fill:_FIELDBG_;fill-opacity:1;stroke:_GC_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.6"
        id="rect814"
-       width="16.000191"
-       height="16.000191"
+       width="16"
+       height="16"
        x="-1.8624377"
        y="282.84866"
        ry="2.0892899" />
     <rect
        style="fill:_ACCENT_;fill-opacity:0.6;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect815-3"
-       width="9.999999"
-       height="9.999999"
+       width="10"
+       height="10"
        x="1.1376581"
        y="285.84879"
        ry="0" />

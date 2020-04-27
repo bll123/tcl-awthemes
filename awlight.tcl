@@ -2,7 +2,7 @@
 #
 #
 
-package provide awlight 7.5
+package provide awlight 7.6
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -44,13 +44,12 @@ namespace eval ::ttk::theme::awlight {
     set colors(bg.tab.selected) $colors(bg.dark)
     set colors(button.anchor) {}
     set colors(button.padding) {5 3}
-    set colors(checkbutton.bg) $colors(bg.dark)
     set colors(entrybg.bg) $colors(bg.lightest)
     set colors(entry.padding) {5 1}
-    set colors(graphics.color.arrow) #ffffff
-    set colors(graphics.color.menubutton) #000000
     set colors(graphics.color.spin.arrow) #000000
     set colors(graphics.color.spin.bg) $colors(bg.bg)
+    set colors(graphics.color.tree.arrow) #000000
+    set colors(graphics.color.grip) #ffffff
     set colors(notebook.tab.focusthickness) 5
     set colors(selectbg.bg) $colors(graphics.color)
     set colors(tab.use.topbar) true

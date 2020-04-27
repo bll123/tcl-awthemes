@@ -3,6 +3,7 @@ The following files are needed:
   awthemes.tcl            - main
   colorutils.tcl          - color utilities
   pkgIndex.tcl            - package index
+  awarc.tcl               - scalable arc theme
   awblack.tcl             - scalable black theme
   awdark.tcl              - awdark theme
   awlight.tcl             - awlight theme
@@ -23,6 +24,12 @@ Try:
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
   # scaled styling
   tclsh demoscaled.tcl winxpblue
+
+9.1 (2020-4-27)
+   - progressbar: rect-bord: fixed sizing.
+   - progressbar: rect-bord: removed border on trough.
+   - various fixes for all themes.
+   - Added 'arc' theme by Sergei Golovan
 
 9.0 (2020-4-23)
    - added 'awtemplate.tcl' as an example to start a new theme.

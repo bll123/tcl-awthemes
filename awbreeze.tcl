@@ -2,7 +2,7 @@
 #
 #
 
-package provide awbreeze 1.3
+package provide awbreeze 1.4
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -48,22 +48,38 @@ namespace eval ::ttk::theme::breeze {
   proc setDerivedColors { } {
     variable colors
 
-    set colors(button.anchor) {}
-    set colors(button.padding) {8 4}
+    # the alternate color would be defined, but we need a copy now
+    # for button-af
+    set colors(graphics.color.alternate) \
+        [::colorutils::opaqueBlendPerc $colors(graphics.color) #ffffff 0.7 2]
+
     set colors(bg.checkbutton) $colors(bg.bg)
+    set colors(button.active.border) $colors(graphics.color)
+    set colors(button.activefocus) $colors(graphics.color.alternate)
+    set colors(button.anchor) {}
+    set colors(button.image.padding) {6 4}
+    set colors(button.padding) {8 3}
+    set colors(button.pressed) $colors(graphics.color)
+    set colors(button.pressed) $colors(graphics.color)
     set colors(checkbutton.border) $colors(graphics.color)
     set colors(checkbutton.focusthickness) 1
     set colors(checkbutton.padding) {4 0 0 2}
+    set colors(combobox.entry.image.padding) {6 8}
     set colors(entrybg.bg) #fcfcfc
+    set colors(entry.image.padding) {5 8}
     set colors(entry.padding) {2 0}
-    set colors(menubutton.use.button.image) true
+    set colors(graphics.color.spin.arrow) $colors(bg.darkest)
+    set colors(graphics.color.tree.arrow) $colors(bg.darkest)
     set colors(menubutton.padding) {10 2}
+    set colors(menubutton.use.button.image) true
     set colors(parent.theme) default
     set colors(scale.trough)  $colors(graphics.color)
     set colors(scrollbar.has.arrows) false
+    set colors(selectbg.bg) $colors(graphics.color)
+    set colors(spinbox.image.padding) {4 4}
     set colors(toolbutton.image.padding) {10 7}
     set colors(toolbutton.use.button.image) true
-    set colors(trough.color) $colors(bg.dark)
+    set colors(trough.color) $colors(bg.darker)
   }
 
   proc init { } {

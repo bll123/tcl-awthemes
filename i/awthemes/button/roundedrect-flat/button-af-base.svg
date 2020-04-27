@@ -1,4 +1,4 @@
-!!<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
@@ -9,13 +9,14 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24"
-   height="24"
-   viewBox="0 0 24 24"
+   width="26"
+   height="14"
+   viewBox="0 0 26 14"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="button-af-base.svg">
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="button-af-base.svg"
+   shape-rendering="crispEdges">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,17 +26,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="19.347826"
-     inkscape:cx="12"
-     inkscape:cy="12.000003"
+     inkscape:zoom="17.269284"
+     inkscape:cx="13"
+     inkscape:cy="6.9999922"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:window-width="1023"
      inkscape:window-height="659"
-     inkscape:window-x="91"
-     inkscape:window-y="174"
+     inkscape:window-x="257"
+     inkscape:window-y="165"
      inkscape:window-maximized="0"
      showborder="false"
      fit-margin-top="0"
@@ -59,14 +60,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(2.8038268,-279.79053)">
+     transform="translate(3.8037868,-284.79051)">
     <rect
-       style="fill:#0075b3;fill-opacity:1;stroke:#003ad1;stroke-opacity:1"
+       style="fill:#0075b3;fill-opacity:1;stroke:#003ad1;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect814"
-       width="23"
-       height="23"
-       x="-2.3038268"
-       y="280.29053"
-       ry="4.0" />
+       width="25"
+       height="13"
+       x="-3.3037467"
+       y="285.29056"
+       ry="2.2608557" />
   </g>
 </svg>

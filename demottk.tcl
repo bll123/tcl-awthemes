@@ -40,12 +40,13 @@ set srect false
 set group {}
 set groupcolor {}
 set theme {}
+set tkscaling {}
 for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
   set a [lindex $::argv $idx]
   switch -exact -- $a {
     -ttkscale {
       incr idx
-      tk scaling [lindex $::argv $idx]
+      set tkscaling [lindex $::argv $idx]
     }
     -focuscolor {
       incr idx
@@ -156,13 +157,17 @@ if { ! [catch {package present tksvg}] } {
   set havetksvg true
 }
 
-set fn data/bll-tecra/tkscale.txt
-if { [file exists $fn] } {
-  set fh [open $fn r]
-  set scale [gets $fh]
-  close $fh
-  tk scaling -displayof . $scale
+if { $tkscaling ne {} && $tkscaling ne "default" } {
+  tk scaling -displayof . $tkscaling
 }
+#set fn data/bll-g7/tkscale.txt
+#if { $tkscaling eq {} && [file exists $fn] } {
+#  set fh [open $fn r]
+#  set scale [gets $fh]
+#  close $fh
+#  tk scaling -displayof . $scale
+#}
+#puts "tk scaling: [tk scaling]"
 
 set calcdpi [expr {round([tk scaling]*72.0)}]
 set scalefactor [expr {$calcdpi/100.0}]

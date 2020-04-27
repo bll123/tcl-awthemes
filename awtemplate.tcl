@@ -13,7 +13,7 @@
 # the new theme:
 #    package ifneeded template 1.0 \
 #        [list source [file join $dir awtemplate.tcl]]
-package provide awtemplate 1.0
+package provide awtemplate 1.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -159,6 +159,9 @@ namespace eval ::ttk::theme::template {
   #                           'alt' has not been used yet in this package,
   #                           I don't know what issues it will have.
   #
+  # For dark themes using progressbar/rect-bord, set:
+  #     scale.border
+  #
   # See the source to 'awthemes.tcl' to see the complete list of settings.
   # See the other aw*.tcl themes for examples on how to set up a theme.
   #
@@ -166,6 +169,8 @@ namespace eval ::ttk::theme::template {
   #     $colors(bg.bg)
   #     $colors(fg.fg)
   #     $colors(graphics.color)
+  #     $colors(graphics.color.light)
+  #     $colors(graphics.color.dark)
   #     $colors(bg.light)
   #     $colors(bg.lighter)
   #     $colors(bg.lightest)
