@@ -2,7 +2,7 @@
 #
 #
 
-package provide awblack 7.3
+package provide black 7.4
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {

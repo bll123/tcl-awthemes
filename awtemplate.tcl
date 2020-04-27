@@ -13,7 +13,7 @@
 # the new theme:
 #    package ifneeded template 1.0 \
 #        [list source [file join $dir awtemplate.tcl]]
-package provide awtemplate 1.1
+package provide template 1.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {

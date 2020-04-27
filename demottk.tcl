@@ -21,7 +21,7 @@ if { [llength $::argv] < 1 } {
   puts "Usage: demottk.tcl \[-ttkscale <scale-factor>] "
   puts "    \[-fontscale <scale-factor>] "
   puts "    \[-background <color>] \[-focuscolor <color>] \[-foreground <color>]"
-  puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-stylerect]"
+  puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-styledemo]"
   puts "    \[-group group -groupcolor color]"
   puts "    <theme> "
   exit 1
@@ -36,7 +36,7 @@ set sf 1.0
 set gc {}
 set nbg {}
 set nfg {}
-set srect false
+set styledemo false
 set group {}
 set groupcolor {}
 set theme {}
@@ -84,8 +84,8 @@ for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     -sizegrip {
       set ::sizegrip true
     }
-    -stylerect {
-      set srect true
+    -styledemo {
+      set styledemo true
     }
     default {
       if { ! [string match -* $a] } {
@@ -141,11 +141,12 @@ if { $havethemeutils && $nfg ne {} } {
 if { $havethemeutils && $group ne {} && $groupcolor ne {} } {
   ::themeutils::setThemeGroupColor $theme $group $groupcolor
 }
-if { $havethemeutils && $srect } {
+if { $havethemeutils && $styledemo } {
   ::themeutils::setThemeColors $theme \
-      style.progressbar rect \
-      style.scale rect \
-      style.scrollbar-grip none
+      style.progressbar rounded-line \
+      style.scale circle-rev \
+      style.scrollbar-grip none \
+      scrollbar.has.arrows false
 }
 
 

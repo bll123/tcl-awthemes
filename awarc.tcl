@@ -3,7 +3,7 @@
 #
 #
 
-package provide awarc 1.0
+package provide arc 1.1
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {

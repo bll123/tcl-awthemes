@@ -2,7 +2,7 @@
 #
 #
 
-package provide awbreeze 1.4
+package provide breeze 1.5
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {

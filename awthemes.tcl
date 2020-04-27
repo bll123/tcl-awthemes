@@ -332,7 +332,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.1
+package provide awthemes 9.1.1
 
 package require Tk
 # set ::notksvg to true for testing purposes
