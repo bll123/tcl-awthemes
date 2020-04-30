@@ -118,7 +118,7 @@ proc main { } {
   catch { package require awthemes }
   set vars(havethemeutils) false
   if { ! [catch {package present awthemes}] } {
-    set varshavethemeutils) true
+    set vars(havethemeutils) true
   }
 
   set vars(havecbt) false
@@ -147,7 +147,7 @@ proc main { } {
     ::themeutils::setHighlightColor $vars(theme) $vars(gc)
   }
   if { $vars(havethemeutils) && $vars(nbg) ne {} } {
-    ::themeutils::setBackgroundColor $vars(theme) $nbg
+    ::themeutils::setBackgroundColor $vars(theme) $vars(nbg)
   }
   if { $vars(havethemeutils) && $vars(nfg) ne {} } {
     ::themeutils::setThemeColors $vars(theme) fg.fg $vars(nfg)
