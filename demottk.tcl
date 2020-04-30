@@ -41,7 +41,7 @@ proc main { } {
     exit 1
   }
 
-  set vars(notksvg) false
+  set ::notksvg false
   set vars(noflex) false
   set vars(nocbt) false
   set vars(sizegrip) false
@@ -87,7 +87,7 @@ proc main { } {
         set vars(groupcolor) [lindex $::argv $idx]
       }
       -notksvg {
-        set vars(notksvg) true
+        set ::notksvg true
       }
       -noflex {
         set vars(noflex) true
@@ -164,7 +164,7 @@ proc main { } {
   }
 
 
-  if { ! $vars(notksvg) } {
+  if { ! $::notksvg } {
     catch { package require tksvg }
   }
   set vars(havetksvg) false
@@ -414,14 +414,14 @@ proc main { } {
     incr row
   }
   set tag {(with tksvg)}
-  if { $vars(notksvg) } {
+  if { $::notksvg } {
     set tag {(without tksvg)}
   }
   .lbn configure -text "$vars(theme) $tag"
 
   pack .lfn .lfd -in .one -side left -padx 3p -pady 3p -expand 1 -fill both
 
-  if { ! $vars(notksvg) && $vars(sizegrip) } {
+  if { ! $::notksvg && $vars(sizegrip) } {
     set sgdata {
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <!-- Created with Inkscape (http://www.inkscape.org/) -->
