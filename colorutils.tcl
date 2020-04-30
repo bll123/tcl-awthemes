@@ -12,7 +12,7 @@
 # don't force Tk to be required
 #package require Tk
 
-package provide colorutils 4.7
+package provide colorutils 4.8
 
 namespace eval ::colorutils {
   variable vars
@@ -81,15 +81,9 @@ namespace eval ::colorutils {
 
     # assuming an 70% foreground, 30% background blend, do
     # a reverse transform to get a color based on the old background.
-    set rorig [expr {((65535 * $rc) - $ro * $bga) / $fga}]
-    set gorig [expr {((65535 * $gc) - $go * $bga) / $fga}]
-    set borig [expr {((65535 * $bc) - $bo * $bga) / $fga}]
-    while { $rorig > 65535 } { set rorig [expr {$rorig-65535}] }
-    while { $gorig > 65535 } { set gorig [expr {$gorig-65535}] }
-    while { $borig > 65535 } { set borig [expr {$borig-65535}] }
-    while { $rorig < 0 } { set rorig [expr {$rorig+65535}] }
-    while { $gorig < 0 } { set gorig [expr {$gorig+65535}] }
-    while { $borig < 0 } { set borig [expr {$borig+65535}] }
+    set rorig [expr {abs(((65535 * $rc) - $ro * $bga) / $fga)}]
+    set gorig [expr {abs(((65535 * $gc) - $go * $bga) / $fga)}]
+    set borig [expr {abs(((65535 * $bc) - $bo * $bga) / $fga)}]
 
     # and then blend it back together with the new background.
     set rnew [expr {($rn * $bga + $rorig * $fga) / 65535}]

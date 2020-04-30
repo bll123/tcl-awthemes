@@ -127,6 +127,12 @@
 #
 # Change History
 #
+# 9.2 (2020-4-30)
+#   - arc: notebook: use roundedtop-dark style.
+#   - fix: set of background/highlight colors: remove extra adjustment.
+#   - fix: setBackground() color adjustments.
+# 9.1.1 (2020-4-27)
+#   - fix package provide statements.
 # 9.1 (2020-4-27)
 #   - progressbar: rect-bord: fixed sizing.
 #   - progressbar: rect-bord: removed border on trough.
@@ -332,7 +338,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.1.1
+package provide awthemes 9.2
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -621,12 +627,8 @@ namespace eval ::ttk::awthemes {
       }
     }
 
-    if { $colors(bg.bg) ne $colors(bg.bg.latest) } {
-      ::ttk::theme::${theme}::setBackground $colors(bg.bg) $theme
-    }
-    if { $colors(graphics.color) ne $colors(graphics.color.latest) } {
-      ::ttk::theme::${theme}::setHighlight $colors(graphics.color) $theme
-    }
+    set colors(bg.bg.latest) $colors(bg.bg)
+    set colors(graphics.color.latest) $colors(graphics.color)
 
     # only need to do this for the requested theme
     _setImageData $theme
@@ -818,6 +820,9 @@ namespace eval ::ttk::awthemes {
         continue
       }
 
+      if { $colors(debug) > 0 } {
+        puts "style: $styledir"
+      }
       foreach {fn} [glob -directory $styledir *.svg] {
         if { [string match *-base* $fn] } { continue }
         set origi [file rootname [file tail $fn]]
@@ -2089,8 +2094,10 @@ namespace eval ::ttk::awthemes {
 
     ttk::style configure ${pfx}TNotebook \
         -borderwidth 0
+    # themes with 'default' as parent would require a borderwidth to be set.
+    # though the 'default' tabs are nice, the border colors are not.
     ttk::style configure ${pfx}TNotebook.Tab \
-        -borderwidth 0
+        -borderwidth $colors(notebook.tab.borderwidth)
     ttk::style map ${pfx}TNotebook.Tab \
         -borderwidth [list disabled 0]
   }
@@ -2776,7 +2783,7 @@ namespace eval ::ttk::awthemes {
           -background $colors(bg.tab.inactive) \
           -padding $pad \
           -focusthickness $colors(notebook.tab.focusthickness) \
-          -relief none \
+          -relief none
       # the use of -lightcolor here turns off any relief.
       ttk::style map ${pfx}TNotebook.Tab \
           -bordercolor [list disabled $colors(bg.tab.border)] \
@@ -2784,12 +2791,10 @@ namespace eval ::ttk::awthemes {
           -background [list \
               {selected !disabled} $colors(bg.tab.selected) \
               {!selected active !disabled} $colors(bg.tab.active) \
-              {!selected !active !disabled} $colors(bg.tab.inactive) \
               disabled $colors(bg.tab.disabled)] \
           -lightcolor [list \
               {selected !disabled} $colors(bg.tab.selected) \
               {!selected active !disabled} $colors(bg.tab.active) \
-              {!selected !active !disabled} $colors(bg.tab.inactive) \
               disabled $colors(bg.tab.disabled)]
 
       # panedwindow
@@ -3398,6 +3403,7 @@ namespace eval ::themeutils {
         combobox.entry.image.padding    entry.image.padding     color
         combobox.padding                0                       static
         combobox.relief                 none                    static
+        debug                           0                       static
         entrybg.bg                      bg.dark                 color
         entrybg.disabled                {entrybg.bg 0.6}        disabled
         entryfg.disabled                {entryfg.fg 0.6}        disabled
@@ -3430,6 +3436,7 @@ namespace eval ::themeutils {
         menubutton.relief               none                    static
         menubutton.use.button.image     false                   static
         menubutton.width                {}                      static
+        notebook.tab.borderwidth        0                       static
         notebook.tab.focusthickness     5                       static
         notebook.tab.padding            {1 0}                   static
         parent.theme                    clam                    static

@@ -3,7 +3,7 @@
 #
 #
 
-package provide arc 1.1
+package provide arc 1.2
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -28,6 +28,7 @@ namespace eval ::ttk::theme::arc {
           style.combobox        -
           style.entry           roundedrect
           style.menubutton      -
+          style.notebook        roundedtop-dark
           style.progressbar     rounded-line
           style.radiobutton     circle-circle-rev
           style.scale           circle-rev
@@ -48,13 +49,15 @@ namespace eval ::ttk::theme::arc {
     set colors(bg.darker) #d3d8e2
     set colors(bg.darkest) #5c616c
 
-    set colors(bg.border) $colors(bg.darker) ; # #cfd6e6
+    set colors(bg.border) $colors(bg.darker)
     set colors(bg.button) $colors(bg.light)
     set colors(bg.tab.disabled) $colors(bg.dark)
     set colors(bg.tab.inactive) $colors(bg.dark)
     set colors(button.active) $colors(bg.lightest)
     set colors(button.active.border) $colors(bg.darker) ; # #cfd6e6
     set colors(button.anchor) {}
+    set colors(notebook.tab.focusthickness) 3
+    set colors(notebook.tab.padding) {3 3}
     set colors(button.image.padding) {6 3}
     set colors(button.padding) {8 4}
     set colors(button.pressed) $colors(bg.darker)
