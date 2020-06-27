@@ -25,12 +25,18 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
- 9.2 (2020-4-30)
+9.2.2 (2020-6-6)
+   - fix: settextcolors: background color.
+
+9.2.1 (2020-5-20)
+   - fix: progressbar: rect, rect-bord border size.
+
+9.2 (2020-4-30)
    - arc: notebook: use roundedtop-dark style.
    - fix: set of background/highlight colors: remove extra adjustment.
    - fix: setBackground() color adjustments.
 
- 9.1.1 (2020-4-27)
+9.1.1 (2020-4-27)
    - fix package provide statements.
 
 9.1 (2020-4-27)

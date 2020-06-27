@@ -127,6 +127,10 @@
 #
 # Change History
 #
+# 9.2.2 (2020-6-6)
+#   - fix: settextcolors: background color.
+# 9.2.1 (2020-5-20)
+#   - fix: progressbar: rect, rect-bord border size.
 # 9.2 (2020-4-30)
 #   - arc: notebook: use roundedtop-dark style.
 #   - fix: set of background/highlight colors: remove extra adjustment.
@@ -338,7 +342,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.2
+package provide awthemes 9.2.2
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -3163,7 +3167,6 @@ namespace eval ::ttk::awthemes {
     } else {
       $w configure -background $colors(bg.bg)
     }
-    $w configure -background $colors(entrybg.bg)
     $w configure -foreground $colors(entryfg.fg)
     $w configure -selectforeground $colors(selectfg.fg)
     $w configure -selectbackground $colors(selectbg.bg)
@@ -3401,7 +3404,7 @@ namespace eval ::themeutils {
         checkbutton.scale               1.0                     static
         combobox.entry.image.border     entry.image.border      color
         combobox.entry.image.padding    entry.image.padding     color
-        combobox.padding                0                       static
+        combobox.padding                {3 1}                   static
         combobox.relief                 none                    static
         debug                           0                       static
         entrybg.bg                      bg.dark                 color

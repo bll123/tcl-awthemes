@@ -121,13 +121,19 @@ proc main { } {
     set vars(havethemeutils) true
   }
 
-  set vars(havecbt) false
-  if { ! $vars(nocbt) } {
-    catch { package require checkButtonToggle }
-    if { ! [catch {package present checkButtonToggle}] } {
-      set vars(havecbt) true
-    }
+  if { ! $::notksvg } {
+    catch { package require tksvg }
   }
+  set vars(havetksvg) false
+  if { ! [catch {package present tksvg}] } {
+    set vars(havetksvg) true
+  }
+
+  if { $vars(tkscaling) ne {} && $vars(tkscaling) ne "default" } {
+    tk scaling -displayof . $vars(tkscaling)
+  }
+  set calcdpi [expr {round([tk scaling]*72.0)}]
+  set vars(scalefactor) [expr {$calcdpi/100.0}]
 
   set vars(haveflex) false
   set vars(menucmd) menu
@@ -140,6 +146,14 @@ proc main { } {
       set vars(menucmd) ::flexmenu
       set vars(topmenuargs) [list -type menubar]
       set vars(menuargs) [list -mode frame]
+    }
+  }
+
+  set vars(havecbt) false
+  if { ! $vars(nocbt) } {
+    catch { package require checkButtonToggle }
+    if { ! [catch {package present checkButtonToggle}] } {
+      set vars(havecbt) true
     }
   }
 
@@ -162,22 +176,6 @@ proc main { } {
         style.scrollbar-grip none \
         scrollbar.has.arrows false
   }
-
-
-  if { ! $::notksvg } {
-    catch { package require tksvg }
-  }
-  set vars(havetksvg) false
-  if { ! [catch {package present tksvg}] } {
-    set vars(havetksvg) true
-  }
-
-  if { $vars(tkscaling) ne {} && $vars(tkscaling) ne "default" } {
-    tk scaling -displayof . $vars(tkscaling)
-  }
-
-  set calcdpi [expr {round([tk scaling]*72.0)}]
-  set vars(scalefactor) [expr {$calcdpi/100.0}]
 
   # Tk defaults to pixels.  Sigh.
   # Use points so that the fonts scale.
@@ -229,8 +227,8 @@ proc main { } {
   set vars(val) 55
   set vars(valb) $vars(theme)
   set vars(bgentry) [ttk::style lookup TFrame -background]
-  set off 0
-  set on 1
+  set ::off 0
+  set ::on 1
 
   . configure -background [ttk::style lookup TFrame -background]
 
@@ -250,11 +248,10 @@ proc main { } {
   .mb add cascade -label {not in use} -menu .mb_b
 
   $vars(menucmd) .mb_widgets -tearoff 0 -font MenuFont {*}$vars(menuargs)
-  .mb_widgets add checkbutton -label checkA
-  .mb_widgets add checkbutton -label checkB
-  .mb_widgets add radiobutton -label radioA -value 0
-  .mb_widgets add radiobutton -label radioB -value 1
-  .mb_widgets add command -label widgets-2
+  .mb_widgets add checkbutton -label checkA -variable ::on
+  .mb_widgets add checkbutton -label checkB -variable ::off
+  .mb_widgets add radiobutton -label radioA -value 0 -variable ::on
+  .mb_widgets add radiobutton -label radioB -value 1 -variable ::on
   .mb add cascade -label widgets -menu .mb_widgets
 
   foreach {w} {.mb .mb_example .mb_widgets} {
@@ -338,14 +335,14 @@ proc main { } {
     grid configure .combo$k -columnspan 2
     grid configure .comboro$k -columnspan 2 -column 2
 
-    ttk::checkbutton .cboff$k -text off -variable off -state $s
-    ttk::checkbutton .cbon$k -text on -variable on -state $s
+    ttk::checkbutton .cboff$k -text on -variable ::off -state $s
+    ttk::checkbutton .cbon$k -text off -variable ::on -state $s
     grid .cboff$k .cbon$k -in .lf$k -sticky w -padx 3p -pady 3p
     incr row
     if { $vars(havecbt) } {
-      ttk::checkbutton .cbtoff$k -text off -variable off -state $s \
+      ttk::checkbutton .cbtoff$k -variable ::off -state $s \
           -style Toggle.TCheckbutton
-      ttk::checkbutton .cbton$k -text on -variable on -state $s \
+      ttk::checkbutton .cbton$k -variable ::on -state $s \
           -style Toggle.TCheckbutton
       grid .cbtoff$k .cbton$k -in .lf$k -sticky w -padx 3p -pady 3p
       incr row
@@ -355,8 +352,8 @@ proc main { } {
     grid .sep$k -in .lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     incr row
 
-    ttk::radiobutton .rboff$k -text off -variable on -value 0 -state $s
-    ttk::radiobutton .rbon$k -text on -variable on -value 1 -state $s
+    ttk::radiobutton .rboff$k -text off -variable ::on -value 0 -state $s
+    ttk::radiobutton .rbon$k -text on -variable ::on -value 1 -state $s
     grid .rboff$k .rbon$k -in .lf$k -sticky w -padx 3p -pady 3p
     incr row
 
@@ -571,7 +568,8 @@ proc main { } {
     set elsizegrip false
     set sgimg {}
     if { [tk windowingsystem] eq "aqua" &&
-        ! $elsizegrip } {
+        ! $elsizegrip &&
+        $vars(havetksvg) } {
       # aqua doesn't have a good sizegrip
       regsub -all _SZGRIP_ $sgdata
           [::colorutils::rgbToHexStr $::sysvars::v(darwin.appearance) 2]
@@ -581,8 +579,8 @@ proc main { } {
       set elsizegrip true
     }
     if { ! $elsizegrip &&
-      ([info commands ::ttk::theme::${vars(theme)}::hasImage] eq {} ||
-    ! [::ttk::theme::${vars(theme)}::hasImage sizegrip]) } {
+        ([info commands ::ttk::theme::${vars(theme)}::hasImage] eq {} ||
+        ! [::ttk::theme::${vars(theme)}::hasImage sizegrip]) } {
       set tcol #000000
       # for dark themes, set tcol to a bright yellow
       regsub -all _SZGRIP_ $sgdata $tcol sgdata
