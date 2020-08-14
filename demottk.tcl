@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/Volumes/Users/bll/Applications/BallroomDJ.app/Contents/MacOS/darwin/64/tcl/bin/tclsh
 
 package require Tk
 
@@ -26,6 +26,38 @@ proc setbg { args } {
       ::ttk::theme::${vars(theme)}::setBackground $vars(bgentry)
     }
   }
+}
+
+proc confMenu { w } {
+  variable vars
+
+  if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
+    ::ttk::theme::${vars(theme)}::setMenuColors $w
+  } elseif { [tk windowingsystem] ne "aqua" } {
+    set c [ttk::style lookup . -background]
+    if { $c ne {} } {
+      $w configure -background $c
+    }
+    set c [ttk::style lookup . -foreground]
+    if { $c ne {} } {
+      $w configure -foreground $c
+    }
+    set c [ttk::style lookup TEntry -selectforeground focus]
+    if { $c ne {} } {
+      $w configure -activeforeground $c
+    }
+    set c [ttk::style lookup TEntry -selectbackground focus]
+    if { $c ne {} } {
+      $w configure -activebackground $c
+    }
+    set c [ttk::style lookup TEntry -foreground disabled]
+    if { $c ne {} } {
+      $w configure -disabledforeground $c
+    }
+  } else {
+  }
+  $w configure -borderwidth 0
+  $w configure -activeborderwidth 0
 }
 
 proc main { } {
@@ -255,32 +287,7 @@ proc main { } {
   .mb add cascade -label widgets -menu .mb_widgets
 
   foreach {w} {.mb .mb_example .mb_widgets} {
-    if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-      ::ttk::theme::${vars(theme)}::setMenuColors $w
-    } else {
-      set c [ttk::style lookup . -background]
-      if { $c ne {} } {
-        $w configure -background $c
-      }
-      set c [ttk::style lookup . -foreground]
-      if { $c ne {} } {
-        $w configure -foreground $c
-      }
-      set c [ttk::style lookup TEntry -selectforeground focus]
-      if { $c ne {} } {
-        $w configure -activeforeground $c
-      }
-      set c [ttk::style lookup TEntry -selectbackground focus]
-      if { $c ne {} } {
-        $w configure -activebackground $c
-      }
-      set c [ttk::style lookup TEntry -foreground disabled]
-      if { $c ne {} } {
-        $w configure -disabledforeground $c
-      }
-    }
-    $w configure -borderwidth 0
-    $w configure -activeborderwidth 0
+    confMenu $w
   }
 
   ttk::style configure TFrame -borderwidth 0
@@ -661,9 +668,16 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
 
   ttk::style configure Treeview \
       -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}] \
-      -fieldbackground [ttk::style lookup TFrame -background] \
+      -fieldbackground [ttk::style lookup Treeview -background] \
       -borderwidth 0 \
       -relief flat
+  # do not want the focus ring.
+  # removing it entirely fixes it on both linux and windows.
+  set l [ttk::style layout Item]
+  if { [regsub "Treeitem.focus.*?-children \{" $l {} l] } {
+    regsub "\}$" $l {} l
+  }
+  ttk::style layout Item $l
   ttk::treeview .tv -columns {a b c}
   pack .tv -in .four -fill both -expand true
   .tv heading #0 -text #0
@@ -696,9 +710,7 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   $vars(menucmd) .menubar_file_m -tearoff 0  -font MenuFont {*}$vars(menuargs)
   .menubar_file_m add command -label "Exit" \
       -underline 1 -command exit
-  if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    ::ttk::theme::${vars(theme)}::setMenuColors .menubar_file_m
-  }
+  confMenu .menubar_file_m
 
   $vars(menucmd) .menubar_edit_m -tearoff 0  -font MenuFont {*}$vars(menuargs)
   .menubar_edit_m add command -label "Cut" \
@@ -709,16 +721,12 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       -command {puts copy}
   .menubar_edit_m add command -label "Paste" \
       -command {puts paste}
-  if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    ::ttk::theme::${vars(theme)}::setMenuColors .menubar_edit_m
-  }
+  confMenu .menubar_edit_m
 
   $vars(menucmd) .menubar_dis_m -tearoff 0 -font MenuFont {*}$vars(menuargs)
   .menubar_dis_m add command -label "xyzzy"
   .menubar_dis_m add command -label "plugh"
-  if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    ::ttk::theme::${vars(theme)}::setMenuColors .menubar_dis_m
-  }
+  confMenu .menubar_dis_m
 
   ttk::button .menubar.tba -text {Toolbutton A} -style Toolbutton
   ttk::button .menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled

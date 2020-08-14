@@ -130,6 +130,23 @@ if { [info commands ::ttk::theme::${theme}::scaledStyle] ne {} } {
 
 ttk::style configure TFrame -borderwidth 0
 
+proc setcboxfont { w } {
+  set cb [winfo parent [winfo parent [winfo parent $w]]]
+  set style [$cb cget -style]
+  if { [regexp Small $style] } {
+    $w configure -font SmallFont
+  }
+}
+proc setcboxgeom { w } {
+  set w [winfo parent $w]
+  set w [winfo parent $w]
+  set cb [winfo parent $w]
+  ::ttk::combobox::PlacePopdown $cb $w
+}
+
+bind ComboboxListbox <Map> +[list ::setcboxfont %W]
+bind ComboboxListbox <Visibility> +[list after 10 ::setcboxgeom %W]
+
 foreach {k} {{} Small} {
   set tfont TkDefaultFont
   set s {}
@@ -157,7 +174,6 @@ foreach {k} {{} Small} {
       -height 5 \
       -font $tfont \
       -style ${s}TCombobox
-  option add *TCombobox*Listbox.font $tfont
 
   ttk::frame .cbf$k
   ttk::checkbutton .cboff$k -text off -variable off -style ${s}TCheckbutton
@@ -202,7 +218,7 @@ foreach {k} {{} Small} {
   ttk::frame .vf$k
   ttk::scale .scv$k \
       -orient vertical \
-      -from 0 -to 100 \
+      -from 100 -to 0 \
       -variable val \
       -length [expr {round(100*$scalefactor)}] \
       -style ${s}Vertical.TScale

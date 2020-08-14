@@ -127,6 +127,10 @@
 #
 # Change History
 #
+# 9.2.4 (--)
+#   - remove unneeded options for scrollbar
+# 9.2.3 (2020-7-17)
+#   - remove focus ring from treeview selection.
 # 9.2.2 (2020-6-6)
 #   - fix: settextcolors: background color.
 # 9.2.1 (2020-5-20)
@@ -342,7 +346,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.2.2
+package provide awthemes 9.2.4
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -2347,7 +2351,7 @@ namespace eval ::ttk::awthemes {
       }
       lappend hlayout {*}[list \
           ${pfx}Horizontal.Scrollbar.trough -sticky nsew -children [list \
-          ${pfx}Horizontal.Scrollbar.thumb -expand 1 -unit 1 \
+          ${pfx}Horizontal.Scrollbar.thumb \
             _GRIP_ \
         ] \
       ]
@@ -2412,7 +2416,7 @@ namespace eval ::ttk::awthemes {
       }
       lappend vlayout {*}[list \
           ${pfx}Vertical.Scrollbar.trough -sticky nsew -children [list \
-          ${pfx}Vertical.Scrollbar.thumb -expand 1 -unit 1 \
+          ${pfx}Vertical.Scrollbar.thumb \
           _GRIP_ \
         ] \
       ]
@@ -2562,7 +2566,9 @@ namespace eval ::ttk::awthemes {
     # the colors are set in setStyledColors (called by scaledStyle)
 
     bind ComboboxListbox <Map> \
-        [list +::ttk::awthemes::awCboxHandler %W]
+        +[list ::ttk::awthemes::awCboxHandler %W]
+    # as awthemes does not ever change the fonts, it is up to the
+    # main program to handle font changes for listboxes.
 
     ttk::style theme create $theme -parent $colors(parent.theme) -settings {
       scaledStyle {} {} {} $theme
@@ -2932,6 +2938,14 @@ namespace eval ::ttk::awthemes {
       ttk::style map ${pfx}Treeview \
           -background [list selected $colors(selectbg.tree.bg)] \
           -foreground [list selected $colors(selectfg.tree.fg)]
+
+      # do not want the focus ring.
+      # removing it entirely fixes it on both linux and windows.
+      set l [ttk::style layout Item]
+      if { [regsub "Treeitem.focus.*?-children \{" $l {} l] } {
+        regsub "\}$" $l {} l
+      }
+      ttk::style layout Item $l
     }
   }
 
@@ -3263,20 +3277,23 @@ namespace eval ::ttk::awthemes {
     if { [info exists colors(entrybg.bg)] &&
         $currtheme eq $vars(theme.name) &&
         ! [dict exists $vars(cache.listbox) $w] } {
-      regsub {\.popdown\.f\.l$} $w {} cbw
+      # get the combobox window name
+      set cbw [winfo parent $w]
+      set cbw [winfo parent $cbw]
+      set cbw [winfo parent $cbw]
       set style [$cbw cget -style]
       if { $style eq {} } {
         set style TCombobox
       }
       if { [dict exists $vars(registered.combobox) $style] } {
         set pfx [dict get $vars(registered.combobox) $style]
-        set sb $cbw.popdown.f.sb
+        set sb [winfo parent $w].sb
         set sborient [string totitle [$sb cget -orient]]
         set sbstyle [$sb cget -style]
         if { $sbstyle eq {} } {
           set sbstyle ${sborient}.TScrollbar
         }
-        $cbw.popdown.f.sb configure -style ${pfx}${sbstyle}
+        $sb configure -style ${pfx}${sbstyle}
       }
       ::ttk::awthemes::setListboxColors $w true
     }
