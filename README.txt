@@ -25,6 +25,12 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+9.2.4 (2020-8-14)
+   - remove unneeded options for scrollbar
+
+9.2.3 (2020-7-17)
+   - remove focus ring from treeview selection.
+
 9.2.2 (2020-6-6)
    - fix: settextcolors: background color.
 
