@@ -2,7 +2,6 @@ package ifneeded awthemes 9.2.4 \
     [list source [file join $dir awthemes.tcl]]
 package ifneeded colorutils 4.8 \
     [list source [file join $dir colorutils.tcl]]
-
 package ifneeded arc 1.2 \
     [list source [file join $dir awarc.tcl]]
 package ifneeded awdark 7.7 \
