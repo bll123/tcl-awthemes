@@ -127,7 +127,7 @@
 #
 # Change History
 #
-# 9.2.4 (--)
+# 9.2.4 (2020-8-14)
 #   - remove unneeded options for scrollbar
 # 9.2.3 (2020-7-17)
 #   - remove focus ring from treeview selection.
