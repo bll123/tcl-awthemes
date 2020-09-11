@@ -1,3 +1,5 @@
-copy.sh
-z.sh
-Archive/
+syntax: regexp
+^copy\.sh$
+^Archive/
+^awthemes-.*\.zip$
+.*~$
