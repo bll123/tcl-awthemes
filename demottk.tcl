@@ -676,15 +676,23 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
 }
 
   ttk::panedwindow $vars(mainW).pw -orient horizontal
+  if { [info commands ::ttk::theme::${vars(theme)}::setBackground] eq {} } {
+    ttk::style configure TPanedwindow -background \
+        [ttk::style lookup TNotebook.Tab -background]
+  }
   pack $vars(mainW).pw -in $vars(mainW).three -fill both -expand true
-  ttk::frame $vars(mainW).p1
-  ttk::frame $vars(mainW).p2
+  set ftype ttk::frame
+  if { $vars(theme) eq "aqua" } {
+    set ftype ttk::labelframe
+  }
+  $ftype $vars(mainW).p1
+  $ftype $vars(mainW).p2
   $vars(mainW).pw add $vars(mainW).p1
   $vars(mainW).pw add $vars(mainW).p2
   ttk::label $vars(mainW).pl1 -text {Pane 1}
   ttk::label $vars(mainW).pl2 -text {Pane 2}
   pack $vars(mainW).pl1 -in $vars(mainW).p1 -anchor nw
-  pack $vars(mainW).pl2 -in $vars(mainW).p2 -anchor se
+  pack $vars(mainW).pl2 -in $vars(mainW).p2 -anchor ne
 
   ttk::style configure Treeview \
       -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}] \
@@ -749,10 +757,15 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   confMenu $vars(mainW).menubar_dis_m
 
   ttk::button $vars(mainW).menubar.tba -text {Toolbutton A} -style Toolbutton
+  ttk::button $vars(mainW).menubar.tbb -text {TB-B} -style Toolbutton
   ttk::button $vars(mainW).menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
 
-  pack $vars(mainW).menubar.file $vars(mainW).menubar.edit $vars(mainW).menubar.dis \
-      $vars(mainW).menubar.tba $vars(mainW).menubar.tbc -side left
+  pack $vars(mainW).menubar.file \
+      $vars(mainW).menubar.edit \
+      $vars(mainW).menubar.dis \
+      $vars(mainW).menubar.tba \
+      $vars(mainW).menubar.tbb \
+      $vars(mainW).menubar.tbc -side left
 
   ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
   ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]

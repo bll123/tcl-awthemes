@@ -127,6 +127,8 @@
 #
 # Change History
 #
+# 9.3 (2020-9-17)
+#   - Fixed inappropriate toolbutton width setting.
 # 9.2.4 (2020-8-14)
 #   - remove unneeded options for scrollbar
 # 9.2.3 (2020-7-17)
@@ -346,7 +348,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.2.4
+package provide awthemes 9.3
 
 package require Tk
 # set ::notksvg to true for testing purposes
@@ -2511,6 +2513,8 @@ namespace eval ::ttk::awthemes {
       set imgbord [_adjustSizes button.image.border $scale]
       set imgpad [_adjustSizes toolbutton.image.padding $scale]
 
+puts "a: tb: border: $imgbord"
+puts "a: tb: padding: $imgpad"
       ttk::style element create ${pfx}Toolbutton.border image \
           [list $images(empty${sfx}) \
           {pressed !disabled} $images(button-p${sfx}) \
@@ -2522,7 +2526,7 @@ namespace eval ::ttk::awthemes {
     }
 
     ttk::style configure ${pfx}Toolbutton \
-        -width -8 \
+        -width {} \
         -borderwidth 1
   }
 

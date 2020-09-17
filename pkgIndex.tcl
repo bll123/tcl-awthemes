@@ -1,4 +1,4 @@
-package ifneeded awthemes 9.2.4 \
+package ifneeded awthemes 9.3 \
     [list source [file join $dir awthemes.tcl]]
 package ifneeded colorutils 4.8 \
     [list source [file join $dir colorutils.tcl]]
