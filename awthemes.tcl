@@ -350,7 +350,7 @@
 #   - initial coding
 #
 
-package provide awthemes 9.3
+package provide awthemes 9.3.1
 
 package require Tk
 # set ::notksvg to true for testing purposes
