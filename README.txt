@@ -25,6 +25,9 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+9.3 (2020-9-17)
+   - Fixed inappropriate toolbutton width setting.
+
 9.2.4 (2020-8-14)
    - remove unneeded options for scrollbar
 
