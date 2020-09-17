@@ -127,6 +127,8 @@
 #
 # Change History
 #
+# 9.3.1 (2020-9-17)
+#   - Remove debug.
 # 9.3 (2020-9-17)
 #   - Fixed inappropriate toolbutton width setting.
 # 9.2.4 (2020-8-14)
@@ -2513,8 +2515,6 @@ namespace eval ::ttk::awthemes {
       set imgbord [_adjustSizes button.image.border $scale]
       set imgpad [_adjustSizes toolbutton.image.padding $scale]
 
-puts "a: tb: border: $imgbord"
-puts "a: tb: padding: $imgpad"
       ttk::style element create ${pfx}Toolbutton.border image \
           [list $images(empty${sfx}) \
           {pressed !disabled} $images(button-p${sfx}) \
