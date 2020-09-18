@@ -25,7 +25,7 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
-9.3 (2020-9-17)
+9.3.1 (2020-9-17)
    - Remove debug.
 
 9.3 (2020-9-17)
