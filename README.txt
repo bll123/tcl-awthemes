@@ -25,6 +25,12 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+9.3.2 (2020-10-5)
+   - setListboxColors: Fixed to properly set colors on
+     removal/reinstantiation of a listbox.
+   - Minor code cleanup.
+   - setTextColors: Removed configuration of border width.
+
 9.3.1 (2020-9-17)
    - Remove debug.
 

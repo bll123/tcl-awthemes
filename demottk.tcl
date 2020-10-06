@@ -21,7 +21,7 @@ proc setbg { args } {
   variable vars
 
   if { [regexp {^#[0-9a-f]{6,6}$} $::vars(bgentry)] } {
-    set theme [ttk::style theme use]
+    set theme [::ttk::style theme use]
     if { [info commands ::ttk::theme::${vars(theme)}::setBackground] ne {} } {
       ::ttk::theme::${vars(theme)}::setBackground $vars(bgentry)
     }
@@ -34,27 +34,26 @@ proc confMenu { w } {
   if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setMenuColors $w
   } elseif { [tk windowingsystem] ne "aqua" } {
-    set c [ttk::style lookup $vars(mainW) -background]
+    set c [::ttk::style lookup $vars(mainW) -background]
     if { $c ne {} } {
       $w configure -background $c
     }
-    set c [ttk::style lookup $vars(mainW) -foreground]
+    set c [::ttk::style lookup $vars(mainW) -foreground]
     if { $c ne {} } {
       $w configure -foreground $c
     }
-    set c [ttk::style lookup TEntry -selectforeground focus]
+    set c [::ttk::style lookup TEntry -selectforeground focus]
     if { $c ne {} } {
       $w configure -activeforeground $c
     }
-    set c [ttk::style lookup TEntry -selectbackground focus]
+    set c [::ttk::style lookup TEntry -selectbackground focus]
     if { $c ne {} } {
       $w configure -activebackground $c
     }
-    set c [ttk::style lookup TEntry -foreground disabled]
+    set c [::ttk::style lookup TEntry -foreground disabled]
     if { $c ne {} } {
       $w configure -disabledforeground $c
     }
-  } else {
   }
   $w configure -borderwidth 0
   $w configure -activeborderwidth 0
@@ -76,7 +75,6 @@ proc main { } {
   variable vars
 
   wm withdraw .
-  # despite the update, the . window still shows up on macos
   update idletasks
   set vars(mainW) .demottk
   toplevel $vars(mainW) -class demottk.tcl
@@ -106,6 +104,7 @@ proc main { } {
   set vars(groupcolor) {}
   set vars(theme) {}
   set vars(tkscaling) {}
+  set vars(macstyles) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
@@ -151,6 +150,9 @@ proc main { } {
       }
       -styledemo {
         set vars(styledemo) true
+      }
+      -macstyles {
+        set vars(macstyles) true
       }
       default {
         if { ! [string match -* $a] } {
@@ -237,6 +239,10 @@ proc main { } {
   font configure TkDefaultFont -size 11
   set origfontsz [font metrics TkDefaultFont -ascent]
   font configure TkDefaultFont -size [expr {round(11.0*$vars(fontscale))}]
+  # MacOS aqua will use the TkSmallCaptionFont for labelframe fonts
+  # (currently in the mac_styles branch, eventually in 8.7)
+  set sz [font metrics TkSmallCaptionFont -ascent]
+  font configure TkSmallCaptionFont -size [expr {round($sz*$vars(fontscale))}]
   font create TextFont
   font configure TextFont -size  [expr {round(10.0*$vars(fontscale))}]
   font create MenuFont
@@ -255,7 +261,7 @@ proc main { } {
     set fn [file join .. code themes themeloader.tcl]
     if { [file exists $fn] } {
       source $fn
-      themeloader::loadTheme $vars(theme)
+      ::themeloader::loadTheme $vars(theme)
       puts "themeloader: loaded $vars(theme)"
       set loaded true
     }
@@ -277,15 +283,32 @@ proc main { } {
     set loaded true
   }
 
-  ttk::style theme use $vars(theme)
+  ::ttk::style theme use $vars(theme)
+
+  # tablelist must be loaded after the theme is set.
+  set vars(havetablelist) false
+
+  # for the time being, this cannot be supported
+  if { 0 } {
+    catch { package require tablelist_tile }
+    if { ! [catch {package present tablelist_tile}] } {
+      if { [info exists ::tablelist::library] } {
+        set vars(tablelistdemofn) \
+            [file join $::tablelist::library demos tileWidgets.tcl]
+        if { [file exists $vars(tablelistdemofn)] } {
+          set vars(havetablelist) true
+        }
+      }
+    }
+  }
 
   set vars(val) 55
   set vars(valb) $vars(theme)
-  set vars(bgentry) [ttk::style lookup TFrame -background]
+  set vars(bgentry) [::ttk::style lookup TFrame -background]
   set ::off 0
   set ::on 1
 
-  $vars(mainW) configure -background [ttk::style lookup TFrame -background]
+  $vars(mainW) configure -background [::ttk::style lookup TFrame -background]
 
   $vars(menucmd) $vars(mainW).mb -font MenuFont {*}$vars(topmenuargs) {*}$vars(menuargs)
   if { $vars(haveflex) } {
@@ -314,27 +337,31 @@ proc main { } {
     confMenu $w
   }
 
-  ttk::style configure TFrame -borderwidth 0
+  ::ttk::style configure TFrame -borderwidth 0
 
-  ttk::notebook $vars(mainW).nb
+  ::ttk::notebook $vars(mainW).nb
   pack $vars(mainW).nb -side left -fill both -expand true
-  ttk::frame $vars(mainW).one
+  ::ttk::frame $vars(mainW).one
   $vars(mainW).nb add $vars(mainW).one -text $vars(theme)
-  ttk::frame $vars(mainW).two
+  ::ttk::frame $vars(mainW).two
   $vars(mainW).nb add $vars(mainW).two -text {Text w/scroll}
-  ttk::frame $vars(mainW).three
+  ::ttk::frame $vars(mainW).three
   $vars(mainW).nb add $vars(mainW).three -text {Paned Window}
-  ttk::frame $vars(mainW).four
+  ::ttk::frame $vars(mainW).four
   $vars(mainW).nb add $vars(mainW).four -text {Treeview}
-  ttk::frame $vars(mainW).five
+  ::ttk::frame $vars(mainW).five
   $vars(mainW).nb add $vars(mainW).five -text {Menubutton}
-  ttk::frame $vars(mainW).six
+  ::ttk::frame $vars(mainW).six
   $vars(mainW).nb add $vars(mainW).six -text {Listbox}
-  ttk::frame $vars(mainW).seven
-  $vars(mainW).nb add $vars(mainW).seven -text {Inactive} -state disabled
+  if { $vars(havetablelist) } {
+    ::ttk::frame $vars(mainW).seven
+    $vars(mainW).nb add $vars(mainW).seven -text {Table List}
+  }
+  ::ttk::frame $vars(mainW).eight
+  $vars(mainW).nb add $vars(mainW).eight -text {Inactive} -state disabled
 
-  ttk::labelframe $vars(mainW).lfn -text " Normal "
-  ttk::labelframe $vars(mainW).lfd -text " Disabled "
+  ::ttk::labelframe $vars(mainW).lfn -text " Normal "
+  ::ttk::labelframe $vars(mainW).lfd -text " Disabled "
   $vars(mainW).lfd state disabled
   foreach {k} {n d} {
     set s !disabled
@@ -342,19 +369,21 @@ proc main { } {
       set s disabled
     }
     set row 0
-    ttk::label $vars(mainW).lb$k -text $vars(theme) -state $s
-    ttk::button $vars(mainW).b$k -text $vars(theme) -state $s
+    ::ttk::label $vars(mainW).lb$k -text $vars(theme) -state $s
+    ::ttk::button $vars(mainW).b$k -text $vars(theme) -state $s
     grid $vars(mainW).lb$k $vars(mainW).b$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p -columnspan 2
     incr row
 
-    ttk::combobox $vars(mainW).combo$k -values \
+    ::ttk::combobox $vars(mainW).combo$k \
+        -values \
         [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
         -textvariable vars(valb) \
         -width 15 \
         -state $s \
         -height 5 \
         -font TkDefaultFont
-    ttk::combobox $vars(mainW).comboro$k -values \
+
+    ::ttk::combobox $vars(mainW).comboro$k -values \
         [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
         -textvariable vars(valb) \
         -width 15 \
@@ -366,31 +395,31 @@ proc main { } {
     grid configure $vars(mainW).combo$k -columnspan 2
     grid configure $vars(mainW).comboro$k -columnspan 2 -column 2
 
-    ttk::checkbutton $vars(mainW).cboff$k -text on -variable ::off -state $s
-    ttk::checkbutton $vars(mainW).cbon$k -text off -variable ::on -state $s
+    ::ttk::checkbutton $vars(mainW).cboff$k -text on -variable ::off -state $s
+    ::ttk::checkbutton $vars(mainW).cbon$k -text off -variable ::on -state $s
     grid $vars(mainW).cboff$k $vars(mainW).cbon$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
     incr row
     if { $vars(havecbt) } {
-      ttk::checkbutton $vars(mainW).cbtoff$k -variable ::off -state $s \
+      ::ttk::checkbutton $vars(mainW).cbtoff$k -variable ::off -state $s \
           -style Toggle.TCheckbutton
-      ttk::checkbutton $vars(mainW).cbton$k -variable ::on -state $s \
+      ::ttk::checkbutton $vars(mainW).cbton$k -variable ::on -state $s \
           -style Toggle.TCheckbutton
       grid $vars(mainW).cbtoff$k $vars(mainW).cbton$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
       incr row
     }
 
-    ttk::separator $vars(mainW).sep$k
+    ::ttk::separator $vars(mainW).sep$k
     grid $vars(mainW).sep$k -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     incr row
 
-    ttk::radiobutton $vars(mainW).rboff$k -text off -variable ::on -value 0 -state $s
-    ttk::radiobutton $vars(mainW).rbon$k -text on -variable ::on -value 1 -state $s
+    ::ttk::radiobutton $vars(mainW).rboff$k -text off -variable ::on -value 0 -state $s
+    ::ttk::radiobutton $vars(mainW).rbon$k -text on -variable ::on -value 1 -state $s
     grid $vars(mainW).rboff$k $vars(mainW).rbon$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
     incr row
 
     grid columnconfigure $vars(mainW).lf$k 4 -weight 1
 
-    ttk::scale $vars(mainW).sc$k \
+    ::ttk::scale $vars(mainW).sc$k \
         -from 0 \
         -to 100 \
         -variable vars(val) \
@@ -400,20 +429,20 @@ proc main { } {
     grid $vars(mainW).sc$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p -columnspan 2
     incr row
 
-    ttk::progressbar $vars(mainW).pb$k \
+    ::ttk::progressbar $vars(mainW).pb$k \
         -orient horizontal \
         -mode determinate \
         -variable vars(val) \
         -length [expr {round(100*$vars(scalefactor))}]
     $vars(mainW).pb$k state $s
-    ttk::scale $vars(mainW).scv$k \
+    ::ttk::scale $vars(mainW).scv$k \
         -orient vertical \
         -from 100 \
         -to 0 \
         -variable vars(val) \
         -length [expr {round(100*$vars(scalefactor))}]
     $vars(mainW).scv$k state $s
-    ttk::progressbar $vars(mainW).pbv$k \
+    ::ttk::progressbar $vars(mainW).pbv$k \
         -orient vertical \
         -mode determinate \
         -variable vars(val) \
@@ -425,7 +454,7 @@ proc main { } {
     grid configure $vars(mainW).scv$k -rowspan 3 -column 2
     grid configure $vars(mainW).pbv$k -rowspan 3 -column 3
 
-    ttk::entry $vars(mainW).ent$k -textvariable ::vars(bgentry) \
+    ::ttk::entry $vars(mainW).ent$k -textvariable ::vars(bgentry) \
         -width 15 \
         -state $k \
         -font TkDefaultFont
@@ -433,7 +462,7 @@ proc main { } {
     incr row
     grid $vars(mainW).ent$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p -columnspan 2 -row $row
 
-    ttk::spinbox $vars(mainW).sbox$k -textvariable vars(val) \
+    ::ttk::spinbox $vars(mainW).sbox$k -textvariable vars(val) \
         -width 5 \
         -from 1 -to 100 -increment 0.1 \
         -state $k \
@@ -442,7 +471,7 @@ proc main { } {
     incr row
   }
   set tag {(with tksvg)}
-  if { $::notksvg } {
+  if { $::notksvg || ! $vars(havetksvg) } {
     set tag {(without tksvg)}
   }
   $vars(mainW).lbn configure -text "$vars(theme) $tag"
@@ -612,7 +641,7 @@ proc main { } {
           [winfo rgb $vars(mainW) systemControlAccentColor] 2] \
           sgdata
       set sgimg [image create photo -data $sgdata -format svg]
-      ttk::style element create new.sizegrip image $sgimg
+      ::ttk::style element create new.sizegrip image $sgimg
       set elsizegrip true
     }
     if { ! $elsizegrip &&
@@ -622,27 +651,27 @@ proc main { } {
       # for dark themes, set tcol to a bright yellow
       regsub -all _SZGRIP_ $sgdata $tcol sgdata
       set sgimg [image create photo -data $sgdata -format svg]
-      ttk::style element create new.sizegrip image $sgimg
+      ::ttk::style element create new.sizegrip image $sgimg
       set elsizegrip true
     }
     if { $elsizegrip } {
-      set sglayout [ttk::style layout TSizegrip]
+      set sglayout [::ttk::style layout TSizegrip]
       regsub {Sizegrip\.sizegrip} $sglayout new.sizegrip sglayout
-      ttk::style layout TSizegrip $sglayout
+      ::ttk::style layout TSizegrip $sglayout
     }
   }
 
-  ttk::sizegrip  $vars(mainW).sg
+  ::ttk::sizegrip  $vars(mainW).sg
   pack $vars(mainW).sg -in $vars(mainW).one -side right -anchor se
 
-  ttk::button $vars(mainW).wrap -text Wrap -command twrap
+  ::ttk::button $vars(mainW).wrap -text Wrap -command twrap
   pack $vars(mainW).wrap -in $vars(mainW).two -side bottom -anchor se
   if { $vars(theme) eq "aqua" } {
-    ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview]
-    ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview]
+    ::ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview]
+    ::ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview]
   } else {
-    ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview] -style Vertical.TScrollbar
-    ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview] \
+    ::ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview] -style Vertical.TScrollbar
+    ::ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview] \
         -style Horizontal.TScrollbar
   }
   pack $vars(mainW).sbv -in $vars(mainW).two -side right -fill y -expand false
@@ -652,10 +681,9 @@ proc main { } {
       -xscrollcommand [list $vars(mainW).sbh set] \
       -yscrollcommand [list $vars(mainW).sbv set] \
       -wrap none \
-      -relief flat \
       -height 10 \
+      -relief flat \
       -width 50 \
-      -borderwidth 0 \
       -highlightthickness 1 \
       -font TextFont
   if { [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
@@ -675,38 +703,39 @@ Phasellus non ultricies mi. Aliquam erat volutpat. Ut sed mollis felis, nec impe
 Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit amet ligula vel, varius mattis ipsum. Praesent erat nisl, vulputate ut ultricies quis, accumsan sit amet diam. Nulla tempor, nunc in malesuada venenatis, purus erat blandit lectus, sit amet pretium arcu arcu id erat. Donec ante eros, sagittis nec tellus eget, porta faucibus nisl. Integer a ex sed felis varius finibus. In hac habitasse platea dictumst. Proin et nisl orci. Fusce mauris nulla, feugiat sit amet commodo viverra, posuere sit amet augue. Vestibulum congue ligula nec dolor dapibus scelerisque. Proin enim sem, congue et nibh nec, suscipit cursus ligula.
 }
 
-  ttk::panedwindow $vars(mainW).pw -orient horizontal
+  ::ttk::panedwindow $vars(mainW).pw -orient horizontal
   if { [info commands ::ttk::theme::${vars(theme)}::setBackground] eq {} } {
-    ttk::style configure TPanedwindow -background \
-        [ttk::style lookup TNotebook.Tab -background]
+    ::ttk::style configure TPanedwindow -background \
+        [::ttk::style lookup TNotebook.Tab -background]
   }
   pack $vars(mainW).pw -in $vars(mainW).three -fill both -expand true
-  set ftype ttk::frame
+  set ftype ::ttk::frame
   if { $vars(theme) eq "aqua" } {
-    set ftype ttk::labelframe
+    set ftype ::ttk::labelframe
   }
   $ftype $vars(mainW).p1
   $ftype $vars(mainW).p2
   $vars(mainW).pw add $vars(mainW).p1
   $vars(mainW).pw add $vars(mainW).p2
-  ttk::label $vars(mainW).pl1 -text {Pane 1}
-  ttk::label $vars(mainW).pl2 -text {Pane 2}
+  ::ttk::label $vars(mainW).pl1 -text {Pane 1}
+  ::ttk::label $vars(mainW).pl2 -text {Pane 2}
   pack $vars(mainW).pl1 -in $vars(mainW).p1 -anchor nw
   pack $vars(mainW).pl2 -in $vars(mainW).p2 -anchor ne
 
-  ttk::style configure Treeview \
+  ::ttk::style configure Treeview \
       -rowheight [expr {[font metrics TkDefaultFont -linespace] + 2}] \
-      -fieldbackground [ttk::style lookup Treeview -background] \
+      -fieldbackground [::ttk::style lookup Treeview -background] \
       -borderwidth 0 \
       -relief flat
+  ::ttk::style configure Heading -relief raised
   # do not want the focus ring.
   # removing it entirely fixes it on both linux and windows.
-  set l [ttk::style layout Item]
+  set l [::ttk::style layout Item]
   if { [regsub "Treeitem.focus.*?-children \{" $l {} l] } {
     regsub "\}$" $l {} l
   }
-  ttk::style layout Item $l
-  ttk::treeview $vars(mainW).tv -columns {a b c}
+  ::ttk::style layout Item $l
+  ::ttk::treeview $vars(mainW).tv -columns {a b c}
   pack $vars(mainW).tv -in $vars(mainW).four -fill both -expand true
   $vars(mainW).tv heading #0 -text #0
   $vars(mainW).tv heading a -text AAA
@@ -725,14 +754,14 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   $vars(mainW).tv insert $id 1 -text {subitem 2-2} -values {z z z}
   $vars(mainW).tv insert $id 2 -text {subitem 2-3} -values {& & &}
 
-  ttk::frame $vars(mainW).menubar -borderwidth 0 -takefocus 0
+  ::ttk::frame $vars(mainW).menubar -borderwidth 0 -takefocus 0
   pack $vars(mainW).menubar -in $vars(mainW).five -side top -fill x
 
-  ttk::menubutton $vars(mainW).menubar.file -text File \
+  ::ttk::menubutton $vars(mainW).menubar.file -text File \
       -underline 0 -menu $vars(mainW).menubar_file_m
-  ttk::menubutton $vars(mainW).menubar.edit -text Edit \
+  ::ttk::menubutton $vars(mainW).menubar.edit -text Edit \
       -underline 0 -menu $vars(mainW).menubar_edit_m
-  ttk::menubutton $vars(mainW).menubar.dis -text Disabled \
+  ::ttk::menubutton $vars(mainW).menubar.dis -text Disabled \
       -underline 0 -menu $vars(mainW).menubar_dis_m -state disabled
 
   $vars(menucmd) $vars(mainW).menubar_file_m -tearoff 0  -font MenuFont {*}$vars(menuargs)
@@ -756,9 +785,9 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   $vars(mainW).menubar_dis_m add command -label "plugh"
   confMenu $vars(mainW).menubar_dis_m
 
-  ttk::button $vars(mainW).menubar.tba -text {Toolbutton A} -style Toolbutton
-  ttk::button $vars(mainW).menubar.tbb -text {TB-B} -style Toolbutton
-  ttk::button $vars(mainW).menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
+  ::ttk::button $vars(mainW).menubar.tba -text {Toolbutton A} -style Toolbutton
+  ::ttk::button $vars(mainW).menubar.tbb -text {TB-B} -style Toolbutton
+  ::ttk::button $vars(mainW).menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
 
   pack $vars(mainW).menubar.file \
       $vars(mainW).menubar.edit \
@@ -767,8 +796,8 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       $vars(mainW).menubar.tbb \
       $vars(mainW).menubar.tbc -side left
 
-  ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
-  ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]
+  ::ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
+  ::ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]
   set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
   # change borderwidth to 1 for color testing
   listbox $vars(mainW).lbox1 \
@@ -796,10 +825,15 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   pack $vars(mainW).lbox2 -in $vars(mainW).six -padx 3p -pady 3p -expand true -fill both -side left
   pack $vars(mainW).sblbox2 -in $vars(mainW).six -padx 0 -pady 3p -fill y -side left
 
+  if { $vars(havetablelist) } {
+    set ::argv $vars(mainW).seven
+    source $vars(tablelistdemofn)
+  }
+
   wm protocol $vars(mainW) WM_DELETE_WINDOW [list ::exit]
 
-  # until released, have this off.
-  if { 0 && $::tcl_platform(os) eq "Darwin" } {
+  # various widgets from the mac_styles branch for Mac OS
+  if { $vars(macstyles) && $::tcl_platform(os) eq "Darwin" } {
     # unmute
     set imgdata {
        iVBORw0KGgoAAAANSUhEUgAAABwAAAAZCAYAAAAiwE4nAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
@@ -827,22 +861,31 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       if { $k eq "d" } {
         set s disabled
       }
-      ttk::frame $vars(mainW).dbf$k
+      ::ttk::frame $vars(mainW).dbf$k
 
-      ttk::button $vars(mainW).dbi$k -text unmute -image $img -state $s -style ImageButton
-      set layout [ttk::style layout TButton]
+      ::ttk::style configure ImageButton -font MenuFont
+      ::ttk::button $vars(mainW).dbi$k \
+          -text unmute -image $img -state $s -style ImageButton
+      set layout [::ttk::style layout TButton]
       regsub {Button.button} $layout RoundedRectButton.button rrlayout
-      ttk::style layout RR.TButton $rrlayout
-      ttk::button $vars(mainW).dbrr$k -text $vars(theme) -state $s -style RR.TButton
+      ::ttk::style layout RR.TButton $rrlayout
+      ::ttk::style configure RR.TButton -font MenuFont
+      ::ttk::button $vars(mainW).dbrr$k -text $vars(theme) \
+          -state $s -style RR.TButton
       regsub {Button.button} $layout DisclosureButton.button disclayout
-      ttk::style layout Disc.TButton $disclayout
-      ttk::button $vars(mainW).dbdisc$k -state $s -style Disc.TButton
+      ::ttk::style layout Disc.TButton $disclayout
+      ::ttk::style configure Disc.TButton -font MenuFont
+      ::ttk::button $vars(mainW).dbdisc$k \
+          -state $s -style Disc.TButton
       regsub {Button.button} $layout GradientButton.button glayout
-      ttk::style layout Gradient.TButton $glayout
-      ttk::button $vars(mainW).dbg$k -text $vars(theme) -state $s -style Gradient.TButton
+      ::ttk::style layout Gradient.TButton $glayout
+      ::ttk::style configure Graident.TButton -font MenuFont
+      ::ttk::button $vars(mainW).dbg$k -text $vars(theme) \
+          -state $s -style Gradient.TButton
       regsub {Button.button} $layout HelpButton.button hlayout
-      ttk::style layout Help.TButton $hlayout
-      ttk::button $vars(mainW).dbhelp$k -state $s -style Help.TButton
+      ::ttk::style layout Help.TButton $hlayout
+      ::ttk::button $vars(mainW).dbhelp$k \
+          -state $s -style Help.TButton
       grid $vars(mainW).dbi$k $vars(mainW).dbrr$k $vars(mainW).dbdisc$k $vars(mainW).dbg$k $vars(mainW).dbhelp$k -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
       grid $vars(mainW).dbf$k -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     }
