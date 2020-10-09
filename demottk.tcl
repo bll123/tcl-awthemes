@@ -82,8 +82,9 @@ proc main { } {
 
   if { [llength $::argv] < 1 } {
     puts "Usage: demottk.tcl \[-ttkscale <scale-factor>] "
-    puts "    \[-fontscale <scale-factor>] "
-    puts "    \[-background <color>] \[-focuscolor <color>] \[-foreground <color>]"
+    puts "    \[-fontsize <size>] \[-fontscale <scale-factor>] "
+    puts "    \[-background <color>] \[-focuscolor <color>] "
+    puts "    \[-foreground <color>]"
     puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-styledemo]"
     puts "    \[-group group -groupcolor color]"
     puts "    <theme> "
@@ -94,6 +95,7 @@ proc main { } {
   set vars(noflex) false
   set vars(nocbt) false
   set vars(sizegrip) false
+  set vars(fontsize) 11
   set vars(fontscale) 1.0 ; # default
   set vars(sf) 1.0
   set vars(gc) {}
@@ -127,6 +129,10 @@ proc main { } {
       -fontscale {
         incr idx
         set vars(fontscale) [lindex $::argv $idx]
+      }
+      -fontsize {
+        incr idx
+        set vars(fontsize) [lindex $::argv $idx]
       }
       -group {
         incr idx
@@ -236,17 +242,21 @@ proc main { } {
 
   # Tk defaults to pixels.  Sigh.
   # Use points so that the fonts scale.
-  font configure TkDefaultFont -size 11
+  font configure TkDefaultFont -size ${vars(fontsize)}
   set origfontsz [font metrics TkDefaultFont -ascent]
-  font configure TkDefaultFont -size [expr {round(11.0*$vars(fontscale))}]
+  font configure TkDefaultFont -size \
+      [expr {round(double(${vars(fontsize)})*$vars(fontscale))}]
   # MacOS aqua will use the TkSmallCaptionFont for labelframe fonts
   # (currently in the mac_styles branch, eventually in 8.7)
   set sz [font metrics TkSmallCaptionFont -ascent]
   font configure TkSmallCaptionFont -size [expr {round($sz*$vars(fontscale))}]
   font create TextFont
-  font configure TextFont -size  [expr {round(10.0*$vars(fontscale))}]
+  # these calculations only work with point sizes, not pixel sizes.
+  font configure TextFont -size \
+      [expr {round((double(${vars(fontsize)})-1.0)*$vars(fontscale))}]
   font create MenuFont
-  font configure MenuFont -size  [expr {round(9.0*$vars(fontscale))}]
+  font configure MenuFont -size \
+      [expr {round((double(${vars(fontsize)})-2.0)*$vars(fontscale))}]
 
   set newfontsz [font metrics TkDefaultFont -ascent]
   if { $origfontsz != $newfontsz } {
@@ -288,16 +298,13 @@ proc main { } {
   # tablelist must be loaded after the theme is set.
   set vars(havetablelist) false
 
-  # for the time being, this cannot be supported
-  if { 0 } {
-    catch { package require tablelist_tile }
-    if { ! [catch {package present tablelist_tile}] } {
-      if { [info exists ::tablelist::library] } {
-        set vars(tablelistdemofn) \
-            [file join $::tablelist::library demos tileWidgets.tcl]
-        if { [file exists $vars(tablelistdemofn)] } {
-          set vars(havetablelist) true
-        }
+  catch { package require tablelist_tile 6.11 }
+  if { ! [catch {package present tablelist_tile 6.11}] } {
+    if { [info exists ::tablelist::library] } {
+      set vars(tablelistdemofn) \
+          [file join $::tablelist::library demos tileWidgets.tcl]
+      if { [file exists $vars(tablelistdemofn)] } {
+        set vars(havetablelist) true
       }
     }
   }

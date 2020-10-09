@@ -53,6 +53,7 @@ proc main { } {
   set fontscale 1.0 ; # default
   set sf 1.0
   set gc {}
+  set fontsize 11
   for {set idx 1} {$idx < [llength $::argv]} {incr idx} {
     if { [lindex $::argv $idx] eq "-ttkscale" } {
       incr idx
@@ -103,9 +104,10 @@ proc main { } {
 
   # Tk defaults to pixels.  Sigh.
   # Use points so that the fonts scale.
-  font configure TkDefaultFont -size 11
+  font configure TkDefaultFont -size $fontsize
   set origfontsz [font metrics TkDefaultFont -ascent]
-  font configure TkDefaultFont -size [expr {round(12.0*$fontscale)}]
+  font configure TkDefaultFont -size \
+      [expr {round(double($fontsize)*$fontscale)}]
 
   set newfontsz [font metrics TkDefaultFont -ascent]
   if { $origfontsz != $newfontsz } {
