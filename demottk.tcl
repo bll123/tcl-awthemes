@@ -298,8 +298,8 @@ proc main { } {
   # tablelist must be loaded after the theme is set.
   set vars(havetablelist) false
 
-  catch { package require tablelist_tile 6.11 }
-  if { ! [catch {package present tablelist_tile 6.11}] } {
+  catch { package require tablelist_tile 6.11- }
+  if { ! [catch {package present tablelist_tile 6.11-}] } {
     if { [info exists ::tablelist::library] } {
       set vars(tablelistdemofn) \
           [file join $::tablelist::library demos tileWidgets.tcl]
