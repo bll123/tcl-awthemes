@@ -1,8 +1,16 @@
 #!/usr/bin/tclsh
 #
+#   breeze:
+#     - Notebook background is not graphical as it was in the original.
+#     - Disabled checkbutton/radiobutton look match the enabled look.
+#     - readonly combobox is not identical.
+#     - toolbutton and menubutton press states are set the same as
+#       the button press.
+#     - treeview arrow selected color is changed.
+#     - sizegrip design is different.
 #
 
-package provide breeze 1.5
+package provide breeze 1.6
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -54,13 +62,12 @@ namespace eval ::ttk::theme::breeze {
         [::colorutils::opaqueBlendPerc $colors(graphics.color) #ffffff 0.7 2]
 
     set colors(bg.checkbutton) $colors(bg.bg)
+    set colors(bg.button.pressed) $colors(graphics.color)
     set colors(button.active.border) $colors(graphics.color)
     set colors(button.activefocus) $colors(graphics.color.alternate)
     set colors(button.anchor) {}
     set colors(button.image.padding) {6 4}
     set colors(button.padding) {8 3}
-    set colors(button.pressed) $colors(graphics.color)
-    set colors(button.pressed) $colors(graphics.color)
     set colors(checkbutton.border) $colors(graphics.color)
     set colors(checkbutton.focusthickness) 1
     set colors(checkbutton.padding) {4 0 0 2}
@@ -68,8 +75,8 @@ namespace eval ::ttk::theme::breeze {
     set colors(entrybg.bg) #fcfcfc
     set colors(entry.image.padding) {5 8}
     set colors(entry.padding) {2 0}
+    set colors(graphics.color.arrow) $colors(bg.darkest)
     set colors(graphics.color.spin.arrow) $colors(bg.darkest)
-    set colors(graphics.color.tree.arrow) $colors(bg.darkest)
     set colors(menubutton.padding) {10 2}
     set colors(menubutton.use.button.image) true
     set colors(parent.theme) default
@@ -79,6 +86,7 @@ namespace eval ::ttk::theme::breeze {
     set colors(spinbox.image.padding) {4 4}
     set colors(toolbutton.image.padding) {10 7}
     set colors(toolbutton.use.button.image) true
+    set colors(tree.arrow.selected) #ffffff
     set colors(trough.color) $colors(bg.darker)
   }
 

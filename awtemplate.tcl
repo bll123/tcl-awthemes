@@ -11,9 +11,10 @@
 # CHANGE: 'awtemplate' to the filename containing your theme.
 # Within the pkgIndex.tcl file, use the following layout to load
 # the new theme:
-#    package ifneeded template 1.0 \
+#    package ifneeded awtemplate 1.0 \
 #        [list source [file join $dir awtemplate.tcl]]
-package provide template 1.1
+
+package provide awtemplate 1.3
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -26,8 +27,8 @@ if { $ap ni $::auto_path } {
 unset ap
 package require awthemes
 
-# CHANGE: 'template' to the name of your theme.
-namespace eval ::ttk::theme::template {
+# CHANGE: 'awtemplate' to the name of your theme.
+namespace eval ::ttk::theme::awtemplate {
 
   # To set a widget style, in the 'setBaseColors' procedure, add
   #   style.<widget-image-type> <style>
@@ -52,6 +53,7 @@ namespace eval ::ttk::theme::template {
   #     button
   #         (default: none)
   #         roundedrect-accent-gradient
+  #         roundedrect-gradient
   #         roundedrect-flat
   #     checkbutton
   #         roundedrect-check (default)
@@ -81,6 +83,7 @@ namespace eval ::ttk::theme::template {
   #     progressbar (these are used for scales and scrollbars also)
   #         rect
   #         rect-bord (default)
+  #         rect-diag
   #         rounded-line
   #     radiobutton
   #         circle-circle (default)
@@ -89,8 +92,8 @@ namespace eval ::ttk::theme::template {
   #         octagon-circle
   #     scale
   #         circle
-  #         rect
-  #         rect-bord-circle (default)
+  #         circle-rev
+  #         rect-bord-grip (default)
   #     scrollbar-grip
   #         circle (default)
   #     sizegrip
@@ -143,6 +146,9 @@ namespace eval ::ttk::theme::template {
   }
 
   # Set any other colors here.
+  #
+  # The list of colors here is not complete.
+  #
   # Use the form:
   #     set colors(color-name) color
   # The main colors you may want to set:
@@ -185,9 +191,9 @@ namespace eval ::ttk::theme::template {
     set colors(graphics.color.arrow) #ffffff
   }
 
-  # CHANGE: 'template' to the name of your theme.
+  # CHANGE: 'awtemplate' to the name of your theme.
   proc init { } {
-    ::ttk::awthemes::init template
+    ::ttk::awthemes::init awtemplate
   }
 
   init

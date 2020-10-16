@@ -1,8 +1,16 @@
 #!/usr/bin/tclsh
 #
+#   winxpblue:
+#     - Changed colors of arrows to match the blue theme.
+#     - Changed selection color to match the background color.
+#     - Changed treeview arrows to match the other arrows.
+#     - Changed the scrollbars to not be a blue color, but to match
+#       the scale color.
+#     - Scale, progressbar, scrollbar, spinbox button design are different.
+#     - sizegrip design is different.
 #
 
-package provide winxpblue 7.6
+package provide winxpblue 7.7
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -58,9 +66,9 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(entrybg.bg) #ffffff
     set colors(entry.padding) {2 0}
     set colors(focus.color) #003c74
+    set colors(graphics.color.arrow) $colors(graphics.color)
     set colors(graphics.color.grip) $colors(bg.darkest)
     set colors(graphics.color.pbar) #ece9d8
-    set colors(graphics.color.spin.arrow) $colors(graphics.color)
     set colors(graphics.highlight) #e59700
     set colors(menubutton.padding) {3 1}
     set colors(menubutton.relief) none
@@ -72,6 +80,7 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(scrollbar.color) $colors(bg.bg)
     set colors(selectbg.bg) $colors(bg.darkest)
     set colors(spinbox.padding) {1 3}
+    set colors(tree.arrow.selected) #ffffff
     set colors(trough.color) $colors(bg.lightest)
   }
 

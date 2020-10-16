@@ -5,6 +5,7 @@ The following files are needed:
   pkgIndex.tcl            - package index
   awarc.tcl               - scalable arc theme
   awblack.tcl             - scalable black theme
+  awclearlooks.tcl        - scalable clearlooks theme
   awdark.tcl              - awdark theme
   awlight.tcl             - awlight theme
   awwinxpblue.tcl         - scalable winxpblue theme
@@ -24,6 +25,25 @@ Try:
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
   # scaled styling
   tclsh demoscaled.tcl winxpblue
+
+9.4.0 (2020-10-16)
+   - added scalable clearlooks theme.
+   - scrollbar style: Fix so that a separate scrollbar slider style
+     can be set, but still uses the progressbar/ directory.
+   - arrow/solid, arrow/solid-bg, combobox/solid-bg: reduce arrow height.
+   - treeview heading: improve colors.
+   - setTextColors: set background color appropriately if the widget
+     is in a normal state.
+   - awdark/awlight: no tksvg: improved/fixed arrow colors.
+   - arc: improved some colors. fixed tab height.
+   - renamed scale/rect-bord-circle to scale/rect-bord-grip.  clean up.
+   - progressbar/rect-bord: clean up.
+   - combobox/rounded: new widget style.
+   - progressbar/rect-diag: new widget style.
+   - button/roundedrect-gradient: new widget style.
+   - scale/rect-narrow: new scale/scale-trough widget style.
+   - demottk.tcl: beta: added a tablelist tab if tablelist 6.11+ is available.
+   - demottk.tcl: added an '-autopath' option.
 
 9.3.2 (2020-10-5)
    - setListboxColors: Fixed to properly set colors on

@@ -1,9 +1,11 @@
 #!/usr/bin/tclsh
 #
-#
+#   arc:
+#     - selection colors are all blue.
+#     - button highlight color matches theme better.
 #
 
-package provide arc 1.2
+package provide arc 1.3
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -48,26 +50,29 @@ namespace eval ::ttk::theme::arc {
     set colors(bg.dark) #eaebed
     set colors(bg.darker) #d3d8e2
     set colors(bg.darkest) #5c616c
+    set colors(trough.color) #cfd6e6
 
+    set colors(accent.color) #ffffff
     set colors(bg.border) $colors(bg.darker)
     set colors(bg.button) $colors(bg.light)
+    set colors(bg.button.active) $colors(trough.color)
+    set colors(bg.button.pressed) $colors(bg.darker)
     set colors(bg.tab.disabled) $colors(bg.dark)
     set colors(bg.tab.inactive) $colors(bg.dark)
-    set colors(button.active) $colors(bg.lightest)
-    set colors(button.active.border) $colors(bg.darker) ; # #cfd6e6
+    set colors(button.active.border) $colors(bg.darker)
     set colors(button.anchor) {}
     set colors(notebook.tab.focusthickness) 3
-    set colors(notebook.tab.padding) {3 3}
+    set colors(notebook.tab.padding) {3 0}
     set colors(button.image.padding) {6 3}
     set colors(button.padding) {8 4}
-    set colors(button.pressed) $colors(bg.darker)
     set colors(checkbutton.scale) 0.95
     set colors(combobox.entry.image.padding) {6 5}
     set colors(combobox.padding) {0 0}
     set colors(entrybg.bg) $colors(bg.lightest)
     set colors(entry.image.padding) {6 5}
     set colors(entry.padding) {0 0}
-    set colors(graphics.color.spin.arrow) $colors(bg.darkest)
+    set colors(graphics.color.arrow) $colors(bg.darkest)
+    set colors(graphics.color.light) $colors(bg.bg)
     set colors(graphics.color.spin.bg) $colors(bg.bg)
     set colors(menubutton.padding) {8 3}
     set colors(menubutton.use.button.image) true
@@ -83,8 +88,7 @@ namespace eval ::ttk::theme::arc {
     set colors(spinbox.padding) {0 0}
     set colors(toolbutton.image.padding) {8 7}
     set colors(toolbutton.use.button.image) true
-    set colors(toolbutton.use.button.image) true
-    set colors(trough.color) #cfd6e6
+    set colors(tree.arrow.selected) $colors(bg.darkest)
   }
 
   proc init { } {

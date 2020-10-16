@@ -2,7 +2,7 @@
 #
 #
 
-package provide awdark 7.7
+package provide awdark 7.8
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -39,6 +39,7 @@ namespace eval ::ttk::theme::awdark {
 
     set colors(bg.border) #000000
     set colors(bg.button) $colors(bg.darker)
+    set colors(bg.button.active) $colors(bg.light)
     set colors(bg.tab.active) $colors(bg.darker)
     set colors(bg.tab.border) $colors(bg.light)
     set colors(bg.tab.disabled) $colors(bg.darker)
@@ -48,10 +49,9 @@ namespace eval ::ttk::theme::awdark {
     set colors(button.padding) {5 3}
     set colors(entrybg.bg) $colors(bg.darkest)
     set colors(entry.padding) {5 1}
+    set colors(graphics.color.arrow) $colors(fg.fg)
     set colors(graphics.color.grip) #000000
-    set colors(graphics.color.spin.arrow) #ffffff
     set colors(graphics.color.spin.bg) $colors(graphics.color)
-    set colors(graphics.color.tree.arrow) #ffffff
     set colors(menubutton.padding) {5 2}
     set colors(notebook.tab.focusthickness) 5
     set colors(scale.border) $colors(bg.darkest)

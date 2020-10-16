@@ -1,8 +1,13 @@
 #!/usr/bin/tclsh
 #
+#   black:
+#     - Added the labelframe box.
+#     - Changed selection color to match the background color.
+#     - Scale, progressbar, scrollbar, spinbox button design are different.
+#     - sizegrip design is different.
 #
 
-package provide black 7.4
+package provide black 7.5
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -51,12 +56,10 @@ namespace eval ::ttk::theme::black {
     set colors(entryfg.fg) #000000
     set colors(entry.padding) {3 0}
     set colors(focus.color) #000000
-    set colors(graphics.color.arrow) #ffffff
+    set colors(graphics.color.arrow) #000000
     set colors(graphics.color.grip) #000000
     set colors(graphics.color.scrollbar.arrow) #000000
     set colors(graphics.color.sizegrip) #000000
-    set colors(graphics.color.spin.arrow) #000000
-    set colors(graphics.color.tree.arrow) #000000
     set colors(menubutton.padding) {5 1}
     set colors(menubutton.relief) raised
     set colors(menubutton.width) -8
@@ -64,6 +67,7 @@ namespace eval ::ttk::theme::black {
     set colors(notebook.tab.padding) {4 2 4 2}
     set colors(scale.border) $colors(bg.darkest)
     set colors(selectbg.bg) $colors(bg.darkest)
+    set colors(tree.arrow.selected) $colors(fg.fg)
     set colors(trough.color) $colors(bg.darkest)
   }
 

@@ -71,6 +71,32 @@ proc twrap { } {
   $vars(mainW).text configure -wrap $c
 }
 
+proc configureFonts { } {
+  variable vars
+
+  font configure TkDefaultFont -size ${vars(fontsize)}
+  set origfontsz [font metrics TkDefaultFont -ascent]
+  font configure TkDefaultFont -size \
+      [expr {round(double(${vars(fontsize)})*$vars(fontscale))}]
+  # MacOS aqua will use the TkSmallCaptionFont for labelframe fonts
+  # (currently in the mac_styles branch, eventually in 8.7)
+  set sz [font metrics TkSmallCaptionFont -ascent]
+  font configure TkSmallCaptionFont -size [expr {round($sz*$vars(fontscale))}]
+  if { "TextFont" ni [font names] } {
+    font create TextFont
+  }
+  # these calculations only work with point sizes, not pixel sizes.
+  font configure TextFont -size \
+      [expr {round((double(${vars(fontsize)})-1.0)*$vars(fontscale))}]
+  if { "MenuFont" ni [font names] } {
+    font create MenuFont
+  }
+  font configure MenuFont -size \
+      [expr {round((double(${vars(fontsize)})-2.0)*$vars(fontscale))}]
+
+  return $origfontsz
+}
+
 proc main { } {
   variable vars
 
@@ -81,11 +107,14 @@ proc main { } {
   wm title $vars(mainW) demottk.tcl
 
   if { [llength $::argv] < 1 } {
-    puts "Usage: demottk.tcl \[-ttkscale <scale-factor>] "
-    puts "    \[-fontsize <size>] \[-fontscale <scale-factor>] "
+    puts "Usage: demottk.tcl "
+    puts "    \[-autopath <path>] "
+    puts "    \[-ttkscale <scale-factor>] "
+    puts "    \[-fontsize <points>] \[-fontscale <scale-factor>] "
     puts "    \[-background <color>] \[-focuscolor <color>] "
     puts "    \[-foreground <color>]"
-    puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-sizegrip] \[-styledemo]"
+    puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-notable]"
+    puts "    \[-sizegrip] \[-styledemo]"
     puts "    \[-group group -groupcolor color]"
     puts "    <theme> "
     exit 1
@@ -107,24 +136,21 @@ proc main { } {
   set vars(theme) {}
   set vars(tkscaling) {}
   set vars(macstyles) false
+  set vars(notable) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
-      -ttkscale {
+      -autopath {
         incr idx
-        set vars(tkscaling) [lindex $::argv $idx]
-      }
-      -focuscolor {
-        incr idx
-        set vars(gc) [lindex $::argv $idx]
+        lappend ::auto_path [split [lindex $::argv $idx] {:;}]
       }
       -background {
         incr idx
         set vars(nbg) [lindex $::argv $idx]
       }
-      -foreground {
+      -focuscolor {
         incr idx
-        set vars(nfg) [lindex $::argv $idx]
+        set vars(gc) [lindex $::argv $idx]
       }
       -fontscale {
         incr idx
@@ -134,6 +160,10 @@ proc main { } {
         incr idx
         set vars(fontsize) [lindex $::argv $idx]
       }
+      -foreground {
+        incr idx
+        set vars(nfg) [lindex $::argv $idx]
+      }
       -group {
         incr idx
         set vars(group) [lindex $::argv $idx]
@@ -142,14 +172,20 @@ proc main { } {
         incr idx
         set vars(groupcolor) [lindex $::argv $idx]
       }
-      -notksvg {
-        set ::notksvg true
+      -nocbt {
+        set vars(nocbt) true
       }
       -noflex {
         set vars(noflex) true
       }
-      -nocbt {
-        set vars(nocbt) true
+      -notable {
+        set vars(notable) true
+      }
+      -notksvg {
+        set ::notksvg true
+      }
+      -macstyles {
+        set vars(macstyles) true
       }
       -sizegrip {
         set vars(sizegrip) true
@@ -157,8 +193,9 @@ proc main { } {
       -styledemo {
         set vars(styledemo) true
       }
-      -macstyles {
-        set vars(macstyles) true
+      -ttkscale {
+        incr idx
+        set vars(tkscaling) [lindex $::argv $idx]
       }
       default {
         if { ! [string match -* $a] } {
@@ -230,6 +267,7 @@ proc main { } {
     ::themeutils::setThemeColors $vars(theme) fg.fg $vars(nfg)
   }
   if { $vars(havethemeutils) && $vars(group) ne {} && $vars(groupcolor) ne {} } {
+    # no idea if this still works properly or at all.
     ::themeutils::setThemeGroupColor $vars(theme) $vars(group) $vars(groupcolor)
   }
   if { $vars(havethemeutils) && $vars(styledemo) } {
@@ -242,21 +280,7 @@ proc main { } {
 
   # Tk defaults to pixels.  Sigh.
   # Use points so that the fonts scale.
-  font configure TkDefaultFont -size ${vars(fontsize)}
-  set origfontsz [font metrics TkDefaultFont -ascent]
-  font configure TkDefaultFont -size \
-      [expr {round(double(${vars(fontsize)})*$vars(fontscale))}]
-  # MacOS aqua will use the TkSmallCaptionFont for labelframe fonts
-  # (currently in the mac_styles branch, eventually in 8.7)
-  set sz [font metrics TkSmallCaptionFont -ascent]
-  font configure TkSmallCaptionFont -size [expr {round($sz*$vars(fontscale))}]
-  font create TextFont
-  # these calculations only work with point sizes, not pixel sizes.
-  font configure TextFont -size \
-      [expr {round((double(${vars(fontsize)})-1.0)*$vars(fontscale))}]
-  font create MenuFont
-  font configure MenuFont -size \
-      [expr {round((double(${vars(fontsize)})-2.0)*$vars(fontscale))}]
+  set origfontsz [configureFonts]
 
   set newfontsz [font metrics TkDefaultFont -ascent]
   if { $origfontsz != $newfontsz } {
@@ -298,15 +322,24 @@ proc main { } {
   # tablelist must be loaded after the theme is set.
   set vars(havetablelist) false
 
-  catch { package require tablelist_tile 6.11- }
-  if { ! [catch {package present tablelist_tile 6.11-}] } {
-    if { [info exists ::tablelist::library] } {
-      set vars(tablelistdemofn) \
-          [file join $::tablelist::library demos tileWidgets.tcl]
-      if { [file exists $vars(tablelistdemofn)] } {
-        set vars(havetablelist) true
+  if { ! $vars(notable) } {
+    set origscale [tk scaling]
+
+    catch { package require tablelist_tile 6.11- }
+    if { ! [catch {package present tablelist_tile 6.11-}] } {
+      if { [info exists ::tablelist::library] } {
+        set vars(tablelistdemofn) \
+            [file join $::tablelist::library demos tileWidgets.tcl]
+        if { [file exists $vars(tablelistdemofn)] } {
+          set vars(havetablelist) true
+        }
       }
     }
+
+    # tablelist resets the tk scaling based on its own ideas. set it back.
+    tk scaling $origscale
+    # tablelist also messes with the font sizes. set them back.
+    configureFonts
   }
 
   set vars(val) 55
@@ -360,15 +393,25 @@ proc main { } {
   $vars(mainW).nb add $vars(mainW).five -text {Menubutton}
   ::ttk::frame $vars(mainW).six
   $vars(mainW).nb add $vars(mainW).six -text {Listbox}
-  if { $vars(havetablelist) } {
+  if { ! $vars(notable) && $vars(havetablelist) } {
     ::ttk::frame $vars(mainW).seven
     $vars(mainW).nb add $vars(mainW).seven -text {Table List}
+    set ::argv $vars(mainW).seven
+    try {
+      source $vars(tablelistdemofn)
+    } on error {err res} {
+      $vars(mainW).nb forget $vars(mainW).seven
+      set vars(havetablelist) false
+    }
+    set ::argv {}
   }
   ::ttk::frame $vars(mainW).eight
   $vars(mainW).nb add $vars(mainW).eight -text {Inactive} -state disabled
 
-  ::ttk::labelframe $vars(mainW).lfn -text " Normal "
-  ::ttk::labelframe $vars(mainW).lfd -text " Disabled "
+  ::ttk::labelframe $vars(mainW).lfn \
+      -text " Normal "
+  ::ttk::labelframe $vars(mainW).lfd \
+      -text " Disabled "
   $vars(mainW).lfd state disabled
   foreach {k} {n d} {
     set s !disabled
@@ -383,7 +426,7 @@ proc main { } {
 
     ::ttk::combobox $vars(mainW).combo$k \
         -values \
-        [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
+        [list $vars(theme) aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
         -textvariable vars(valb) \
         -width 15 \
         -state $s \
@@ -391,7 +434,7 @@ proc main { } {
         -font TkDefaultFont
 
     ::ttk::combobox $vars(mainW).comboro$k -values \
-        [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
+        [list $vars(theme) aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
         -textvariable vars(valb) \
         -width 15 \
         -height 5 \
@@ -402,8 +445,8 @@ proc main { } {
     grid configure $vars(mainW).combo$k -columnspan 2
     grid configure $vars(mainW).comboro$k -columnspan 2 -column 2
 
-    ::ttk::checkbutton $vars(mainW).cboff$k -text on -variable ::off -state $s
-    ::ttk::checkbutton $vars(mainW).cbon$k -text off -variable ::on -state $s
+    ::ttk::checkbutton $vars(mainW).cboff$k -text off -variable ::off -state $s
+    ::ttk::checkbutton $vars(mainW).cbon$k -text on -variable ::on -state $s
     grid $vars(mainW).cboff$k $vars(mainW).cbon$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
     incr row
     if { $vars(havecbt) } {
@@ -436,12 +479,14 @@ proc main { } {
     grid $vars(mainW).sc$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p -columnspan 2
     incr row
 
-    ::ttk::progressbar $vars(mainW).pb$k \
-        -orient horizontal \
-        -mode determinate \
-        -variable vars(val) \
-        -length [expr {round(100*$vars(scalefactor))}]
-    $vars(mainW).pb$k state $s
+    if { $s ne "disabled" } {
+      ::ttk::progressbar $vars(mainW).pb$k \
+          -orient horizontal \
+          -mode determinate \
+          -variable vars(val) \
+          -length [expr {round(100*$vars(scalefactor))}]
+      $vars(mainW).pb$k state $s
+    }
     ::ttk::scale $vars(mainW).scv$k \
         -orient vertical \
         -from 100 \
@@ -449,17 +494,23 @@ proc main { } {
         -variable vars(val) \
         -length [expr {round(100*$vars(scalefactor))}]
     $vars(mainW).scv$k state $s
-    ::ttk::progressbar $vars(mainW).pbv$k \
-        -orient vertical \
-        -mode determinate \
-        -variable vars(val) \
-        -length [expr {round(100*$vars(scalefactor))}]
-    $vars(mainW).pbv$k state $s
-    grid $vars(mainW).pb$k $vars(mainW).scv$k $vars(mainW).pbv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
+    if { $s ne "disabled" } {
+      ::ttk::progressbar $vars(mainW).pbv$k \
+          -orient vertical \
+          -mode determinate \
+          -variable vars(val) \
+          -length [expr {round(100*$vars(scalefactor))}]
+      $vars(mainW).pbv$k state $s
+    }
+    if { $s ne "disabled" } {
+      grid $vars(mainW).pb$k $vars(mainW).scv$k $vars(mainW).pbv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
+      grid configure $vars(mainW).pb$k -columnspan 2
+      grid configure $vars(mainW).pbv$k -rowspan 3 -column 3
+    } else {
+      grid $vars(mainW).scv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
+    }
     incr row
-    grid configure $vars(mainW).pb$k -columnspan 2
     grid configure $vars(mainW).scv$k -rowspan 3 -column 2
-    grid configure $vars(mainW).pbv$k -rowspan 3 -column 3
 
     ::ttk::entry $vars(mainW).ent$k -textvariable ::vars(bgentry) \
         -width 15 \
@@ -796,16 +847,17 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   ::ttk::button $vars(mainW).menubar.tbb -text {TB-B} -style Toolbutton
   ::ttk::button $vars(mainW).menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
 
-  pack $vars(mainW).menubar.file \
+  grid $vars(mainW).menubar.file \
       $vars(mainW).menubar.edit \
       $vars(mainW).menubar.dis \
       $vars(mainW).menubar.tba \
       $vars(mainW).menubar.tbb \
-      $vars(mainW).menubar.tbc -side left
+      $vars(mainW).menubar.tbc \
+      -sticky news
 
   ::ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
   ::ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]
-  set ::lbox [list aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
+  set ::lbox [list $vars(theme) aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp qqq rrr sss ttt uuu vvv www xxx yyy zzz]
   # change borderwidth to 1 for color testing
   listbox $vars(mainW).lbox1 \
       -listvariable ::lbox \
@@ -831,11 +883,6 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   pack $vars(mainW).sblbox1 -in $vars(mainW).six -padx 0 -pady 3p -fill y -side left
   pack $vars(mainW).lbox2 -in $vars(mainW).six -padx 3p -pady 3p -expand true -fill both -side left
   pack $vars(mainW).sblbox2 -in $vars(mainW).six -padx 0 -pady 3p -fill y -side left
-
-  if { $vars(havetablelist) } {
-    set ::argv $vars(mainW).seven
-    source $vars(tablelistdemofn)
-  }
 
   wm protocol $vars(mainW) WM_DELETE_WINDOW [list ::exit]
 
