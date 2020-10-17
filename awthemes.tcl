@@ -108,7 +108,7 @@
 # Change History
 #
 # 9.4.1 (2020-10-16)
-#   - fix mkpkgidx.sh script for clearlooks theme…
+#   - fix mkpkgidx.sh script for clearlooks theme.
 # 9.4.0 (2020-10-16)
 #   - added scalable clearlooks theme.
 #   - arc: improved some colors. fixed tab height.

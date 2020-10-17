@@ -26,6 +26,9 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+9.4.1 (2020-10-16)
+   - fix mkpkgidx.sh script for clearlooks theme.
+
 9.4.0 (2020-10-16)
    - added scalable clearlooks theme.
    - scrollbar style: Fix so that a separate scrollbar slider style
