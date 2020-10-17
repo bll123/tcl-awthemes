@@ -137,6 +137,7 @@ proc main { } {
   set vars(tkscaling) {}
   set vars(macstyles) false
   set vars(notable) false
+  set vars(cleanpath) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
@@ -147,6 +148,9 @@ proc main { } {
       -background {
         incr idx
         set vars(nbg) [lindex $::argv $idx]
+      }
+      -cleanpath {
+        set vars(cleanpath) true
       }
       -focuscolor {
         incr idx
@@ -305,16 +309,24 @@ proc main { } {
   if { $vars(havetksvg) && [file exists aw${vars(theme)}.tcl] } {
     set ttheme aw${vars(theme)}
   }
-  if { [file exists $ttheme.tcl] && ! $loaded } {
+  if { ! $loaded } {
+    if { ! [catch {package require $vars(theme)}] } {
+      puts "loaded via package require $vars(theme)"
+      set loaded true
+    }
+  }
+  if { ! $loaded && [file exists $ttheme.tcl] } {
     source $ttheme.tcl
     puts "loaded via source $ttheme.tcl"
     set loaded true
   }
-  set tfn [file join $::env(HOME) s ballroomdj code themes $ttheme.tcl]
-  if { [file exists $tfn] && ! $loaded } {
-    source $tfn
-    puts "loaded $tfn"
-    set loaded true
+  if { ! $vars(cleanpath) } {
+    set tfn [file join $::env(HOME) s ballroomdj code themes $ttheme.tcl]
+    if { ! $loaded && [file exists $tfn] } {
+      source $tfn
+      puts "loaded $tfn"
+      set loaded true
+    }
   }
 
   ::ttk::style theme use $vars(theme)
