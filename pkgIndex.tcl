@@ -14,5 +14,7 @@ package ifneeded breeze 1.6 \
     [list source [file join $dir awbreeze.tcl]]
 package ifneeded winxpblue 7.7 \
     [list source [file join $dir awwinxpblue.tcl]]
+package ifneeded clearlooks 1.0 \
+    [list source [file join $dir awclearlooks.tcl]]
 package ifneeded awtemplate 1.3 \
     [list source [file join $dir awtemplate.tcl]]
