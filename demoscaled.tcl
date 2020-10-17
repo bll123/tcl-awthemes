@@ -136,7 +136,14 @@ proc main { } {
       ($havetksvg && $theme eq "winxpblue") } {
     set ttheme aw${theme}
   }
-  if { [file exists $ttheme.tcl] && ! $loaded } {
+  if { ! $loaded } {
+    if { ! [catch {package require $theme}] } {
+      puts "loaded via package require $theme"
+      set loaded true
+    }
+  }
+  if { ! $loaded && [file exists $ttheme.tcl] } {
+    puts "loaded via source $ttheme.tcl"
     source $ttheme.tcl
   }
 
