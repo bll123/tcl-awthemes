@@ -8,12 +8,13 @@ set ap [file dirname $iscript]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
 }
-if { 1 } {
-  set ap [file normalize [file join [file dirname $iscript] .. code]]
-  if { $ap ni $::auto_path } {
-    lappend ::auto_path $ap
-  }
+#begin ballroomdj
+# this block is used for testing awthemes
+set ap [file normalize [file join [file dirname $iscript] .. code]]
+if { $ap ni $::auto_path } {
+  lappend ::auto_path $ap
 }
+#end ballroomdj
 unset ap
 unset iscript
 
@@ -80,8 +81,8 @@ proc configureFonts { } {
       [expr {round(double(${vars(fontsize)})*$vars(fontscale))}]
   # MacOS aqua will use the TkSmallCaptionFont for labelframe fonts
   # (currently in the mac_styles branch, eventually in 8.7)
-  set sz [font metrics TkSmallCaptionFont -ascent]
-  font configure TkSmallCaptionFont -size [expr {round($sz*$vars(fontscale))}]
+  font configure TkSmallCaptionFont -size \
+      [expr {round(double(${vars(fontsize)}-1)*$vars(fontscale))}]
   if { "TextFont" ni [font names] } {
     font create TextFont
   }
@@ -115,7 +116,6 @@ proc main { } {
     puts "    \[-foreground <color>]"
     puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-notable]"
     puts "    \[-sizegrip] \[-styledemo]"
-    puts "    \[-group group -groupcolor color]"
     puts "    <theme> "
     exit 1
   }
@@ -131,8 +131,6 @@ proc main { } {
   set vars(nbg) {}
   set vars(nfg) {}
   set vars(styledemo) false
-  set vars(group) {}
-  set vars(groupcolor) {}
   set vars(theme) {}
   set vars(tkscaling) {}
   set vars(macstyles) false
@@ -150,6 +148,7 @@ proc main { } {
         set vars(nbg) [lindex $::argv $idx]
       }
       -cleanpath {
+        # use for testing...
         set vars(cleanpath) true
       }
       -focuscolor {
@@ -167,14 +166,6 @@ proc main { } {
       -foreground {
         incr idx
         set vars(nfg) [lindex $::argv $idx]
-      }
-      -group {
-        incr idx
-        set vars(group) [lindex $::argv $idx]
-      }
-      -groupcolor {
-        incr idx
-        set vars(groupcolor) [lindex $::argv $idx]
       }
       -nocbt {
         set vars(nocbt) true
@@ -246,18 +237,11 @@ proc main { } {
   if { ! $vars(noflex) } {
     catch { package require flexmenu }
     if { ! [catch {package present flexmenu}] } {
+      puts "using flexmenu"
       set vars(haveflex) true
       set vars(menucmd) ::flexmenu
       set vars(topmenuargs) [list -type menubar]
       set vars(menuargs) [list -mode frame]
-    }
-  }
-
-  set vars(havecbt) false
-  if { ! $vars(nocbt) } {
-    catch { package require checkButtonToggle }
-    if { ! [catch {package present checkButtonToggle}] } {
-      set vars(havecbt) true
     }
   }
 
@@ -269,10 +253,6 @@ proc main { } {
   }
   if { $vars(havethemeutils) && $vars(nfg) ne {} } {
     ::themeutils::setThemeColors $vars(theme) fg.fg $vars(nfg)
-  }
-  if { $vars(havethemeutils) && $vars(group) ne {} && $vars(groupcolor) ne {} } {
-    # no idea if this still works properly or at all.
-    ::themeutils::setThemeGroupColor $vars(theme) $vars(group) $vars(groupcolor)
   }
   if { $vars(havethemeutils) && $vars(styledemo) } {
     ::themeutils::setThemeColors $vars(theme) \
@@ -295,7 +275,9 @@ proc main { } {
   }
 
   set loaded false
-  if { 1 } {
+#begin ballroomdj
+  if { ! $vars(cleanpath) } {
+    # this block is used for testing awthemes
     set fn [file join .. code themes themeloader.tcl]
     if { [file exists $fn] } {
       source $fn
@@ -304,32 +286,47 @@ proc main { } {
       set loaded true
     }
   }
+#end ballroomdj
 
   set ttheme $vars(theme)
   if { $vars(havetksvg) && [file exists aw${vars(theme)}.tcl] } {
     set ttheme aw${vars(theme)}
   }
   if { ! $loaded } {
-    if { ! [catch {package require $vars(theme)}] } {
-      puts "loaded via package require $vars(theme)"
+    try {
+      package require $vars(theme)
+      puts "loaded via: package require $vars(theme)"
       set loaded true
+    } on error {err res} {
+      puts $err
     }
   }
   if { ! $loaded && [file exists $ttheme.tcl] } {
     source $ttheme.tcl
-    puts "loaded via source $ttheme.tcl"
+    puts "loaded via: source $ttheme.tcl"
     set loaded true
   }
+#begin ballroomdj
   if { ! $vars(cleanpath) } {
+    # this block is used for testing awthemes
     set tfn [file join $::env(HOME) s ballroomdj code themes $ttheme.tcl]
     if { ! $loaded && [file exists $tfn] } {
       source $tfn
-      puts "loaded $tfn"
+      puts "loaded: $tfn"
       set loaded true
     }
   }
+#end ballroomdj
 
   ::ttk::style theme use $vars(theme)
+
+  set vars(havecbt) false
+  if { ! $vars(nocbt) } {
+    catch { package require checkButtonToggle }
+    if { ! [catch {package present checkButtonToggle}] } {
+      set vars(havecbt) true
+    }
+  }
 
   # tablelist must be loaded after the theme is set.
   set vars(havetablelist) false
@@ -348,9 +345,11 @@ proc main { } {
       }
     }
 
-    # tablelist resets the tk scaling based on its own ideas. set it back.
+    # Tablelist resets the tk scaling based on its own calculations.
+    # Change it back to the original.
     tk scaling $origscale
-    # tablelist also messes with the font sizes. set them back.
+    # Tablelist may change the font sizes. Reset the font sizes to match
+    # the original tk scaling setting.
     configureFonts
   }
 
@@ -419,6 +418,9 @@ proc main { } {
   }
   ::ttk::frame $vars(mainW).eight
   $vars(mainW).nb add $vars(mainW).eight -text {Inactive} -state disabled
+
+  # configure the labelframe font to match what MacOS does.
+  ::ttk::style configure TLabelframe.Label -font TkSmallCaptionFont
 
   ::ttk::labelframe $vars(mainW).lfn \
       -text " Normal "
