@@ -3,7 +3,7 @@
 find . -name '*~' -print0 | xargs -0 rm -f
 find . -name '*.orig' -print0 | xargs -0 rm -f
 nm=awthemes
-ver=$(egrep 'package provide awthemes' ${nm}.tcl | sed 's/.* //')
+ver=$(egrep 'set ::themeutils::awversion' ${nm}.tcl | sed 's/.* //')
 echo "VERSION: $ver"
 test -f ${nm}-${ver}.zip && rm -f ${nm}-${ver}.zip
 tdir=awthemes-${ver}
