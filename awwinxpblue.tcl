@@ -10,8 +10,6 @@
 #     - sizegrip design is different.
 #
 
-package provide winxpblue 7.7
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -22,6 +20,7 @@ if { $ap ni $::auto_path } {
 }
 unset ap
 package require awthemes
+
 
 namespace eval ::ttk::theme::winxpblue {
 
@@ -57,18 +56,18 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(accent.color) #21a12a
     set colors(bg.active) $colors(bg.dark)
     set colors(button.anchor) w
-    set colors(button.border) #003c74
+    set colors(border.button) #003c74
     set colors(button.padding) {3 3}
-    set colors(checkbutton.border) #003c74
+    set colors(border.checkbutton) #003c74
     set colors(checkbutton.padding) {8 0 0 2}
     set colors(checkbutton.scale) 0.75
     set colors(combobox.padding) {5 0}
     set colors(entrybg.bg) #ffffff
     set colors(entry.padding) {2 0}
     set colors(focus.color) #003c74
-    set colors(graphics.color.arrow) $colors(graphics.color)
-    set colors(graphics.color.grip) $colors(bg.darkest)
-    set colors(graphics.color.pbar) #ece9d8
+    set colors(arrow.color) $colors(graphics.color)
+    set colors(grip.color) $colors(bg.darkest)
+    set colors(pbar.color) #ece9d8
     set colors(graphics.highlight) #e59700
     set colors(menubutton.padding) {3 1}
     set colors(menubutton.relief) none
@@ -78,13 +77,19 @@ namespace eval ::ttk::theme::winxpblue {
     set colors(progressbar.color) $colors(bg.bg)
     set colors(scale.color) $colors(bg.bg)
     set colors(scrollbar.color) $colors(bg.bg)
-    set colors(selectbg.bg) $colors(bg.darkest)
+    set colors(select.bg) $colors(bg.darkest)
     set colors(spinbox.padding) {1 3}
     set colors(tree.arrow.selected) #ffffff
     set colors(trough.color) $colors(bg.lightest)
   }
 
   proc init { } {
+    if { ([info exists ::notksvg] && $::notksvg) ||
+        [catch {package present tksvg}] } {
+      namespace delete ::ttk::theme::winxpblue
+      error "no tksvg package present: cannot load scalable winxpblue theme"
+    }
+    package provide winxpblue 7.8
     ::ttk::awthemes::init winxpblue
   }
 

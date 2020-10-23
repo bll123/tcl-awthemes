@@ -14,8 +14,6 @@
 #    package ifneeded awtemplate 1.0 \
 #        [list source [file join $dir awtemplate.tcl]]
 
-package provide awtemplate 1.3
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -44,7 +42,7 @@ namespace eval ::ttk::theme::awtemplate {
   # To make a basic scalable theme, the checkbuttons, radiobuttons,
   # progressbar, arrows and scale should be set.
   #
-  # As of 2020-4-22, the available styles are:
+  # As of 2020-10-16, the available styles are:
   #     arrow
   #         chevron (default)
   #         solid-bg
@@ -53,15 +51,17 @@ namespace eval ::ttk::theme::awtemplate {
   #     button
   #         (default: none)
   #         roundedrect-accent-gradient
-  #         roundedrect-gradient
   #         roundedrect-flat
+  #         roundedrect-gradient
   #     checkbutton
   #         roundedrect-check (default)
+  #         roundedrect-check-rev
   #         roundedrect-square
   #         square-check-gradient
   #         square-x
   #     combobox
   #         (defaults to arrow/chevron)
+  #         rounded
   #         solid-bg
   #     empty
   #         empty (default)
@@ -89,11 +89,13 @@ namespace eval ::ttk::theme::awtemplate {
   #         circle-circle (default)
   #         circle-circle-gradient
   #         circle-circle-hlbg
+  #         circle-circle-rev
   #         octagon-circle
   #     scale
   #         circle
   #         circle-rev
   #         rect-bord-grip (default)
+  #         rect-narrow
   #     scrollbar-grip
   #         circle (default)
   #     sizegrip
@@ -101,9 +103,9 @@ namespace eval ::ttk::theme::awtemplate {
   #     treeview
   #         (defaults to arrow/chevron)
   #         chevron (larger than arrow/chevron)
-  #         triangle-open
-  #         triangle-solid
+  #         open
   #         plusminus-box
+  #         solid
   #
 
   #
@@ -154,8 +156,8 @@ namespace eval ::ttk::theme::awtemplate {
   # The main colors you may want to set:
   #     entrybg.bg            entry field background
   #     entryfg.fg            entry field foreground
-  #     selectbg.bg           selection background
-  #     selectfg.fg           selection foreground
+  #     select.bg             selection background
+  #     select.fg             selection foreground
   #     focus.color           if different from graphics.color
   #     accent.color          used for some widget styles (check/radio button)
   #                           an alternate graphics color
@@ -188,11 +190,17 @@ namespace eval ::ttk::theme::awtemplate {
   proc setDerivedColors { } {
     variable colors
 
-    set colors(graphics.color.arrow) #ffffff
+    set colors(arrow.color) #ffffff
   }
 
   # CHANGE: 'awtemplate' to the name of your theme.
   proc init { } {
+    if { ([info exists ::notksvg] && $::notksvg) ||
+        [catch {package present tksvg}] } {
+      namespace delete ::ttk::theme::awtemplate
+      error "no tksvg package present: cannot load scalable awtemplate theme"
+    }
+    package provide awtemplate 1.4
     ::ttk::awthemes::init awtemplate
   }
 

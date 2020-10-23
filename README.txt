@@ -26,6 +26,21 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
+9.4.2 (2020-10-23)
+   - Renamed internal color names.
+     This may break backwards compatibility for anyone using
+     'setThemeColors' or 'getColor'.
+   - removed 'setThemeGroupColor' function.
+   - Fix so that a missing or incorrect widget style will fallback
+     to 'none' and use the parent theme's style.
+   - breeze, arc: fix active vertical scale handle.
+   - Added $::themeutils::awversion to allow version checks.
+   - Fix scalable themes so that they will fail to load if tksvg is
+     not present.
+   - Improve scaling/layout of combobox/solid-bg.
+   - demottk.tcl: added 'package require' as a method to load the themes.
+   - clean demo code before production releases.
+
 9.4.1 (2020-10-16)
    - fix mkpkgidx.sh script for clearlooks theme.
 

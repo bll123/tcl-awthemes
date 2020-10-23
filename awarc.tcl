@@ -5,8 +5,6 @@
 #     - button highlight color matches theme better.
 #
 
-package provide arc 1.3
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -53,13 +51,13 @@ namespace eval ::ttk::theme::arc {
     set colors(trough.color) #cfd6e6
 
     set colors(accent.color) #ffffff
-    set colors(bg.border) $colors(bg.darker)
-    set colors(bg.button) $colors(bg.light)
-    set colors(bg.button.active) $colors(trough.color)
-    set colors(bg.button.pressed) $colors(bg.darker)
-    set colors(bg.tab.disabled) $colors(bg.dark)
-    set colors(bg.tab.inactive) $colors(bg.dark)
-    set colors(button.active.border) $colors(bg.darker)
+    set colors(border) $colors(bg.darker)
+    set colors(button) $colors(bg.light)
+    set colors(button.active) $colors(trough.color)
+    set colors(button.pressed) $colors(bg.darker)
+    set colors(tab.disabled) $colors(bg.dark)
+    set colors(tab.inactive) $colors(bg.dark)
+    set colors(border.button.active) $colors(bg.darker)
     set colors(button.anchor) {}
     set colors(notebook.tab.focusthickness) 3
     set colors(notebook.tab.padding) {3 0}
@@ -71,19 +69,19 @@ namespace eval ::ttk::theme::arc {
     set colors(entrybg.bg) $colors(bg.lightest)
     set colors(entry.image.padding) {6 5}
     set colors(entry.padding) {0 0}
-    set colors(graphics.color.arrow) $colors(bg.darkest)
+    set colors(arrow.color) $colors(bg.darkest)
     set colors(graphics.color.light) $colors(bg.bg)
-    set colors(graphics.color.spin.bg) $colors(bg.bg)
+    set colors(spinbox.color.bg) $colors(bg.bg)
     set colors(menubutton.padding) {8 3}
     set colors(menubutton.use.button.image) true
     set colors(parent.theme) default
     set colors(scale.trough) $colors(graphics.color)
-    set colors(scrollbar.active) #d3d4d8
+    set colors(scrollbar.color.active) #d3d4d8
     set colors(scrollbar.color) #b8babf
     set colors(scrollbar.has.arrows) false
-    set colors(scrollbar.pressed) $colors(graphics.color)
+    set colors(scrollbar.color.pressed) $colors(graphics.color)
     set colors(scrollbar.trough) $colors(bg.bg)
-    set colors(selectbg.bg) $colors(graphics.color)
+    set colors(select.bg) $colors(graphics.color)
     set colors(spinbox.image.padding) {4 0}
     set colors(spinbox.padding) {0 0}
     set colors(toolbutton.image.padding) {8 7}
@@ -92,6 +90,12 @@ namespace eval ::ttk::theme::arc {
   }
 
   proc init { } {
+    if { ([info exists ::notksvg] && $::notksvg) ||
+        [catch {package present tksvg}] } {
+      namespace delete ::ttk::theme::arc
+      error "no tksvg package present: cannot load scalable arc theme"
+    }
+    package provide arc 1.4
     ::ttk::awthemes::init arc
   }
 

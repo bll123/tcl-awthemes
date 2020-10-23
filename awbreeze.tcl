@@ -10,8 +10,6 @@
 #     - sizegrip design is different.
 #
 
-package provide breeze 1.6
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -61,28 +59,28 @@ namespace eval ::ttk::theme::breeze {
     set colors(graphics.color.alternate) \
         [::colorutils::opaqueBlendPerc $colors(graphics.color) #ffffff 0.7 2]
 
-    set colors(bg.checkbutton) $colors(bg.bg)
-    set colors(bg.button.pressed) $colors(graphics.color)
-    set colors(button.active.border) $colors(graphics.color)
-    set colors(button.activefocus) $colors(graphics.color.alternate)
+    set colors(entrybg.checkbutton) $colors(bg.bg)
+    set colors(button.pressed) $colors(graphics.color)
+    set colors(border.button.active) $colors(graphics.color)
+    set colors(button.active.focus) $colors(graphics.color.alternate)
     set colors(button.anchor) {}
     set colors(button.image.padding) {6 4}
     set colors(button.padding) {8 3}
-    set colors(checkbutton.border) $colors(graphics.color)
+    set colors(border.checkbutton) $colors(graphics.color)
     set colors(checkbutton.focusthickness) 1
     set colors(checkbutton.padding) {4 0 0 2}
     set colors(combobox.entry.image.padding) {6 8}
     set colors(entrybg.bg) #fcfcfc
     set colors(entry.image.padding) {5 8}
     set colors(entry.padding) {2 0}
-    set colors(graphics.color.arrow) $colors(bg.darkest)
-    set colors(graphics.color.spin.arrow) $colors(bg.darkest)
+    set colors(arrow.color) $colors(bg.darkest)
+    set colors(spinbox.color.arrow) $colors(bg.darkest)
     set colors(menubutton.padding) {10 2}
     set colors(menubutton.use.button.image) true
     set colors(parent.theme) default
     set colors(scale.trough)  $colors(graphics.color)
     set colors(scrollbar.has.arrows) false
-    set colors(selectbg.bg) $colors(graphics.color)
+    set colors(select.bg) $colors(graphics.color)
     set colors(spinbox.image.padding) {4 4}
     set colors(toolbutton.image.padding) {10 7}
     set colors(toolbutton.use.button.image) true
@@ -91,6 +89,12 @@ namespace eval ::ttk::theme::breeze {
   }
 
   proc init { } {
+    if { ([info exists ::notksvg] && $::notksvg) ||
+        [catch {package present tksvg}] } {
+      namespace delete ::ttk::theme::breeze
+      error "no tksvg package present: cannot load scalable breeze theme"
+    }
+    package provide breeze 1.7
     ::ttk::awthemes::init breeze
   }
 

@@ -6,8 +6,6 @@
 #     -
 #
 
-package provide clearlooks 1.0
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -54,12 +52,12 @@ namespace eval ::ttk::theme::clearlooks {
     set colors(bg.darkest) #9c9284
 
     set colors(accent.color) #000000
-    set colors(bg.border) $colors(bg.darkest)
-    set colors(bg.button) $colors(bg.dark)
-    set colors(bg.button.active) $colors(bg.bg)
-    set colors(bg.button.pressed) $colors(bg.darker)
-    set colors(bg.tab.active) $colors(bg.darker)
-    set colors(bg.tab.inactive) $colors(bg.darker)
+    set colors(border) $colors(bg.darkest)
+    set colors(button) $colors(bg.dark)
+    set colors(button.active) $colors(bg.bg)
+    set colors(button.pressed) $colors(bg.darker)
+    set colors(tab.active) $colors(bg.darker)
+    set colors(tab.inactive) $colors(bg.darker)
     set colors(button.anchor) {}
     set colors(button.padding) {8 2}
     set colors(checkbutton.scale) 0.8
@@ -70,21 +68,21 @@ namespace eval ::ttk::theme::clearlooks {
     set colors(entry.image.padding) {3 1}
     set colors(entry.padding) {0 1}
     set colors(focus.color) #c9ac9a
-    set colors(graphics.color.arrow) #000000
-    set colors(graphics.color.pbar) $colors(focus.color)
-    set colors(graphics.color.pbar.border) $colors(bg.border)
-    set colors(graphics.color.scrollbar.arrow) #000000
-    set colors(graphics.color.sizegrip) $colors(bg.darkest)
-    set colors(graphics.color.spin.bg) $colors(bg.dark)
+    set colors(arrow.color) #000000
+    set colors(pbar.color) $colors(focus.color)
+    set colors(pbar.color.border) $colors(border)
+    set colors(scrollbar.color.arrow) #000000
+    set colors(sizegrip.color) $colors(bg.darkest)
+    set colors(spinbox.color.bg) $colors(bg.dark)
     set colors(menubutton.padding) {0 2}
     set colors(menubutton.use.button.image) true
     set colors(notebook.tab.focusthickness) 2
     set colors(notebook.tab.padding) {3 2}
     set colors(parent.theme) clam
-    set colors(scrollbar.active) $colors(bg.light)
-    set colors(scrollbar.color) $colors(graphics.color.spin.bg)
+    set colors(scrollbar.color.active) $colors(bg.light)
+    set colors(scrollbar.color) $colors(spinbox.color.bg)
     set colors(scrollbar.has.arrows) true
-    set colors(selectbg.bg) $colors(focus.color)
+    set colors(select.bg) $colors(focus.color)
     set colors(selectfg.fg) #000000
     set colors(trough.color) #d7cbbe
     set colors(toolbutton.image.padding) {4 0}
@@ -92,6 +90,12 @@ namespace eval ::ttk::theme::clearlooks {
   }
 
   proc init { } {
+    if { ([info exists ::notksvg] && $::notksvg) ||
+        [catch {package present tksvg}] } {
+      namespace delete ::ttk::theme::clearlooks
+      error "no tksvg package present: cannot load scalable clearlooks theme"
+    }
+    package provide clearlooks 1.1
     ::ttk::awthemes::init clearlooks
   }
 

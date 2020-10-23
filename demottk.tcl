@@ -1,4 +1,4 @@
-#!/Volumes/Users/bll/Applications/BallroomDJ.app/Contents/MacOS/darwin/64/tcl/bin/tclsh
+#!/usr/bin/tclsh
 
 package require Tk
 
@@ -8,13 +8,6 @@ set ap [file dirname $iscript]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
 }
-#begin ballroomdj
-# this block is used for testing awthemes
-set ap [file normalize [file join [file dirname $iscript] .. code]]
-if { $ap ni $::auto_path } {
-  lappend ::auto_path $ap
-}
-#end ballroomdj
 unset ap
 unset iscript
 
@@ -275,18 +268,6 @@ proc main { } {
   }
 
   set loaded false
-#begin ballroomdj
-  if { ! $vars(cleanpath) } {
-    # this block is used for testing awthemes
-    set fn [file join .. code themes themeloader.tcl]
-    if { [file exists $fn] } {
-      source $fn
-      ::themeloader::loadTheme $vars(theme)
-      puts "themeloader: loaded $vars(theme)"
-      set loaded true
-    }
-  }
-#end ballroomdj
 
   set ttheme $vars(theme)
   if { $vars(havetksvg) && [file exists aw${vars(theme)}.tcl] } {
@@ -306,17 +287,6 @@ proc main { } {
     puts "loaded via: source $ttheme.tcl"
     set loaded true
   }
-#begin ballroomdj
-  if { ! $vars(cleanpath) } {
-    # this block is used for testing awthemes
-    set tfn [file join $::env(HOME) s ballroomdj code themes $ttheme.tcl]
-    if { ! $loaded && [file exists $tfn] } {
-      source $tfn
-      puts "loaded: $tfn"
-      set loaded true
-    }
-  }
-#end ballroomdj
 
   ::ttk::style theme use $vars(theme)
 

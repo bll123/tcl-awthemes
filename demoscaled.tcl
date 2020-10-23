@@ -8,12 +8,6 @@ set ap [file normalize [file dirname $iscript]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
 }
-if { 1 } {
-  set ap [file normalize [file join [file dirname $iscript] .. code]]
-  if { $ap ni $::auto_path } {
-    lappend ::auto_path $ap
-  }
-}
 unset ap
 unset iscript
 
@@ -117,14 +111,6 @@ proc main { } {
   }
 
   set loaded false
-  if { 1 } {
-    set fn [file join $::env(HOME) s ballroomdj code themes themeloader.tcl]
-    if { [file exists $fn] } {
-      source $fn
-      ::themeloader::loadTheme $theme
-      set loaded true
-    }
-  }
 
   set havetksvg false
   if { ! [catch {package present tksvg}] } {
@@ -137,9 +123,12 @@ proc main { } {
     set ttheme aw${theme}
   }
   if { ! $loaded } {
-    if { ! [catch {package require $theme}] } {
-      puts "loaded via package require $theme"
+    try {
+      package require $theme
+      puts "loaded via: package require $theme"
       set loaded true
+    } on error {err res} {
+      puts $err
     }
   }
   if { ! $loaded && [file exists $ttheme.tcl] } {
