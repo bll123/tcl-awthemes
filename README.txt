@@ -26,9 +26,13 @@ Try:
   # scaled styling
   tclsh demoscaled.tcl winxpblue
 
-To load other theme files, use the -autopath option:
+To load other theme files, use the -autopath option to
+adjust the ::auto_path variable:
+
   # loads the original winxpblue
   tclsh demottk.tcl winxpblue -notksvg -autopath $HOME/mystuff
+  # loads the scalable winxpblue when -notksvg is not present
+  tclsh demottk.tcl winxpblue -autopath $HOME/mystuff
 
 
 9.4.2 (2020-10-23)
