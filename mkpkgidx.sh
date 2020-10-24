@@ -4,7 +4,7 @@
 for f in awthemes.tcl ; do
   sf=$(echo $f | sed 's/\.tcl$//')
   pp=$(grep 'set ::themeutils::awversion [0-9]' $f |
-    sed -e 's/.* /package ifneeded /')
+    sed -e "s/.* /package ifneeded $sf /")
   cat << _HERE_ >> pkgIndex.tcl
 $pp \\
     [list source [file join \$dir $f]]
