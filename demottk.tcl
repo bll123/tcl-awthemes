@@ -277,23 +277,48 @@ proc main { } {
 
   set loaded false
 
-  set ttheme $vars(theme)
-  if { $vars(havetksvg) && [file exists aw${vars(theme)}.tcl] } {
-    set ttheme aw${vars(theme)}
-  }
   if { ! $loaded } {
-    try {
-      package require $vars(theme)
-      puts "loaded via: package require $vars(theme)"
+    if { $vars(theme) in [::ttk::style theme names] } {
+      # built-in themes
+      puts "built-in theme"
       set loaded true
-    } on error {err res} {
-      puts $err
+    } elseif { $::notksvg || ! $vars(havetksvg) } {
+      # try a package require to grab older themes using
+      # the ::ttk::theme namespace.
+      # many themes use this namespace in the 'package require'.
+      try {
+        package require ttk::theme::$vars(theme)
+        puts "loaded via: package require ttk::theme::$vars(theme)"
+        set loaded true
+      } on error { err res } {
+        # do not need this error
+      }
+    } else {
+      # try a package require to grab by theme name w/o leading namespace
+      try {
+        package require $vars(theme)
+        puts "loaded via: package require $vars(theme)"
+        set loaded true
+      } on error {err res} {
+        puts $err
+      }
     }
   }
-  if { ! $loaded && [file exists $ttheme.tcl] } {
-    source $ttheme.tcl
-    puts "loaded via: source $ttheme.tcl"
-    set loaded true
+  if { ! $loaded } {
+    foreach p [list . {*}$::auto_path] {
+      set ttheme $vars(theme)
+      if { ! $::notksvg && $vars(havetksvg) &&
+          [file exists [file join $p aw${ttheme}.tcl]] } {
+        set ttheme aw${vars(theme)}
+      }
+      set fn [file join [file join $p $ttheme.tcl]]
+      if { [file exists $fn] } {
+        source $fn
+        puts "loaded via: source $fn.tcl"
+        set loaded true
+        break
+      }
+    }
   }
 
   ::ttk::style theme use $vars(theme)
