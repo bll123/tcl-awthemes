@@ -106,7 +106,7 @@ proc main { } {
     puts "    \[-ttkscale <scale-factor>] "
     puts "    \[-fontsize <points>] \[-fontscale <scale-factor>] "
     puts "    \[-background <color>] \[-focuscolor <color>] "
-    puts "    \[-foreground <color>]"
+    puts "    \[-foreground <color>] \[-accentcolor <color>] "
     puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-notable]"
     puts "    \[-sizegrip] \[-styledemo]"
     puts "    <theme> "
@@ -121,6 +121,7 @@ proc main { } {
   set vars(fontscale) 1.0 ; # default
   set vars(sf) 1.0
   set vars(gc) {}
+  set vars(accent) {}
   set vars(nbg) {}
   set vars(nfg) {}
   set vars(styledemo) false
@@ -132,6 +133,10 @@ proc main { } {
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
+      -accentcolor {
+        incr idx
+        set vars(accent) [lindex $::argv $idx]
+      }
       -autopath {
         incr idx
         lappend ::auto_path [split [lindex $::argv $idx] {:;}]
@@ -240,6 +245,9 @@ proc main { } {
 
   if { $vars(havethemeutils) && $vars(gc) ne {} } {
     ::themeutils::setHighlightColor $vars(theme) $vars(gc)
+  }
+  if { $vars(havethemeutils) && $vars(accent) ne {} } {
+    ::themeutils::setThemeColors $vars(theme) accent.color $vars(accent)
   }
   if { $vars(havethemeutils) && $vars(nbg) ne {} } {
     ::themeutils::setBackgroundColor $vars(theme) $vars(nbg)
