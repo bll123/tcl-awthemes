@@ -49,7 +49,11 @@ proc confMenu { w } {
       $w configure -disabledforeground $c
     }
   }
-  $w configure -borderwidth 0
+  if { $w ne "$vars(mainW).mb" } {
+    $w configure -borderwidth 1
+  } else {
+    $w configure -borderwidth 0
+  }
   $w configure -activeborderwidth 0
 }
 
@@ -198,7 +202,7 @@ proc main { } {
     }
   }
 
-  if { [tk windowingsystem] eq "aqua" } {
+  if { $vars(theme) eq "aqua" } {
     set vars(sizegrip) true
   }
 

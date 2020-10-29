@@ -100,6 +100,10 @@
 #
 # Change History
 #
+# 9.5.0 (2020-10-29)
+#   - Fix so that multiple scaled styles will work.
+#   - Change so that scaled styles can have (a few of) their own colors.
+#   - Code cleanup
 # 9.4.2 (2020-10-23)
 #   - Renamed internal color names.
 #     This may break backwards compatibility for anyone using
@@ -369,7 +373,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 9.4.2
+set ::themeutils::awversion 9.5.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -402,11 +406,13 @@ namespace eval ::ttk::awthemes {
   set endtime 0
 
   proc init { theme } {
+    set gstarttime [clock milliseconds]
 
     namespace eval ::ttk::theme::${theme} {
       variable vars
       variable colors
       variable images
+      variable rawimgdata
       variable imgdata
       variable imgtype
     }
@@ -449,8 +455,6 @@ namespace eval ::ttk::awthemes {
     if { ! [catch {package present tksvg}] } {
       set vars(have.tksvg) true
     }
-
-    set starttime [clock milliseconds]
 
     # The rb/cb pad/small images are not listed here, as they
     # are dynamically generated.
@@ -645,6 +649,37 @@ namespace eval ::ttk::awthemes {
       labelframe-d          labelframe-n
     }
 
+    _initializeColors $theme
+
+    # only need to do this for the requested theme
+    set starttime [clock milliseconds]
+    _loadImageData $theme $vars(image.dir.awthemes)
+    _copyDerivedImageData $theme
+    _setImageData $theme
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t: image setup: [expr {$endtime-$starttime}]"
+    }
+
+    set starttime [clock milliseconds]
+    _createTheme $theme
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t: theme creation: [expr {$endtime-$starttime}]"
+    }
+    set gendtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t: init: [expr {$gendtime-$gstarttime}]"
+    }
+  }
+
+  proc _initializeColors { theme } {
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::${theme} $var $var
+    }
+
+    set starttime [clock milliseconds]
+
     # default styles.
     # the theme will override the style with the theme specific styles.
     foreach {st sn} $::themeutils::vars(names.styles) {
@@ -690,7 +725,7 @@ namespace eval ::ttk::awthemes {
     _setDerivedColors $theme
 
     # now override any derived colors with user-specified colors
-    foreach {n val type} $::themeutils::vars(names.colors.derived.all) {
+    foreach {grp n val type} $::themeutils::vars(names.colors.derived) {
       if { [info exists colors(user.$n)] } {
         set colors($n) $colors(user.$n)
         if { $::ttk::awthemes::debug > 0 } {
@@ -704,21 +739,6 @@ namespace eval ::ttk::awthemes {
     set endtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
       puts "t: color setup: [expr {$endtime-$starttime}]"
-    }
-
-    # only need to do this for the requested theme
-    set starttime [clock milliseconds]
-    _setImageData $theme
-    set endtime [clock milliseconds]
-    if { $::ttk::awthemes::debug > 0 } {
-      puts "t: image setup: [expr {$endtime-$starttime}]"
-    }
-
-    set starttime [clock milliseconds]
-    _createTheme $theme
-    set endtime [clock milliseconds]
-    if { $::ttk::awthemes::debug > 0 } {
-      puts "t: theme creation: [expr {$endtime-$starttime}]"
     }
   }
 
@@ -741,10 +761,13 @@ namespace eval ::ttk::awthemes {
     set nl {}
     set count 0
     while { $ll > 0 && $count < 4} {
-      if { $ll % 3 != 0 } {
+      if { $::ttk::awthemes::debug > 0 } {
+        puts "c: == pass $count"
+      }
+      if { $ll % 4 != 0 } {
         error "bad list : $count"
       }
-      foreach {n value type} $l {
+      foreach {grp n value type} $l {
         if { [info exists colors($n)] } {
           # skip any color that is already set
           if { $::ttk::awthemes::debug > 0 } {
@@ -761,7 +784,7 @@ namespace eval ::ttk::awthemes {
           }
         } elseif { $type eq "color" } {
           if { ! [info exists colors($value)] } {
-            lappend nl $n $value $type
+            lappend nl $grp $n $value $type
           } else {
             set colors($n) $colors($value)
             if { $::ttk::awthemes::debug > 0 } {
@@ -775,7 +798,7 @@ namespace eval ::ttk::awthemes {
           lassign $value col perc
 
           if { ! [info exists colors($col)] } {
-            lappend nl $n $value $type
+            lappend nl $grp $n $value $type
           } else {
             set proc ::colorutils::opaqueBlendPerc
 
@@ -821,7 +844,7 @@ namespace eval ::ttk::awthemes {
     }
     if { $count >= 4 } {
       puts stderr "==== $count"
-      foreach {n value type} $l {
+      foreach {grp n value type} $l {
         if { ! [info exists colors($n)] } {
           puts stderr "$n /$value/ $type"
         }
@@ -845,7 +868,7 @@ namespace eval ::ttk::awthemes {
 
     # now calculate the rest of the derived colors
     # the colors set by the theme will be skipped.
-    set l $::themeutils::vars(names.colors.derived.all)
+    set l $::themeutils::vars(names.colors.derived)
     _processDerivedColors $theme $l
   }
 
@@ -862,6 +885,11 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$theme $var $var
     }
     namespace upvar ::ttk::theme::$theme imgtype imgtype
+    namespace upvar ::ttk::theme::$theme rawimgdata rawimgdata
+
+    if { ! $vars(have.tksvg) } {
+      return
+    }
 
     # copy derived image files
     # if a theme has an image, it should be used for all possible
@@ -877,18 +905,19 @@ namespace eval ::ttk::awthemes {
         puts stderr "bad fallback config: $n $fb"
         continue
       }
-      if { [info exists imgdata($n)] } {
+      if { [info exists rawimgdata($n)] } {
         continue
       }
-      if { ! [info exists imgdata($n)] &&
+      if { ! [info exists rawimgdata($n)] &&
           [dict exists $vars(fallback.images) $n] } {
         foreach {ttn} [dict get $vars(fallback.images) $n] {
-          if { $ttn ne $n && [info exists imgdata($ttn)] } {
+          if { $ttn ne $n && [info exists rawimgdata($ttn)] } {
             if { $::ttk::awthemes::debug > 0 } {
               puts "i: fallback: $n $ttn"
             }
-            set imgdata($n) $imgdata($ttn)
+            set rawimgdata($n) $rawimgdata($ttn)
             set imgtype($n) $imgtype($ttn)
+            dict set vars(images) $n 1
             break
           }
         }
@@ -901,6 +930,11 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$theme $var $var
     }
     namespace upvar ::ttk::theme::$theme imgtype imgtype
+    namespace upvar ::ttk::theme::$theme rawimgdata rawimgdata
+
+    if { ! $vars(have.tksvg) } {
+      return
+    }
 
     if { ! [file isdirectory $basedir] } {
       return
@@ -946,7 +980,8 @@ namespace eval ::ttk::awthemes {
           }
           if { ! [info exists imgtype($origi)] } {
             set imgtype($origi) svg
-            set imgdata($origi) [_readFile $fn]
+            set rawimgdata($origi) [_readFile $fn]
+            dict set vars(images) $origi 1
             if { $::ttk::awthemes::debug > 0 } {
               puts "i: loaded: $origi for $st"
             }
@@ -971,22 +1006,22 @@ namespace eval ::ttk::awthemes {
     } ; # foreach widget style
   }
 
-  proc _setImageData { theme } {
+  proc _setImageData { theme {sfx {}} } {
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$theme $var $var
     }
     namespace upvar ::ttk::theme::$theme imgtype imgtype
+    namespace upvar ::ttk::theme::$theme rawimgdata rawimgdata
 
     if { $vars(have.tksvg) } {
-      # load .svg files
-      # this will also load the various settings for each style.
-      _loadImageData $theme $vars(image.dir.awthemes)
-
-      _copyDerivedImageData $theme
-
       # convert all the svg colors to theme specific colors
-
       # this mess could be turned into some sort of table driven method.
+
+      # make a copy of the raw image data before modifying it.
+      foreach {n} [dict keys $vars(images)] {
+        set imgdata($n$sfx) $rawimgdata($n)
+        set imgtype($n$sfx) $imgtype($n)
+      }
 
       # scrollbar pressed color
       foreach {n} {
@@ -995,8 +1030,8 @@ namespace eval ::ttk::awthemes {
         foreach {oc nc} [list \
             _GC_      $colors(scrollbar.color.pressed) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1009,8 +1044,8 @@ namespace eval ::ttk::awthemes {
             _BUTTONBG_    $colors(button.pressed) \
             _BUTTONBORD_  $colors(border.button.active) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1023,8 +1058,8 @@ namespace eval ::ttk::awthemes {
             _BUTTONBG_    $colors(button.active.focus) \
             _BUTTONBORD_  $colors(border.button.active) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1039,8 +1074,8 @@ namespace eval ::ttk::awthemes {
             _FIELDBG_     $colors(button.active) \
             _BORD_        $colors(border.button.active) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1053,8 +1088,8 @@ namespace eval ::ttk::awthemes {
             _FIELDBG_   $colors(button) \
             _BORD_      $colors(border.button) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1066,8 +1101,8 @@ namespace eval ::ttk::awthemes {
         foreach {oc nc} [list \
             _GC_      $colors(scrollbar.color.active) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1079,8 +1114,8 @@ namespace eval ::ttk::awthemes {
         foreach {oc nc} [list \
             _TROUGH_      $colors(scrollbar.trough) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1094,8 +1129,8 @@ namespace eval ::ttk::awthemes {
             _GC_      $colors(scrollbar.color) \
             _GCBORD_    $colors(scrollbar.border) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1106,11 +1141,11 @@ namespace eval ::ttk::awthemes {
           scale-va scale-vd scale-vn scale-vp
           } {
         foreach {oc nc} [list \
-            _GC_      $colors(scale.color) \
+            _GC_        $colors(scale.color) \
             _GCBORD_    $colors(border.scale) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1122,8 +1157,8 @@ namespace eval ::ttk::awthemes {
         foreach {oc nc} [list \
             _TROUGH_    $colors(scale.trough) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1134,8 +1169,8 @@ namespace eval ::ttk::awthemes {
             _GC_    $colors(pbar.color) \
             _GCBORD_  $colors(pbar.color.border) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1154,8 +1189,8 @@ namespace eval ::ttk::awthemes {
             _GCBG_  $colors(spinbox.color.bg) \
             _GCARR_ $colors(scrollbar.color.arrow) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1167,8 +1202,8 @@ namespace eval ::ttk::awthemes {
         foreach {oc nc} [list \
             _GCARR_ $colors(tree.arrow.selected) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
@@ -1187,21 +1222,21 @@ namespace eval ::ttk::awthemes {
             _GC_      $colors(spinbox.color.arrow) \
             _GCARR_   $colors(spinbox.color.arrow) \
             ] {
-          if { [info exists imgdata($n)] } {
-            set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
           }
         }
       }
 
-      foreach {n} [array names imgdata] {
+      foreach {n} [dict keys $vars(images)] {
         # special handling for radio buttons so that the width
         # can be set for the padded version.
         if { [regexp {^[rc]b-} $n] } {
-          regexp {\sheight="(\d+)"} $imgdata($n) all value
+          regexp {\sheight="(\d+)"} $imgdata($n$sfx) all value
           if { [regexp {pad} $n] } {
             set value [expr {round(double($value)*1.4)}]
           }
-          regsub -all _MAINWIDTH_ $imgdata($n) $value imgdata($n)
+          regsub -all _MAINWIDTH_ $imgdata($n$sfx) $value imgdata($n$sfx)
         }
         foreach {oc nc} [list \
             _ACCENT_    $colors(accent.color) \
@@ -1225,7 +1260,7 @@ namespace eval ::ttk::awthemes {
             _SZGRIP_    $colors(sizegrip.color) \
             _TROUGH_    $colors(trough.color) \
             ] {
-          set c [regsub -all $oc $imgdata($n) $nc imgdata($n)]
+          set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
         }
       }
     }
@@ -1236,6 +1271,7 @@ namespace eval ::ttk::awthemes {
       if { $vars(theme.name) eq "awdark" } {
         if { ! [info exists imgdata(cb-sa)] } {
           # cb-sa
+          dict set vars(images) cb-sa 1
           set imgdata(cb-sa) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1254,6 +1290,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-sd)] } {
           # cb-sd
+          dict set vars(images) cb-sd 1
           set imgdata(cb-sd) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1271,6 +1308,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-sn)] } {
           # cb-sn
+          dict set vars(images) cb-sn 1
           set imgdata(cb-sn) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1289,6 +1327,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-ua)] } {
           # cb-ua
+          dict set vars(images) cb-ua 1
           set imgdata(cb-ua) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1302,6 +1341,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-ud)] } {
           # cb-ud
+          dict set vars(images) cb-ud 1
           set imgdata(cb-ud) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1314,6 +1354,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un)] } {
           # cb-un
+          dict set vars(images) cb-un 1
           set imgdata(cb-un) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1328,6 +1369,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(cb-sn-small)] } {
           # cb-sn-small
+          dict set vars(images) cb-sn-small 1
           set imgdata(cb-sn-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1343,6 +1385,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un-small)] } {
           # cb-un-small
+          dict set vars(images) cb-un-small 1
           set imgdata(cb-un-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1355,6 +1398,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn-small)] } {
           # rb-sn-small
+          dict set vars(images) rb-sn-small 1
           set imgdata(rb-sn-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1371,6 +1415,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un-small)] } {
           # rb-un-small
+          dict set vars(images) rb-un-small 1
           set imgdata(rb-un-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1386,6 +1431,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(cb-sn-pad)] } {
           # cb-sn-pad
+          dict set vars(images) cb-sn-pad 1
           set imgdata(cb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1402,6 +1448,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un-pad)] } {
           # cb-un-pad
+          dict set vars(images) cb-un-pad 1
           set imgdata(cb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1414,6 +1461,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn-pad)] } {
           # rb-sn-pad
+          dict set vars(images) rb-sn-pad 1
           set imgdata(rb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1431,6 +1479,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un-pad)] } {
           # rb-un-pad
+          dict set vars(images) rb-un-pad 1
           set imgdata(rb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1447,6 +1496,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(rb-sa)] } {
           # rb-sa
+          dict set vars(images) rb-sa 1
           set imgdata(rb-sa) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1467,6 +1517,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sd)] } {
           # rb-sd
+          dict set vars(images) rb-sd 1
           set imgdata(rb-sd) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1487,6 +1538,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn)] } {
           # rb-sn
+          dict set vars(images) rb-sn 1
           set imgdata(rb-sn) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1507,6 +1559,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-ua)] } {
           # rb-ua
+          dict set vars(images) rb-ua 1
           set imgdata(rb-ua) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1525,6 +1578,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-ud)] } {
           # rb-ud
+          dict set vars(images) rb-ud 1
           set imgdata(rb-ud) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1542,6 +1596,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un)] } {
           # rb-un
+          dict set vars(images) rb-un 1
           set imgdata(rb-un) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1562,6 +1617,7 @@ namespace eval ::ttk::awthemes {
       if { $vars(theme.name) eq "awlight" } {
         if { ! [info exists imgdata(cb-sa)] } {
           # cb-sa
+          dict set vars(images) cb-sa 1
           set imgdata(cb-sa) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1580,6 +1636,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-sd)] } {
           # cb-sd
+          dict set vars(images) cb-sd 1
           set imgdata(cb-sd) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1597,6 +1654,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-sn)] } {
           # cb-sn
+          dict set vars(images) cb-sn 1
           set imgdata(cb-sn) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1615,6 +1673,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-ua)] } {
           # cb-ua
+          dict set vars(images) cb-ua 1
           set imgdata(cb-ua) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1628,6 +1687,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-ud)] } {
           # cb-ud
+          dict set vars(images) cb-ud 1
           set imgdata(cb-ud) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1640,6 +1700,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un)] } {
           # cb-un
+          dict set vars(images) cb-un 1
           set imgdata(cb-un) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1654,6 +1715,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(cb-sn-small)] } {
           # cb-sn-small
+          dict set vars(images) cb-sn-small 1
           set imgdata(cb-sn-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1669,6 +1731,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un-small)] } {
           # cb-un-small
+          dict set vars(images) cb-un-small 1
           set imgdata(cb-un-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1681,6 +1744,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn-small)] } {
           # rb-sn-small
+          dict set vars(images) rb-sn-small 1
           set imgdata(rb-sn-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1699,6 +1763,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un-small)] } {
           # rb-un-small
+          dict set vars(images) rb-un-small 1
           set imgdata(rb-un-small) {
              iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1715,6 +1780,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(cb-sn-pad)] } {
           # cb-sn-pad
+          dict set vars(images) cb-sn-pad 1
           set imgdata(cb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1730,6 +1796,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(cb-un-pad)] } {
           # cb-un-pad
+          dict set vars(images) cb-un-pad 1
           set imgdata(cb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1742,6 +1809,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn-pad)] } {
           # rb-sn-pad
+          dict set vars(images) rb-sn-pad 1
           set imgdata(rb-sn-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1760,6 +1828,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un-pad)] } {
           # rb-un-pad
+          dict set vars(images) rb-un-pad 1
           set imgdata(rb-un-pad) {
              iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAKnQAACp0BJpU99gAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1776,6 +1845,7 @@ namespace eval ::ttk::awthemes {
 
         if { ! [info exists imgdata(rb-sa)] } {
           # rb-sa
+          dict set vars(images) rb-sa 1
           set imgdata(rb-sa) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1798,6 +1868,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sd)] } {
           # rb-sd
+          dict set vars(images) rb-sd 1
           set imgdata(rb-sd) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1820,6 +1891,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-sn)] } {
           # rb-sn
+          dict set vars(images) rb-sn 1
           set imgdata(rb-sn) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1842,6 +1914,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-ua)] } {
           # rb-ua
+          dict set vars(images) rb-ua 1
           set imgdata(rb-ua) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1860,6 +1933,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-ud)] } {
           # rb-ud
+          dict set vars(images) rb-ud 1
           set imgdata(rb-ud) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1877,6 +1951,7 @@ namespace eval ::ttk::awthemes {
         }
         if { ! [info exists imgdata(rb-un)] } {
           # rb-un
+          dict set vars(images) rb-un 1
           set imgdata(rb-un) {
              iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
              AAAOJgAADiYBou8l/AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABSdEVY
@@ -1898,6 +1973,7 @@ namespace eval ::ttk::awthemes {
 #END-PNG-DATA
   }
 
+  # the image suffix has already been applied to the name
   proc _mkimage { n {scale 1.0} } {
     variable currtheme
     foreach {var} {colors images imgdata vars} {
@@ -1910,6 +1986,9 @@ namespace eval ::ttk::awthemes {
         $imgtype($n) eq "svg" &&
         [info exists imgdata($n)] } {
       set sf [expr {$vars(scale.factor)*$colors(scale.factor)*$scale}]
+      if { $::ttk::awthemes::debug > 0 } {
+        puts "i: mk svg $n"
+      }
       try {
         set images($n) [image create photo -data $imgdata($n) \
             -format "svg -scale $sf"]
@@ -1919,8 +1998,10 @@ namespace eval ::ttk::awthemes {
         exit 1
       }
     }
-    if { ! [info exists images($n)] &&
-        [info exists imgdata($n)] } {
+    if { ! [info exists images($n)] && [info exists imgdata($n)] } {
+      if { $::ttk::awthemes::debug > 0 } {
+        puts "i: mk png $n"
+      }
       set images($n) [image create photo -data $imgdata($n)]
     }
   }
@@ -2029,22 +2110,12 @@ namespace eval ::ttk::awthemes {
           {selected !disabled} $images(cb-sn-small${sfx})] \
     }
 
-    ::ttk::style layout ${pfx}Menu.TCheckbutton [list \
-      Checkbutton.padding -sticky nswe -children [list \
-        ${pfx}Menu.Checkbutton.indicator -side left -sticky {} \
-      ] \
-    ]
     ::ttk::style layout ${pfx}Flexmenu.TCheckbutton [list \
       Checkbutton.padding -sticky nswe -children [list \
         ${pfx}Menu.Checkbutton.indicator -side left -sticky {} \
       ] \
     ]
 
-    ::ttk::style configure ${pfx}Menu.TCheckbutton \
-        -borderwidth 0 \
-        -relief none \
-        -focusthickness 0 \
-        -indicatormargin 0
     ::ttk::style configure ${pfx}Flexmenu.TCheckbutton \
         -borderwidth 0 \
         -relief none \
@@ -2121,11 +2192,6 @@ namespace eval ::ttk::awthemes {
     ::ttk::style configure ${pfx}TCombobox \
         -borderwidth 1 \
         -relief none
-#    if { [info exists images(combo-arrow-down-n)] } {
-#      set wid [image width $images(combo-arrow-down-n${sfx})]
-#      ::ttk::style configure ${pfx}TCombobox \
-#          -arrowsize $wid
-#    }
   }
 
   proc _createEntry { {pfx {}} {sfx {}} {scale 1.0} } {
@@ -2361,26 +2427,17 @@ namespace eval ::ttk::awthemes {
           {selected} $images(rb-sn-small${sfx})]
     }
 
-    ::ttk::style layout ${pfx}Menu.TRadiobutton [list \
-      Radiobutton.padding -sticky nswe -children [list \
-        ${pfx}Menu.Radiobutton.indicator -side left -sticky {} \
-      ] \
-    ]
     ::ttk::style layout ${pfx}Flexmenu.TRadiobutton [list \
       Radiobutton.padding -sticky nswe -children [list \
         ${pfx}Menu.Radiobutton.indicator -side left -sticky {} \
       ] \
     ]
 
-    ::ttk::style configure ${pfx}Menu.TRadiobutton \
-        -borderwidth 0 \
-        -relief none \
-        -focusthickness 0
     ::ttk::style configure ${pfx}Flexmenu.TRadiobutton \
-        -padding $colors(radiobutton.padding) \
         -borderwidth 0 \
         -relief none \
-        -focusthickness 0
+        -focusthickness 0 \
+        -indicatormargin 0
   }
 
   proc _createScale { {pfx {}} {sfx {}} {scale 1.0} } {
@@ -2715,7 +2772,7 @@ namespace eval ::ttk::awthemes {
     # main program to handle font changes for listboxes.
 
     ::ttk::style theme create $theme -parent $colors(parent.theme) -settings {
-      scaledStyle {} {} {} $theme
+      _createScaledStyle $theme
     }
   }
 
@@ -2830,8 +2887,6 @@ namespace eval ::ttk::awthemes {
           -darkcolor $colors(bg.dark) \
           -padding $pad \
           -focusthickness $colors(checkbutton.focusthickness)
-      ::ttk::style configure ${pfx}Menu.TCheckbutton \
-          -padding $pad
       ::ttk::style configure ${pfx}Flexmenu.TCheckbutton \
           -padding $pad
       ::ttk::style map ${pfx}TCheckbutton \
@@ -2983,8 +3038,6 @@ namespace eval ::ttk::awthemes {
       ::ttk::style configure ${pfx}TRadiobutton \
           -padding $pad \
           -focusthickness $colors(radiobutton.focusthickness)
-      ::ttk::style configure ${pfx}Menu.TRadiobutton \
-          -padding $pad
       ::ttk::style configure ${pfx}Flexmenu.TRadiobutton \
           -padding $pad
       ::ttk::style map ${pfx}TRadiobutton \
@@ -3145,8 +3198,10 @@ namespace eval ::ttk::awthemes {
       return
     }
 
-    foreach {k value type} $::themeutils::vars(names.colors.derived.$group) {
-      if { $colors($k) eq $colors($basename) } {
+    foreach {grp k value type} $::themeutils::vars(names.colors.derived) {
+      if { $grp ne $group } {
+        continue
+      } elseif { $colors($k) eq $colors($basename) } {
         set tc $newcol
       } elseif { [info exists colors(user.$k)] } {
         # do not override user-set colors
@@ -3161,6 +3216,71 @@ namespace eval ::ttk::awthemes {
       }
       set colors($k) $tc
     }
+  }
+
+  # sf : scale factor
+  # pfx : prefix
+  # sfx : suffix ( -$pfx )
+  proc _createScaledStyle { {theme {}} {sf 1.0} {pfx {}} {sfx {}} } {
+    variable currtheme
+
+    set currtheme [::ttk::style theme use]
+    if { $theme ne {} } {
+      set currtheme $theme
+    }
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::$currtheme $var $var
+    }
+    namespace upvar ::ttk::theme::$currtheme imgtype imgtype
+
+    foreach {n} [dict keys $vars(images)] {
+      set scale $sf
+      if { [regexp {small$} $n] || [regexp {pad$} $n] } {
+        set scale [expr {$sf * 0.7}]
+      }
+      if { [regexp {^cb-} $n] } {
+        set scale [expr {$sf * $colors(checkbutton.scale)}]
+      }
+      if { [regexp {^rb-} $n] } {
+        set scale [expr {$sf * $colors(radiobutton.scale)}]
+      }
+      _mkimage $n${sfx} $scale
+    }
+
+    ::ttk::style theme settings $vars(theme.name) {
+      # arrows are used for scrollbars and spinboxes and possibly
+      # the combobox.
+      # the non-tksvg awdark and awlight themes define arrow-up-n
+      if { [info exists images(arrow-up-n)] } {
+        foreach {dir} {up down left right} {
+          if { [info exists images(arrow-${dir}-n${sfx})] } {
+            ::ttk::style element create ${pfx}${dir}arrow image \
+                [list $images(arrow-${dir}-n${sfx}) \
+                disabled $images(arrow-${dir}-d${sfx}) \
+                pressed $images(arrow-${dir}-n${sfx}) \
+                active $images(arrow-${dir}-n${sfx})] \
+                -border 4 -sticky news
+          }
+        }
+      }
+
+      _createButton $pfx $sfx $sf
+      _createCheckButton $pfx $sfx $sf
+      _createCombobox $pfx $sfx $sf
+      _createEntry $pfx $sfx $sf
+      _createLabelframe $pfx $sfx $sf
+      _createMenubutton $pfx $sfx $sf
+      _createNotebook $pfx $sfx $sf
+      _createProgressbar $pfx $sfx $sf
+      _createRadioButton $pfx $sfx $sf
+      _createScale $pfx $sfx $sf
+      _createScrollbars $pfx $sfx $sf
+      _createSizegrip $pfx $sfx $sf
+      _createSpinbox $pfx $sfx $sf
+      _createTreeview $pfx $sfx $sf
+      _createToolbutton $pfx $sfx $sf
+    }
+    _setStyledColors $pfx $sf
   }
 
   # user routines
@@ -3247,6 +3367,7 @@ namespace eval ::ttk::awthemes {
 
   proc setMenuColors { w } {
     variable currtheme
+
     set currtheme [::ttk::style theme use]
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
@@ -3313,16 +3434,14 @@ namespace eval ::ttk::awthemes {
     $w configure -highlightcolor $colors(focus.color)
     $w configure -highlightbackground $colors(bg.bg)
     if { $isforcombobox } {
-      # want this for the combobox drop-down
+      # Want a border for the combobox drop-down.
       # The listbox border does not seem to have a method to change
       # its color.
       # -relief solid doesn't look too bad, but seems to only have
       # black as a color, and this doesn't always match the theme.
+      $w configure -borderwidth 1p
       if { $colors(is.dark) } {
         $w configure -relief solid
-        $w configure -borderwidth 1p
-      } else {
-        $w configure -borderwidth 0
       }
     }
   }
@@ -3359,6 +3478,8 @@ namespace eval ::ttk::awthemes {
 
   proc scaledStyle { {pfx {}} {f1 {}} {f2 {}} {theme {}} } {
     variable currtheme
+
+    set starttime [clock milliseconds]
     set currtheme [::ttk::style theme use]
     if { $theme ne {} } {
       set currtheme $theme
@@ -3367,6 +3488,8 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
     namespace upvar ::ttk::theme::$currtheme imgtype imgtype
+
+    _initializeColors $currtheme
 
     set sf 1.0
     if { $f1 ne {} && $f2 ne {} } {
@@ -3380,58 +3503,12 @@ namespace eval ::ttk::awthemes {
       set pfx $pfx.
     }
 
-    foreach {n} [array names imgdata] {
-      if { $sfx ne {} } {
-        set imgdata($n${sfx}) $imgdata($n)
-        set imgtype($n${sfx}) $imgtype($n)
-      }
-      set scale $sf
-      if { [regexp {small$} $n] || [regexp {pad$} $n] } {
-        set scale [expr {$sf * 0.7}]
-      }
-      if { [regexp {^cb-} $n] } {
-        set scale [expr {$sf * $colors(checkbutton.scale)}]
-      }
-      if { [regexp {^rb-} $n] } {
-        set scale [expr {$sf * $colors(radiobutton.scale)}]
-      }
-      _mkimage $n${sfx} $scale
+    _setImageData $currtheme $sfx
+    _createScaledStyle $currtheme $sf $pfx $sfx
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t: scaled style $pfx: [expr {$endtime-$starttime}]"
     }
-
-    ::ttk::style theme settings $vars(theme.name) {
-      # arrows are used for scrollbars and spinboxes and possibly
-      # the combobox.
-      # the non-tksvg awdark and awlight themes define arrow-up-n
-      if { [info exists images(arrow-up-n)] } {
-        foreach {dir} {up down left right} {
-          if { [info exists images(arrow-${dir}-n${sfx})] } {
-            ::ttk::style element create ${pfx}${dir}arrow image \
-                [list $images(arrow-${dir}-n${sfx}) \
-                disabled $images(arrow-${dir}-d${sfx}) \
-                pressed $images(arrow-${dir}-n${sfx}) \
-                active $images(arrow-${dir}-n${sfx})] \
-                -border 4 -sticky news
-          }
-        }
-      }
-
-      _createButton $pfx $sfx $sf
-      _createCheckButton $pfx $sfx $sf
-      _createCombobox $pfx $sfx $sf
-      _createEntry $pfx $sfx $sf
-      _createLabelframe $pfx $sfx $sf
-      _createMenubutton $pfx $sfx $sf
-      _createNotebook $pfx $sfx $sf
-      _createProgressbar $pfx $sfx $sf
-      _createRadioButton $pfx $sfx $sf
-      _createScale $pfx $sfx $sf
-      _createScrollbars $pfx $sfx $sf
-      _createSizegrip $pfx $sfx $sf
-      _createSpinbox $pfx $sfx $sf
-      _createTreeview $pfx $sfx $sf
-      _createToolbutton $pfx $sfx $sf
-    }
-    _setStyledColors $pfx $sf
   }
 
   proc awCboxHandler { w } {
@@ -3549,167 +3626,138 @@ namespace eval ::themeutils {
         bg fg entrybg entryfg focus accent selectfg other \
         ]
 
-    # These will be added to the 'bg' group automatically.
     set vars(names.colors.derived.basic) {
-        bg.dark                         {bg.bg 0.9}             black
-        bg.darker                       {bg.bg 0.7}             black
-        bg.darkest                      {bg.bg 0.5}             black
-        bg.light                        {bg.bg 0.95}            white
-        bg.lighter                      {bg.bg 0.8}             white
-        bg.lightest                     #ffffff                 static
+      bg      bg.dark                     {bg.bg 0.9}             black
+      bg      bg.darker                   {bg.bg 0.7}             black
+      bg      bg.darkest                  {bg.bg 0.5}             black
+      bg      bg.light                    {bg.bg 0.95}            white
+      bg      bg.lighter                  {bg.bg 0.8}             white
+      bg      bg.lightest                 #ffffff                 static
     }
 
-    set vars(names.colors.derived.bg) {
-        bg.active                       {bg.bg 0.9}             highlight
-        bg.bg                           -                       base
-        bg.disabled                     {bg.bg 0.6}             disabled
-        border                          bg.darker               color
-        border.button.active            border.button           color
-        border.button                   border                  color
-        border.checkbutton              border                  color
-        border.dark                     bg.darkest              color
-        border.disabled                 {border 0.8}            disabled
-        border.labelframe               border                  color
-        border.scale                    {scale.color 0.8}       black
-        border.slider                   border                  color
-        border.tab                      border                  color
-        button                          bg.bg                   color
-        button.active                   button                  color
-        button.active.focus             button.active           color
-        button.pressed                  button                  color
-        tab.active                      bg.light                color
-        tab.box                         bg.bg                   color
-        tab.disabled                    bg.darker               color
-        tab.inactive                    bg.dark                 color
-        tab.selected                    bg.bg                   color
+    # group
+    # color name
+    # data
+    # type
+    set vars(names.colors.derived) { \
+      bg        bg.active                     {bg.bg 0.9}             highlight
+      bg        bg.bg                         -                       base
+      bg        bg.disabled                   {bg.bg 0.6}             disabled
+      bg        border                        bg.darker               color
+      bg        border.button.active          border.button           color
+      bg        border.button                 border                  color
+      bg        border.checkbutton            border                  color
+      bg        border.dark                   bg.darkest              color
+      bg        border.disabled               {border 0.8}            disabled
+      bg        border.labelframe             border                  color
+      bg        border.scale                  {scale.color 0.8}       black
+      bg        border.slider                 border                  color
+      bg        border.tab                    border                  color
+      bg        button                        bg.bg                   color
+      bg        button.active                 button                  color
+      bg        button.active.focus           button.active           color
+      bg        button.pressed                button                  color
+      bg        tab.active                    bg.light                color
+      bg        tab.box                       bg.bg                   color
+      bg        tab.disabled                  bg.darker               color
+      bg        tab.inactive                  bg.dark                 color
+      bg        tab.selected                  bg.bg                   color
+      fg        fg.disabled                   {fg.fg 0.65}            disabled
+      fg        fg.fg                         -                       base
+      entrybg   entrybg.bg                    bg.dark                 color
+      entrybg   entrybg.checkbutton           entrybg.bg              color
+      entrybg   entrybg.disabled              {entrybg.bg 0.6}        disabled
+      entryfg   entryfg.disabled              {entryfg.fg 0.6}        disabled
+      entryfg   entryfg.fg                    fg.fg                   color
+      focus     focus.color.combobox          focus.color             color
+      focus     focus.color.entry             focus.color             color
+      focus     focus.color                   graphics.color          color
+      focus     highlight.darkhighlight       {select.bg 0.9}         black
+      focus     select.bg                     {focus.color 0.7}       white
+      focus     select.bg.inactive            bg.lighter              color
+      focus     select.bg.tree                select.bg               color
+      accent    accent.color                  graphics.color          color
+      accent    arrow.color.disabled          {arrow.color 0.6}       disabled
+      accent    arrow.color                   graphics.color          color
+      accent    graphics.color                -                       base
+      accent    graphics.color.dark           {graphics.color 0.4}    black
+      accent    graphics.color.light          {graphics.color 0.4}    white
+      accent    graphics.highlight            accent.color            color
+      accent    pbar.color                    graphics.color          color
+      accent    pbar.color.border             graphics.color.dark     color
+      accent    scale.color                   graphics.color          color
+      accent    scrollbar.border              {scrollbar.color 0.8}   black
+      accent    scrollbar.color               graphics.color          color
+      accent    scrollbar.color.active        scrollbar.color         color
+      accent    scrollbar.color.arrow         arrow.color             color
+      accent    scrollbar.color.grip          graphics.color.dark     color
+      accent    scrollbar.color.pressed       scrollbar.color         color
+      accent    sizegrip.color                graphics.color          color
+      accent    spinbox.color.arrow           arrow.color             color
+      accent    spinbox.color.bg              graphics.color          color
+      accent    spinbox.color.border          graphics.color.dark     color
+      accent    tab.color.disabled            bg.lighter              color
+      accent    tab.color.hover               graphics.color          color
+      accent    tab.color.inactive            bg.darkest              color
+      accent    tab.color.selected            graphics.color          color
+      accent    tree.arrow.selected           arrow.color             color
+      accent    trough.color                  {graphics.color 0.5}    black
+      selectfg  select.fg                     bg.lightest             color
+      selectfg  select.tree.fg                select.fg               color
+      other     button.anchor                 w                       static
+      other     button.has.focus              true                    static
+      other     button.image.border           {1 1}                   static
+      other     button.image.padding          {0 0}                   static
+      other     button.padding                {4 1}                   static
+      other     button.relief                 raised                  static
+      other     checkbutton.focusthickness    2                       static
+      other     checkbutton.padding           {5 0 1 2}               static
+      other     checkbutton.scale             1.0                     static
+      other     combobox.image.border         {0 0}                   static
+      other     combobox.image.sticky         {}                      static
+      other     combobox.entry.image.border   entry.image.border      color
+      other     combobox.entry.image.padding  entry.image.padding     color
+      other     combobox.padding              {3 1}                   static
+      other     combobox.relief               none                    static
+      other     debug                         0                       static
+      other     entry.image.border            {1 1}                   static
+      other     entry.image.padding           {0 0}                   static
+      other     entry.padding                 {3 1}                   static
+      other     menubutton.image.padding      {0 0}                   static
+      other     menubutton.padding            {3 0}                   static
+      other     menubutton.relief             none                    static
+      other     menubutton.use.button.image   false                   static
+      other     menubutton.width              {}                      static
+      other     notebook.tab.borderwidth      0                       static
+      other     notebook.tab.focusthickness   5                       static
+      other     notebook.tab.padding          {1 0}                   static
+      other     parent.theme                  clam                    static
+      other     radiobutton.focusthickness    checkbutton.focusthickness color
+      other     radiobutton.padding           checkbutton.padding     color
+      other     radiobutton.scale             checkbutton.scale       color
+      other     scale.factor                  1.0                     static
+      other     scale.slider.image.border     slider.image.border     color
+      other     scale.trough.image.border     trough.image.border     color
+      other     scale.trough                  trough.color            color
+      other     scrollbar.has.arrows          true                    static
+      other     scrollbar.trough              trough.color            color
+      other     slider.image.border           {0 0}                   static
+      other     slider.image.padding          {0 0}                   static
+      other     spinbox.image.border          entry.image.border      color
+      other     spinbox.image.padding         entry.image.padding     color
+      other     spinbox.padding               entry.padding           color
+      other     tab.image.border              {2 2 2 1}               static
+      other     tab.image.padding             {0 0}                   static
+      other     tab.use.topbar                false                   static
+      other     toolbutton.image.padding      {0 0}                   static
+      other     toolbutton.use.button.image   false                   static
+      other     trough.image.border           {0 0}                   static
+      other     trough.image.padding          {0 0}                   static
     }
 
-    # add the basic derived colors to the 'bg' group.
-    foreach {n value type} $vars(names.colors.derived.basic) {
-      lappend vars(names.colors.derived.bg) $n $value $type
-    }
-
-    set vars(names.colors.derived.fg) {
-        fg.disabled                     {fg.fg 0.65}            disabled
-        fg.fg                           -                       base
-    }
-
-    set vars(names.colors.derived.entrybg) {
-        entrybg.bg                      bg.dark                 color
-        entrybg.checkbutton             entrybg.bg              color
-        entrybg.disabled                {entrybg.bg 0.6}        disabled
-    }
-
-    set vars(names.colors.derived.entryfg) {
-        entryfg.disabled                {entryfg.fg 0.6}        disabled
-        entryfg.fg                      fg.fg                   color
-    }
-
-    set vars(names.colors.derived.focus) {
-        focus.color.combobox            focus.color             color
-        focus.color.entry               focus.color             color
-        focus.color                     graphics.color          color
-        highlight.darkhighlight         {select.bg 0.9}         black
-        select.bg                       {focus.color 0.7}       white
-        select.bg.inactive              bg.lighter              color
-        select.bg.tree                  select.bg               color
-    }
-
-    set vars(names.colors.derived.accent) {
-        accent.color                    graphics.color          color
-        arrow.color.disabled            {arrow.color 0.6}       disabled
-        arrow.color                     graphics.color          color
-        graphics.color                  -                       base
-        graphics.color.dark             {graphics.color 0.4}    black
-        graphics.color.light            {graphics.color 0.4}    white
-        graphics.highlight              accent.color            color
-        pbar.color                      graphics.color          color
-        pbar.color.border               graphics.color.dark     color
-        scrollbar.border                {scrollbar.color 0.8}   black
-        scrollbar.color                 graphics.color          color
-        scrollbar.color.active          scrollbar.color         color
-        scrollbar.color.arrow           arrow.color             color
-        scrollbar.color.grip            graphics.color.dark     color
-        scrollbar.color.pressed         scrollbar.color         color
-        sizegrip.color                  graphics.color          color
-        spinbox.color.arrow             arrow.color             color
-        spinbox.color.bg                graphics.color          color
-        spinbox.color.border            graphics.color.dark     color
-        tab.color.disabled              bg.lighter              color
-        tab.color.hover                 graphics.color          color
-        tab.color.inactive              bg.darkest              color
-        tab.color.selected              graphics.color          color
-        tree.arrow.selected             arrow.color             color
-        trough.color                    {graphics.color 0.5}    black
-    }
-
-    set vars(names.colors.derived.selectfg) {
-        select.fg                     bg.lightest             color
-        select.tree.fg                select.fg             color
-    }
-
-    # all the rest.
-    # various configuration items
-    # image border and padding settings
-    set vars(names.colors.derived.other) {
-        button.anchor                   w                       static
-        button.has.focus                true                    static
-        button.image.border             {1 1}                   static
-        button.image.padding            {0 0}                   static
-        button.padding                  {4 1}                   static
-        button.relief                   raised                  static
-        checkbutton.focusthickness      2                       static
-        checkbutton.padding             {5 0 1 2}               static
-        checkbutton.scale               1.0                     static
-        combobox.image.border           {0 0}                   static
-        combobox.image.sticky           {}                      static
-        combobox.entry.image.border     entry.image.border      color
-        combobox.entry.image.padding    entry.image.padding     color
-        combobox.padding                {3 1}                   static
-        combobox.relief                 none                    static
-        debug                           0                       static
-        entry.image.border              {1 1}                   static
-        entry.image.padding             {0 0}                   static
-        entry.padding                   {3 1}                   static
-        menubutton.image.padding        {0 0}                   static
-        menubutton.padding              {3 0}                   static
-        menubutton.relief               none                    static
-        menubutton.use.button.image     false                   static
-        menubutton.width                {}                      static
-        notebook.tab.borderwidth        0                       static
-        notebook.tab.focusthickness     5                       static
-        notebook.tab.padding            {1 0}                   static
-        parent.theme                    clam                    static
-        radiobutton.focusthickness      checkbutton.focusthickness color
-        radiobutton.padding             checkbutton.padding     color
-        radiobutton.scale               checkbutton.scale       color
-        scale.color                     graphics.color          color
-        scale.factor                    1.0                     static
-        scale.slider.image.border       slider.image.border     color
-        scale.trough.image.border       trough.image.border     color
-        scale.trough                    trough.color            color
-        scrollbar.has.arrows            true                    static
-        scrollbar.trough                trough.color            color
-        slider.image.border             {0 0}                   static
-        slider.image.padding            {0 0}                   static
-        spinbox.image.border            entry.image.border      color
-        spinbox.image.padding           entry.image.padding     color
-        spinbox.padding                 entry.padding           color
-        tab.image.border                {2 2 2 1}               static
-        tab.image.padding               {0 0}                   static
-        tab.use.topbar                  false                   static
-        toolbutton.image.padding        {0 0}                   static
-        toolbutton.use.button.image     false                   static
-        trough.image.border             {0 0}                   static
-        trough.image.padding            {0 0}                   static
-    }
-
-    # create a .all list so that a multi-pass process on the list
-    # can be done.
-    foreach group $vars(derived.group.names) {
-      foreach {n value type} $vars(names.colors.derived.$group) {
-        lappend vars(names.colors.derived.all) $n $value $type
-      }
+    # add the basic derived colors to the main list
+    foreach {grp n value type} $vars(names.colors.derived.basic) {
+      lappend vars(names.colors.derived) $grp $n $value $type
     }
   }
 

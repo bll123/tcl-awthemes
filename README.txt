@@ -14,7 +14,7 @@ The following files are needed:
   i/                      - images
 
 Demonstration scripts:
-  demottk.tcl, demoscaled.tcl
+  demottk.tcl, demoscaled.tcl, demoscaledb.tcl
 
 Try:
   # application scaling
@@ -23,8 +23,18 @@ Try:
   tclsh demottk.tcl winxpblue -ttkscale 2.0
   # user with high dpi, smaller font
   tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
+
   # scaled styling
   tclsh demoscaled.tcl winxpblue
+
+  # multiple scaled styling, alternate colors
+  # Colors are shared between all styles, they do not each have
+  # their own set of colors.  Only a few colors used in the graphics
+  # can be changed safely.
+  tclsh demoscaledb.tcl awdark
+
+  # original no-tksvg version of awdark/awlight
+  tclsh demottk.tcl -notksvg awdark
 
 To load other theme files, use the -autopath option to
 adjust the ::auto_path variable:
@@ -34,6 +44,33 @@ adjust the ::auto_path variable:
   # loads the scalable winxpblue when -notksvg is not present
   tclsh demottk.tcl winxpblue -autopath $HOME/mystuff
 
+demottk.tcl options:
+  -accentcolor        Change the accent color (awthemes).
+  -autopath           Set ::auto_path.
+  -background         Set the background color using 'setBackgroundColor'
+                      (awthemes).
+  -focuscolor         Set the graphics and focus color using
+                      'setHighlightColor' (awthemes).
+  -fontscale          Change the font scaling factor (awthemes).
+  -fontsize           Set the initial font size.
+  -foreground         Set the foreground color (awthemes).
+  -macstyles          Turn on some of the new styles available in the
+                      mac_styles branch.
+  -nocbt              Do not load checkButtonToggle.
+  -noflex             Do not load flexmenu.
+  -notable            Do not load or use tablelist.
+  -notksvg            Do not load or use tksvg.
+  -sizegrip           Replace the sizegrip with the svg version.
+                      True for the aqua theme (requires tksvg).
+  -styledemo          A demonstration of changing widget styles (awthemes).
+                      Changes the progressbar and scale widget styles, turns
+                      off the scrollbar grip and arrows.
+  -ttkscale           Set the the [tk scaling] factor.
+
+9.5.0 (2020-10-29)
+   - Fix so that multiple scaled styles will work.
+   - Change so that scaled styles can have (a few of) their own colors.
+   - Code cleanup
 
 9.4.2 (2020-10-23)
    - Renamed internal color names.

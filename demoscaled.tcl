@@ -37,7 +37,7 @@ proc main { } {
 
 
   if { [llength $::argv] < 1 } {
-    puts "Usage: demottk.tcl <theme> \[-ttkscale <scale-factor>] \[-scale <scale-factor>] \[-fontscale <scale-factor>] \[-highlightcolor <color>] \[-notksvg]"
+    puts "Usage: demoscaled.tcl <theme> \[-ttkscale <scale-factor>]"
     exit 1
   }
 
@@ -53,45 +53,15 @@ proc main { } {
       incr idx
       tk scaling [lindex $::argv $idx]
     }
-    if { [lindex $::argv $idx] eq "-scale" } {
-      incr idx
-      set sf [lindex $::argv $idx]
-    }
-    if { [lindex $::argv $idx] eq "-highlightcolor" } {
-      incr idx
-      set gc [lindex $::argv $idx]
-    }
-    if { [lindex $::argv $idx] eq "-fontscale" } {
-      incr idx
-      set fontscale [lindex $::argv $idx]
-    }
-    if { [lindex $::argv $idx] eq "-notksvg" } {
-      set ::notksvg true
-    }
   }
 
-  # now do the requires so that -notksvg has an effect.
   package require colorutils
   package require awthemes
 
-  if { $gc ne {} } {
-    ::themeutils::setThemeColors $theme \
-        graphics.color $gc
-  }
   ::themeutils::setThemeColors $theme \
       scale.factor $sf
 
-  if { ! $::notksvg } {
-    catch { package require tksvg }
-  }
-
-  set fn data/bll-tecra/tkscale.txt
-  if { [file exists $fn] } {
-    set fh [open $fn r]
-    set scale [gets $fh]
-    close $fh
-    tk scaling -displayof $vars(mainW) $scale
-  }
+  catch { package require tksvg }
 
   set calcdpi [expr {round([tk scaling]*72.0)}]
   set scalefactor [expr {$calcdpi/100.0}]
@@ -112,16 +82,6 @@ proc main { } {
 
   set loaded false
 
-  set havetksvg false
-  if { ! [catch {package present tksvg}] } {
-    set havetksvg true
-  }
-
-  set ttheme $theme
-  if { ($havetksvg && $theme eq "black") ||
-      ($havetksvg && $theme eq "winxpblue") } {
-    set ttheme aw${theme}
-  }
   if { ! $loaded } {
     try {
       package require $theme
@@ -131,9 +91,10 @@ proc main { } {
       puts $err
     }
   }
-  if { ! $loaded && [file exists $ttheme.tcl] } {
-    puts "loaded via source $ttheme.tcl"
-    source $ttheme.tcl
+
+  set havetksvg true
+  if { [catch {package present tksvg}] } {
+    error "tksvg is required"
   }
 
   ::ttk::style theme use $theme
@@ -148,6 +109,12 @@ proc main { } {
   if { [info commands ::ttk::theme::${theme}::scaledStyle] ne {} } {
     font create SmallFont
     font configure SmallFont -size [expr {round(8.0*$fontscale)}]
+
+#    ::themeutils::setThemeColors $theme \
+#        graphics.color #aa2233 \
+#        pbar.color #aa2233 \
+#        spinbox.color.bg #aa2233 \
+#        scale.color #aa2233
     ::ttk::theme::${theme}::scaledStyle Small TkDefaultFont SmallFont
   }
 
