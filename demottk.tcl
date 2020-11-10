@@ -26,7 +26,9 @@ proc confMenu { w } {
   variable vars
 
   if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    ::ttk::theme::${vars(theme)}::setMenuColors $w
+    if { ! $vars(optiondb) } {
+      ::ttk::theme::${vars(theme)}::setMenuColors $w
+    }
   } elseif { [tk windowingsystem] ne "aqua" } {
     set c [::ttk::style lookup $vars(mainW) -background]
     if { $c ne {} } {
@@ -112,7 +114,7 @@ proc main { } {
     puts "    \[-background <color>] \[-focuscolor <color>] "
     puts "    \[-foreground <color>] \[-accentcolor <color>] "
     puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-notable]"
-    puts "    \[-sizegrip] \[-styledemo]"
+    puts "    \[-sizegrip] \[-styledemo] \[-optiondb]"
     puts "    <theme> "
     exit 1
   }
@@ -134,6 +136,7 @@ proc main { } {
   set vars(macstyles) false
   set vars(notable) false
   set vars(cleanpath) false
+  set vars(optiondb) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
@@ -169,6 +172,9 @@ proc main { } {
         incr idx
         set vars(nfg) [lindex $::argv $idx]
       }
+      -macstyles {
+        set vars(macstyles) true
+      }
       -nocbt {
         set vars(nocbt) true
       }
@@ -181,8 +187,8 @@ proc main { } {
       -notksvg {
         set ::notksvg true
       }
-      -macstyles {
-        set vars(macstyles) true
+      -optiondb {
+        set vars(optiondb) true
       }
       -sizegrip {
         set vars(sizegrip) true
@@ -360,6 +366,13 @@ proc main { } {
     configureFonts
   }
 
+  if { $vars(optiondb) &&
+      [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
+    ::ttk::theme::${vars(theme)}::setMenuColors -optiondb
+    ::ttk::theme::${vars(theme)}::setListboxColors -optiondb
+    ::ttk::theme::${vars(theme)}::setTextColors -optiondb -entry
+  }
+
   set vars(val) 55
   set vars(valb) $vars(theme)
   set vars(bgentry) [::ttk::style lookup TFrame -background]
@@ -381,7 +394,7 @@ proc main { } {
   $vars(mainW).mb add cascade -label Example -menu $vars(mainW).mb_example
 
   $vars(menucmd) $vars(mainW).mb_b -tearoff 0 -font MenuFont {*}$vars(menuargs)
-  $vars(mainW).mb add cascade -label {not in use} -menu $vars(mainW).mb_b
+  $vars(mainW).mb add cascade -label {not in use} -menu $vars(mainW).mb_b -state disabled
 
   $vars(menucmd) $vars(mainW).mb_widgets -tearoff 0 -font MenuFont {*}$vars(menuargs)
   $vars(mainW).mb_widgets add checkbutton -label checkA -variable ::on
@@ -765,7 +778,8 @@ proc main { } {
       -width 50 \
       -highlightthickness 1 \
       -font TextFont
-  if { [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
+  if { ! $vars(optiondb) &&
+      [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setTextColors $vars(mainW).text
   }
   bind $vars(mainW).text <MouseWheel> {%W yview scroll [expr {int(pow(-%D/240,3))}] units}
@@ -896,7 +910,8 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       -relief sunken
   $vars(mainW).lbox2 configure -state disabled
 
-  if { [info commands ::ttk::theme::${vars(theme)}::setListboxColors] ne {} } {
+  if { ! $vars(optiondb) &&
+      [info commands ::ttk::theme::${vars(theme)}::setListboxColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setListboxColors $vars(mainW).lbox1
     ::ttk::theme::${vars(theme)}::setListboxColors $vars(mainW).lbox2
   }

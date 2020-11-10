@@ -12,17 +12,38 @@
 #
 # Helper routines:
 #
-#   ::ttk::theme::${theme}::setMenuColors .menuwidget
+#   ::ttk::theme::${theme}::setMenuColors {.menuwidget|-optiondb}
 #     Sets the menu colors and also changes any checkbutton and
 #     radiobutton types to use thematic images.
 #     Side effect: The menu will have -hidemargin set to true.
 #
-#   ::ttk::theme::${theme}::setTextColors .textwidget ?-dark?
-#     Sets the text widget colors.  If -dark is specified, the
-#     background will be set to the darker color (like TEntry).
+#     If -optiondb is specified instead of a widget, the *Menu.*
+#     color configurations are changed in the options database.
 #
-#   ::ttk::theme::${theme}::setListboxColors .listboxwidget
+#   ::ttk::theme::${theme}::setTextColors \
+#         {.textwidget|-optiondb} [{-entry|-background}]
+#     Sets the text widget colors.
+#
+#     If the text widget is in a "normal" state, the background is
+#     set to the entry background.  If the text widget is in a
+#     "disabled" state, the background is set to the background color.
+#
+#     If -entry is specified, the background is set the same as
+#     an entry widget's background.  This is needed when -optiondb
+#     is specified, or to override the normal/disabled logic.
+#
+#     If -background is specified, the background is set the same as
+#     the normal background.  This can be used to override the
+#     normal/disabled logic.
+#
+#     If -optiondb is specified instead of a widget, the *Text.*
+#     color configurations are changed in the options database.
+#
+#   ::ttk::theme::${theme}::setListboxColors {.listboxwidget|-optiondb}
 #     Sets the listbox widget colors.
+#
+#     If -optiondb is specified instead of a widget, the *Listbox.*
+#     color configurations are changed in the options database.
 #
 #   ::ttk::theme::${theme}::scaledStyle \
 #           prefix defaultfont listingfont
@@ -87,7 +108,7 @@
 #             scale.factor 1.5
 #       package require awdark
 #
-#   ::ttk::theme::${theme}::setBackground color
+#   ::ttk::theme::${theme}::setBackground <color>
 #       Used after the theme has been instantiated.
 #
 #       set theme [::ttk::style theme use]
@@ -95,11 +116,17 @@
 #         ::ttk::theme::${theme}::setBackground $newcolor
 #       }
 #
-#   ::ttk::theme::${theme}::getColor theme colorname
+#   ::ttk::theme::${theme}::getColor <theme> <colorname>
 #     A lower level procedure to get the color assigned to a theme colorname.
 #
 # Change History
 #
+# 9.5.1 (2020-11-10)
+#   - progressbar/rect-bord: fix: set trough image border.
+#   - setMenuColors: add ability to set the option database.
+#   - setTextColors: add ability to set the option database.
+#   - setListboxColors: add ability to set the option database.
+#   - setMenuColors: change selectColor to use fg.fg (for option database).
 # 9.5.0 (2020-10-29)
 #   - Fix so that multiple scaled styles will work.
 #   - Change so that scaled styles can have (a few of) their own colors.
@@ -373,7 +400,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 9.5.0
+set ::themeutils::awversion 9.5.1
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -3373,24 +3400,13 @@ namespace eval ::ttk::awthemes {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
 
-    if { ! [dict exists $vars(cache.menu) $w] } {
-      dict set vars(cache.menu) $w 1
-    }
-
-    $w configure -background $colors(bg.bg)
-    $w configure -foreground $colors(fg.fg)
-    $w configure -activebackground $colors(select.bg)
-    $w configure -activeforeground $colors(select.fg)
-    $w configure -disabledforeground $colors(fg.disabled)
-    $w configure -selectcolor $colors(select.bg)
-
-    set max [$w index end]
-    if { $max eq "none" } {
-      return
-    }
-
     # the standard menu does not have a -mode option
-    if { [catch {$w cget -mode}] } {
+    if { $w ne "-optiondb" && [catch {$w cget -mode}] } {
+      set max [$w index end]
+      if { $max eq "none" } {
+        return
+      }
+
       # this does not work for mac os x standard menus.
       # it is fine for user menus or pop-ups
       for {set i 0} {$i <= $max} {incr i} {
@@ -3411,6 +3427,27 @@ namespace eval ::ttk::awthemes {
         }
       } ; # for each menu entry
     } ; # not using flexmenu? (has -mode)
+
+    if { $w eq "-optiondb" } {
+      option add *Menu.background $colors(bg.bg)
+      option add *Menu.foreground $colors(fg.fg)
+      option add *Menu.activeBackground $colors(select.bg)
+      option add *Menu.activeForeground $colors(select.fg)
+      option add *Menu.disabledForeground $colors(fg.disabled)
+      option add *Menu.selectColor $colors(fg.fg)
+      return
+    }
+
+    if { ! [dict exists $vars(cache.menu) $w] } {
+      dict set vars(cache.menu) $w 1
+    }
+
+    $w configure -background $colors(bg.bg)
+    $w configure -foreground $colors(fg.fg)
+    $w configure -activebackground $colors(select.bg)
+    $w configure -activeforeground $colors(select.fg)
+    $w configure -disabledforeground $colors(fg.disabled)
+    $w configure -selectcolor $colors(fg.fg)
   }
 
   proc setListboxColors { w {isforcombobox 0} } {
@@ -3418,6 +3455,17 @@ namespace eval ::ttk::awthemes {
     set currtheme [::ttk::style theme use]
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
+    }
+
+    if { $w eq "-optiondb" } {
+      option add *Listbox.background $colors(entrybg.bg)
+      option add *Listbox.foreground $colors(entryfg.fg)
+      option add *Listbox.disabledForeground $colors(fg.disabled)
+      option add *Listbox.selectBackground $colors(select.bg)
+      option add *Listbox.selectForeground $colors(select.fg)
+      option add *Listbox.highlightColor $colors(focus.color)
+      option add *Listbox.highlightBackground $colors(bg.bg)
+      return
     }
 
     # the listbox cache is for re-setting the colors on
@@ -3457,17 +3505,33 @@ namespace eval ::ttk::awthemes {
       dict set vars(cache.text) $w $useflag
     }
 
+    set tbg $colors(bg.bg)
     if { $useflag eq "-entry" } {
-      $w configure -background $colors(entrybg.bg)
-    } elseif { $useflag eq "-dark" } {
-      $w configure -background $colors(bg.dark)
-    } else {
+      set tbg $colors(entrybg.bg)
+    } elseif { $useflag eq "-background" } {
+      set tbg $colors(bg.bg)
+    } elseif { $w ne "-optiondb" } {
+      # if the user specifies -optiondb for the window, there is
+      # no way to tell what color they want for the text widget
       if { [$w cget -state] eq "normal" } {
-        $w configure -background $colors(entrybg.bg)
+        set tbg $colors(entrybg.bg)
       } else {
-        $w configure -background $colors(bg.bg)
+        set tbg $colors(bg.bg)
       }
     }
+
+    if { $w eq "-optiondb" } {
+      option add *Text.background $tbg
+      option add *Text.foreground $colors(entryfg.fg)
+      option add *Text.selectForeground $colors(select.fg)
+      option add *Text.selectBackground $colors(select.bg)
+      option add *Text.inactiveSelectBackground $colors(select.bg.inactive)
+      option add *Text.highlightColor $colors(focus.color)
+      option add *Text.highlightBackground $colors(bg.bg)
+      return
+    }
+
+    $w configure -background $tbg
     $w configure -foreground $colors(entryfg.fg)
     $w configure -selectforeground $colors(select.fg)
     $w configure -selectbackground $colors(select.bg)
