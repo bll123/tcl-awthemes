@@ -127,6 +127,8 @@
 #   - setTextColors: add ability to set the option database.
 #   - setListboxColors: add ability to set the option database.
 #   - setMenuColors: change selectColor to use fg.fg (for option database).
+#   - setTextColors: add -background option.
+#   - setTextColors: deprecate -dark option.
 # 9.5.0 (2020-10-29)
 #   - Fix so that multiple scaled styles will work.
 #   - Change so that scaled styles can have (a few of) their own colors.

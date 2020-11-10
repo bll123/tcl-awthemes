@@ -60,12 +60,23 @@ demottk.tcl options:
   -noflex             Do not load flexmenu.
   -notable            Do not load or use tablelist.
   -notksvg            Do not load or use tksvg.
+  -optiondb           Use the -optiondb method for setMenuColors,
+                      setListboxColors and setTextColors.
   -sizegrip           Replace the sizegrip with the svg version.
                       True for the aqua theme (requires tksvg).
   -styledemo          A demonstration of changing widget styles (awthemes).
                       Changes the progressbar and scale widget styles, turns
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
+
+9.5.1 (2020-11-10)
+   - progressbar/rect-bord: fix: set trough image border.
+   - setMenuColors: add ability to set the option database.
+   - setTextColors: add ability to set the option database.
+   - setListboxColors: add ability to set the option database.
+   - setMenuColors: change selectColor to use fg.fg (for option database).
+   - setTextColors: add -background option.
+   - setTextColors: deprecate -dark option.
 
 9.5.0 (2020-10-29)
    - Fix so that multiple scaled styles will work.
