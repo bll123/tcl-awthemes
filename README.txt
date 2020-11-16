@@ -12,6 +12,7 @@ The following files are needed:
   awbreeze.tcl            - scalable breeze theme
   awtemplate.tcl          - example file to start a new theme
   i/                      - images
+  LICENSE                 - zlib/libpng LICENSE
 
 Demonstration scripts:
   demottk.tcl, demoscaled.tcl, demoscaledb.tcl
@@ -68,6 +69,9 @@ demottk.tcl options:
                       Changes the progressbar and scale widget styles, turns
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
+
+9.5.1.1 (2020-11-16)
+   - update licensing information
 
 9.5.1 (2020-11-10)
    - progressbar/rect-bord: fix: set trough image border.

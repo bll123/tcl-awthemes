@@ -10,7 +10,8 @@ tdir=awthemes-${ver}
 
 mkdir ${tdir}
 cp -r \
-    aw*.tcl colorutils.tcl demoscaled.tcl demoscaledb.tcl demottk.tcl \
+    LICENSE aw*.tcl colorutils.tcl \
+    demoscaled.tcl demoscaledb.tcl demottk.tcl \
     pkgIndex.tcl README.txt i \
     ${tdir}
 zip -rq ${nm}-${ver}.zip ${tdir}

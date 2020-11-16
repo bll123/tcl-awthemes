@@ -121,6 +121,8 @@
 #
 # Change History
 #
+# 9.5.1.1 (2020-11-16)
+#   - update licensing information
 # 9.5.1 (2020-11-10)
 #   - progressbar/rect-bord: fix: set trough image border.
 #   - setMenuColors: add ability to set the option database.
@@ -402,7 +404,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 9.5.1
+set ::themeutils::awversion 9.5.1.1
 package provide awthemes $::themeutils::awversion
 
 package require Tk
