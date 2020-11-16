@@ -324,7 +324,7 @@ proc main { } {
       set fn [file join [file join $p $ttheme.tcl]]
       if { [file exists $fn] } {
         source $fn
-        puts "loaded via: source $fn.tcl"
+        puts "loaded via: source $fn"
         set loaded true
         break
       }
