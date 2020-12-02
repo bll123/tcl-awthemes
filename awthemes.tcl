@@ -132,6 +132,7 @@
 #     arc -> awarc, black -> awblack, breeze -> awbreeze,
 #     clearlooks -> awclearlooks, winxpblue -> awwinxpblue.
 #     Required due to the addition of the ttk::theme::<theme> package names.
+#   - Added manual page.
 # 9.5.1.1 (2020-11-16)
 #   - update licensing information
 # 9.5.1 (2020-11-10)

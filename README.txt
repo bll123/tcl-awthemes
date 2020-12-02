@@ -39,7 +39,7 @@ Try:
 
   # option db testing
   echo "*TkTheme: awdark" | xrdb -merge -
-  tclsh demottk.tcl -optionnone -optiondflt awdark
+  TCLLIBPATH=$(pwd) tclsh demottk.tcl -optionnone -optiondflt awdark
 
 To load other theme files, use the -autopath option to
 adjust the ::auto_path variable:
@@ -87,6 +87,7 @@ demottk.tcl options:
      arc -> awarc, black -> awblack, breeze -> awbreeze,
      clearlooks -> awclearlooks, winxpblue -> awwinxpblue.
      Required due to the addition of the ttk::theme::<theme> package names.
+   - Added manual page.
 
 9.5.1.1 (2020-11-16)
    - update licensing information
