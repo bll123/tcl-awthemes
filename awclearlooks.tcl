@@ -100,7 +100,6 @@ namespace eval ::ttk::theme::awclearlooks {
     package provide ${theme} $version
     package provide ttk::theme::${theme} $version
     ::ttk::awthemes::init ${theme}
-    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

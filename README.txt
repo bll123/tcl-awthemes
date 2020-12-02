@@ -26,7 +26,7 @@ Try:
   tclsh demottk.tcl awwinxpblue -ttkscale 2.0 -fontscale 0.7
 
   # scaled styling
-  tclsh demoscaled.tcl awwinxpblue
+  tclsh demoscaled.tcl awdark
 
   # multiple scaled styling, alternate colors
   # Colors are shared between all styles, they do not each have
@@ -45,7 +45,7 @@ To load other theme files, use the -autopath option to
 adjust the ::auto_path variable:
 
   # loads the original awwinxpblue
-  tclsh demottk.tcl awwinxpblue -notksvg -autopath $HOME/mystuff
+  tclsh demottk.tcl winxpblue -notksvg -autopath $HOME/mystuff
   # loads the scalable awwinxpblue when -notksvg is not present
   tclsh demottk.tcl awwinxpblue -autopath $HOME/mystuff
 
@@ -82,9 +82,11 @@ demottk.tcl options:
    - add ttk::theme::<theme> package names so that the option db can
      be used to set the theme and the old setTheme and ttk::themes
      procedures may be used.
-   - theme name changes to prevent conflicts with the originals.
+   - Breaking change:
+     Theme name changes to prevent conflicts with the originals.
      arc -> awarc, black -> awblack, breeze -> awbreeze,
-     clearlooks -> awclearlooks, winxpblue -> awwinxpblue,
+     clearlooks -> awclearlooks, winxpblue -> awwinxpblue.
+     Required due to the addition of the ttk::theme::<theme> package names.
 
 9.5.1.1 (2020-11-16)
    - update licensing information

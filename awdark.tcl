@@ -62,7 +62,6 @@ namespace eval ::ttk::theme::awdark {
     set theme awdark
     set version 7.10
     ::ttk::awthemes::init $theme
-    after idle [list ::ttk::awthemes::initOptiondb $theme]
     package provide $theme $version
     package provide ttk::theme::${theme} $version
   }

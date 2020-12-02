@@ -59,7 +59,6 @@ namespace eval ::ttk::theme::awlight {
     set theme awlight
     set version 7.9
     ::ttk::awthemes::init $theme
-    after idle [list ::ttk::awthemes::initOptiondb $theme]
     package provide $theme $version
     package provide ttk::theme::${theme} $version
   }

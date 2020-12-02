@@ -205,7 +205,6 @@ namespace eval ::ttk::theme::awtemplate {
     package provide ${theme} $version
     package provide ttk::theme::${theme} $version
     ::ttk::awthemes::init ${theme}
-    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

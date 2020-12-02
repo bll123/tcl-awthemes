@@ -127,9 +127,11 @@
 #   - add ttk::theme::<theme> package names so that the option db can
 #     be used to set the theme and the old setTheme and ttk::themes
 #     procedures may be used.
-#   - theme name changes to prevent conflicts with the originals.
+#   - Breaking change:
+#     Theme name changes to prevent conflicts with the originals.
 #     arc -> awarc, black -> awblack, breeze -> awbreeze,
 #     clearlooks -> awclearlooks, winxpblue -> awwinxpblue.
+#     Required due to the addition of the ttk::theme::<theme> package names.
 # 9.5.1.1 (2020-11-16)
 #   - update licensing information
 # 9.5.1 (2020-11-10)
@@ -703,6 +705,7 @@ namespace eval ::ttk::awthemes {
 
     set starttime [clock milliseconds]
     _createTheme $theme
+    initOptiondb $theme
     set endtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
       puts "t:   theme creation: [expr {$endtime-$starttime}]"
@@ -714,9 +717,11 @@ namespace eval ::ttk::awthemes {
   }
 
   proc initOptiondb { theme } {
-    ::ttk::theme::${theme}::setMenuColors -optiondb
-    ::ttk::theme::${theme}::setListboxColors -optiondb
-    ::ttk::theme::${theme}::setTextColors -optiondb -entry
+    # ttk::style theme use has not been run yet, so the
+    # theme must be supplied.
+    setMenuColors -optiondb $theme
+    setListboxColors -optiondb 0 $theme
+    setTextColors -optiondb -entry $theme
   }
 
   proc _initializeColors { theme } {
@@ -3426,10 +3431,13 @@ namespace eval ::ttk::awthemes {
     }
   }
 
-  proc setMenuColors { w } {
+  proc setMenuColors { w {theme {}} } {
     variable currtheme
 
     set currtheme [::ttk::style theme use]
+    if { $theme ne {} } {
+      set currtheme $theme
+    }
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
@@ -3484,9 +3492,13 @@ namespace eval ::ttk::awthemes {
     $w configure -selectcolor $colors(fg.fg)
   }
 
-  proc setListboxColors { w {isforcombobox 0} } {
+  proc setListboxColors { w {isforcombobox 0} {theme {}} } {
     variable currtheme
+
     set currtheme [::ttk::style theme use]
+    if { $theme ne {} } {
+      set currtheme $theme
+    }
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
@@ -3528,9 +3540,13 @@ namespace eval ::ttk::awthemes {
     }
   }
 
-  proc setTextColors { w {useflag {}} } {
+  proc setTextColors { w {useflag {}} {theme {}} } {
     variable currtheme
+
     set currtheme [::ttk::style theme use]
+    if { $theme ne {} } {
+      set currtheme $theme
+    }
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::$currtheme $var $var
     }
