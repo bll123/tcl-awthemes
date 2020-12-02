@@ -121,12 +121,15 @@
 #
 # Change History
 #
-# 9.6.0 (2020-12-1)
+# 10.0.0 (2020-12-2)
 #   - option database is always updated.  The text widget colors will
 #     default to -entry.
 #   - add ttk::theme::<theme> package names so that the option db can
 #     be used to set the theme and the old setTheme and ttk::themes
 #     procedures may be used.
+#   - theme name changes to prevent conflicts with the originals.
+#     arc -> awarc, black -> awblack, breeze -> awbreeze,
+#     clearlooks -> awclearlooks, winxpblue -> awwinxpblue.
 # 9.5.1.1 (2020-11-16)
 #   - update licensing information
 # 9.5.1 (2020-11-10)
@@ -410,7 +413,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 9.6.0
+set ::themeutils::awversion 10.0.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk

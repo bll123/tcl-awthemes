@@ -19,14 +19,14 @@ Demonstration scripts:
 
 Try:
   # application scaling
-  tclsh demottk.tcl winxpblue -fontscale 1.2
+  tclsh demottk.tcl awwinxpblue -fontscale 1.2
   # tk scaling only
-  tclsh demottk.tcl winxpblue -ttkscale 2.0
+  tclsh demottk.tcl awwinxpblue -ttkscale 2.0
   # user with high dpi, smaller font
-  tclsh demottk.tcl winxpblue -ttkscale 2.0 -fontscale 0.7
+  tclsh demottk.tcl awwinxpblue -ttkscale 2.0 -fontscale 0.7
 
   # scaled styling
-  tclsh demoscaled.tcl winxpblue
+  tclsh demoscaled.tcl awwinxpblue
 
   # multiple scaled styling, alternate colors
   # Colors are shared between all styles, they do not each have
@@ -37,13 +37,17 @@ Try:
   # original no-tksvg version of awdark/awlight
   tclsh demottk.tcl -notksvg awdark
 
+  # option db testing
+  echo "*TkTheme: awdark" | xrdb -merge -
+  tclsh demottk.tcl -optionnone -optiondflt awdark
+
 To load other theme files, use the -autopath option to
 adjust the ::auto_path variable:
 
-  # loads the original winxpblue
-  tclsh demottk.tcl winxpblue -notksvg -autopath $HOME/mystuff
-  # loads the scalable winxpblue when -notksvg is not present
-  tclsh demottk.tcl winxpblue -autopath $HOME/mystuff
+  # loads the original awwinxpblue
+  tclsh demottk.tcl awwinxpblue -notksvg -autopath $HOME/mystuff
+  # loads the scalable awwinxpblue when -notksvg is not present
+  tclsh demottk.tcl awwinxpblue -autopath $HOME/mystuff
 
 demottk.tcl options:
   -accentcolor        Change the accent color (awthemes).
@@ -71,6 +75,16 @@ demottk.tcl options:
                       Changes the progressbar and scale widget styles, turns
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
+
+10.0.0 (2020-12-2)
+   - option database is always updated.  The text widget colors will
+     default to -entry.
+   - add ttk::theme::<theme> package names so that the option db can
+     be used to set the theme and the old setTheme and ttk::themes
+     procedures may be used.
+   - theme name changes to prevent conflicts with the originals.
+     arc -> awarc, black -> awblack, breeze -> awbreeze,
+     clearlooks -> awclearlooks, winxpblue -> awwinxpblue,
 
 9.5.1.1 (2020-11-16)
    - update licensing information

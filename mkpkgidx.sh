@@ -36,4 +36,3 @@ package ifneeded ttk::theme::$th $ver \\
     [list source [file join \$dir $f]]
 _HERE_
 done
-

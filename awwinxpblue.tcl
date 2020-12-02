@@ -22,7 +22,7 @@ unset ap
 package require awthemes
 
 
-namespace eval ::ttk::theme::winxpblue {
+namespace eval ::ttk::theme::awwinxpblue {
 
   proc setBaseColors { } {
     variable colors
@@ -84,7 +84,7 @@ namespace eval ::ttk::theme::winxpblue {
   }
 
   proc init { } {
-    set theme winxpblue
+    set theme awwinxpblue
     set version 7.9
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {

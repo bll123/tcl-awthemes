@@ -21,7 +21,7 @@ if { $ap ni $::auto_path } {
 unset ap
 package require awthemes
 
-namespace eval ::ttk::theme::breeze {
+namespace eval ::ttk::theme::awbreeze {
 
   proc setBaseColors { } {
     variable colors
@@ -89,7 +89,7 @@ namespace eval ::ttk::theme::breeze {
   }
 
   proc init { } {
-    set theme breeze
+    set theme awbreeze
     set version 1.8
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {

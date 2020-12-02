@@ -17,7 +17,7 @@ if { $ap ni $::auto_path } {
 unset ap
 package require awthemes
 
-namespace eval ::ttk::theme::clearlooks {
+namespace eval ::ttk::theme::awclearlooks {
 
   proc setBaseColors { } {
     variable colors
@@ -90,7 +90,7 @@ namespace eval ::ttk::theme::clearlooks {
   }
 
   proc init { } {
-    set theme clearlooks
+    set theme awclearlooks
     set version 1.2
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
