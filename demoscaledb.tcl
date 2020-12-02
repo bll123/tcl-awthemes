@@ -39,7 +39,6 @@ proc main { } {
     }
   }
 
-  package require colorutils
   package require awthemes
 
   ::themeutils::setThemeColors $theme \

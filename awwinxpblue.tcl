@@ -84,13 +84,17 @@ namespace eval ::ttk::theme::winxpblue {
   }
 
   proc init { } {
+    set theme winxpblue
+    set version 7.9
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::winxpblue
-      error "no tksvg package present: cannot load scalable winxpblue theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide winxpblue 7.8
-    ::ttk::awthemes::init winxpblue
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

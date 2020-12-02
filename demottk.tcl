@@ -26,7 +26,7 @@ proc confMenu { w } {
   variable vars
 
   if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    if { ! $vars(optiondb) } {
+    if { ! $vars(optiondb) && ! $vars(optionnone) } {
       ::ttk::theme::${vars(theme)}::setMenuColors $w
     }
   } elseif { [tk windowingsystem] ne "aqua" } {
@@ -74,6 +74,9 @@ proc twrap { } {
 proc configureFonts { } {
   variable vars
 
+  if { $::tcl_platform(os) eq "Darwin" } {
+    set vars(fontsize) [expr {round($vars(fontsize) * 1.3)}]
+  }
   font configure TkDefaultFont -size ${vars(fontsize)}
   set origfontsz [font metrics TkDefaultFont -ascent]
   font configure TkDefaultFont -size \
@@ -115,6 +118,7 @@ proc main { } {
     puts "    \[-foreground <color>] \[-accentcolor <color>] "
     puts "    \[-notksvg] \[-noflex] \[-nocbt] \[-notable]"
     puts "    \[-sizegrip] \[-styledemo] \[-optiondb]"
+    puts "    \[-optionnone]"
     puts "    <theme> "
     exit 1
   }
@@ -137,6 +141,8 @@ proc main { } {
   set vars(notable) false
   set vars(cleanpath) false
   set vars(optiondb) false
+  set vars(optionnone) false
+  set vars(optiondflt) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
@@ -190,6 +196,12 @@ proc main { } {
       -optiondb {
         set vars(optiondb) true
       }
+      -optionnone {
+        set vars(optionnone) true
+      }
+      -optiondflt {
+        set vars(optiondflt) true
+      }
       -sizegrip {
         set vars(sizegrip) true
       }
@@ -203,6 +215,9 @@ proc main { } {
       default {
         if { ! [string match -* $a] } {
           set vars(theme) $a
+          if { $vars(optiondflt) } {
+            option add *TkTheme [lindex $::argv $idx]
+          }
         }
       }
     }
@@ -290,7 +305,7 @@ proc main { } {
   if { ! $loaded } {
     if { $vars(theme) in [::ttk::style theme names] } {
       # built-in themes
-      puts "built-in theme"
+      puts "built-in theme or theme specified by option db"
       set loaded true
     } elseif { $::notksvg || ! $vars(havetksvg) } {
       # try a package require to grab older themes using
@@ -331,7 +346,9 @@ proc main { } {
     }
   }
 
-  ::ttk::style theme use $vars(theme)
+  if { ! $vars(optiondflt) } {
+    ::ttk::style theme use $vars(theme)
+  }
 
   set vars(havecbt) false
   if { ! $vars(nocbt) } {
@@ -366,7 +383,7 @@ proc main { } {
     configureFonts
   }
 
-  if { $vars(optiondb) &&
+  if { $vars(optiondb) && ! $vars(optionnone) &&
       [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setMenuColors -optiondb
     ::ttk::theme::${vars(theme)}::setListboxColors -optiondb
@@ -778,7 +795,7 @@ proc main { } {
       -width 50 \
       -highlightthickness 1 \
       -font TextFont
-  if { ! $vars(optiondb) &&
+  if { ! $vars(optiondb) && ! $vars(optionnone) &&
       [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setTextColors $vars(mainW).text
   }
@@ -910,7 +927,7 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       -relief sunken
   $vars(mainW).lbox2 configure -state disabled
 
-  if { ! $vars(optiondb) &&
+  if { ! $vars(optiondb) && ! $vars(optionnone) &&
       [info commands ::ttk::theme::${vars(theme)}::setListboxColors] ne {} } {
     ::ttk::theme::${vars(theme)}::setListboxColors $vars(mainW).lbox1
     ::ttk::theme::${vars(theme)}::setListboxColors $vars(mainW).lbox2
@@ -953,30 +970,38 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       }
       ::ttk::frame $vars(mainW).dbf$k
 
+      ::ttk::style configure InlineButton -font MenuFont
+      ::ttk::button $vars(mainW).dbib$k -text $vars(theme) \
+          -state $s -style InlineButton
+
       ::ttk::style configure ImageButton -font MenuFont
-      ::ttk::button $vars(mainW).dbi$k \
+      ::ttk::button $vars(mainW).dbimg$k \
           -text unmute -image $img -state $s -style ImageButton
-      set layout [::ttk::style layout TButton]
-      regsub {Button.button} $layout RoundedRectButton.button rrlayout
-      ::ttk::style layout RR.TButton $rrlayout
-      ::ttk::style configure RR.TButton -font MenuFont
+
+      ::ttk::style configure RecessedButton -font MenuFont
+      ::ttk::button $vars(mainW).dbrb$k \
+          -text $vars(theme) -state $s -style RecessedButton
+
+      ::ttk::style configure RoundedRectButton -font MenuFont
       ::ttk::button $vars(mainW).dbrr$k -text $vars(theme) \
-          -state $s -style RR.TButton
-      regsub {Button.button} $layout DisclosureButton.button disclayout
-      ::ttk::style layout Disc.TButton $disclayout
-      ::ttk::style configure Disc.TButton -font MenuFont
+          -state $s -style RoundedRectButton
+
+      ::ttk::style configure DisclosureButton -font MenuFont
       ::ttk::button $vars(mainW).dbdisc$k \
-          -state $s -style Disc.TButton
-      regsub {Button.button} $layout GradientButton.button glayout
-      ::ttk::style layout Gradient.TButton $glayout
-      ::ttk::style configure Graident.TButton -font MenuFont
+          -state $s -style DisclosureButton
+
+      ::ttk::style configure GradientButton -font MenuFont
       ::ttk::button $vars(mainW).dbg$k -text $vars(theme) \
-          -state $s -style Gradient.TButton
-      regsub {Button.button} $layout HelpButton.button hlayout
-      ::ttk::style layout Help.TButton $hlayout
+          -state $s -style GradientButton
+
       ::ttk::button $vars(mainW).dbhelp$k \
-          -state $s -style Help.TButton
-      grid $vars(mainW).dbi$k $vars(mainW).dbrr$k $vars(mainW).dbdisc$k $vars(mainW).dbg$k $vars(mainW).dbhelp$k -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
+          -state $s -style HelpButton
+
+      grid $vars(mainW).dbib$k $vars(mainW).dbimg$k $vars(mainW).dbrb$k \
+          -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
+      grid $vars(mainW).dbrr$k $vars(mainW).dbdisc$k $vars(mainW).dbg$k \
+          $vars(mainW).dbhelp$k \
+          -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
       grid $vars(mainW).dbf$k -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     }
   }

@@ -195,13 +195,17 @@ namespace eval ::ttk::theme::awtemplate {
 
   # CHANGE: 'awtemplate' to the name of your theme.
   proc init { } {
+    set theme awtemplate
+    set version 1.5
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::awtemplate
-      error "no tksvg package present: cannot load scalable awtemplate theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide awtemplate 1.4
-    ::ttk::awthemes::init awtemplate
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

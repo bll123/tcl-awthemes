@@ -70,13 +70,17 @@ namespace eval ::ttk::theme::black {
   }
 
   proc init { } {
+    set theme black
+    set version 7.7
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::black
-      error "no tksvg package present: cannot load scalable black theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide black 7.6
-    ::ttk::awthemes::init black
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

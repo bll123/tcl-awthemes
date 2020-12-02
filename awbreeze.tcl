@@ -89,13 +89,17 @@ namespace eval ::ttk::theme::breeze {
   }
 
   proc init { } {
+    set theme breeze
+    set version 1.8
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::breeze
-      error "no tksvg package present: cannot load scalable breeze theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide breeze 1.7
-    ::ttk::awthemes::init breeze
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

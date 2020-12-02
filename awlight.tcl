@@ -2,8 +2,6 @@
 #
 #
 
-package provide awlight 7.8
-
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
   lappend ::auto_path $ap
@@ -58,7 +56,12 @@ namespace eval ::ttk::theme::awlight {
   }
 
   proc init { } {
-    ::ttk::awthemes::init awlight
+    set theme awlight
+    set version 7.9
+    ::ttk::awthemes::init $theme
+    after idle [list ::ttk::awthemes::initOptiondb $theme]
+    package provide $theme $version
+    package provide ttk::theme::${theme} $version
   }
 
   init

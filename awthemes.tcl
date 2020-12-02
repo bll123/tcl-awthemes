@@ -121,6 +121,12 @@
 #
 # Change History
 #
+# 9.6.0 (2020-12-1)
+#   - option database is always updated.  The text widget colors will
+#     default to -entry.
+#   - add ttk::theme::<theme> package names so that the option db can
+#     be used to set the theme and the old setTheme and ttk::themes
+#     procedures may be used.
 # 9.5.1.1 (2020-11-16)
 #   - update licensing information
 # 9.5.1 (2020-11-10)
@@ -404,7 +410,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 9.5.1.1
+set ::themeutils::awversion 9.6.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -689,19 +695,25 @@ namespace eval ::ttk::awthemes {
     _setImageData $theme
     set endtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
-      puts "t: image setup: [expr {$endtime-$starttime}]"
+      puts "t:   image setup: [expr {$endtime-$starttime}]"
     }
 
     set starttime [clock milliseconds]
     _createTheme $theme
     set endtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
-      puts "t: theme creation: [expr {$endtime-$starttime}]"
+      puts "t:   theme creation: [expr {$endtime-$starttime}]"
     }
     set gendtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
       puts "t: init: [expr {$gendtime-$gstarttime}]"
     }
+  }
+
+  proc initOptiondb { theme } {
+    ::ttk::theme::${theme}::setMenuColors -optiondb
+    ::ttk::theme::${theme}::setListboxColors -optiondb
+    ::ttk::theme::${theme}::setTextColors -optiondb -entry
   }
 
   proc _initializeColors { theme } {
@@ -769,7 +781,7 @@ namespace eval ::ttk::awthemes {
     set colors(graphics.color.latest) $colors(graphics.color)
     set endtime [clock milliseconds]
     if { $::ttk::awthemes::debug > 0 } {
-      puts "t: color setup: [expr {$endtime-$starttime}]"
+      puts "t:   color setup: [expr {$endtime-$starttime}]"
     }
   }
 
@@ -3264,6 +3276,7 @@ namespace eval ::ttk::awthemes {
     }
     namespace upvar ::ttk::theme::$currtheme imgtype imgtype
 
+    set starttime [clock milliseconds]
     foreach {n} [dict keys $vars(images)] {
       set scale $sf
       if { [regexp {small$} $n] || [regexp {pad$} $n] } {
@@ -3277,7 +3290,12 @@ namespace eval ::ttk::awthemes {
       }
       _mkimage $n${sfx} $scale
     }
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t:     make images: [expr {$endtime-$starttime}]"
+    }
 
+    set starttime [clock milliseconds]
     ::ttk::style theme settings $vars(theme.name) {
       # arrows are used for scrollbars and spinboxes and possibly
       # the combobox.
@@ -3311,7 +3329,16 @@ namespace eval ::ttk::awthemes {
       _createTreeview $pfx $sfx $sf
       _createToolbutton $pfx $sfx $sf
     }
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t:     theme setup: [expr {$endtime-$starttime}]"
+    }
+    set starttime [clock milliseconds]
     _setStyledColors $pfx $sf
+    set endtime [clock milliseconds]
+    if { $::ttk::awthemes::debug > 0 } {
+      puts "t:     set styled colors: [expr {$endtime-$starttime}]"
+    }
   }
 
   # user routines

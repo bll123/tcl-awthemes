@@ -90,13 +90,17 @@ namespace eval ::ttk::theme::arc {
   }
 
   proc init { } {
+    set theme arc
+    set version 1.5
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::arc
-      error "no tksvg package present: cannot load scalable arc theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide arc 1.4
-    ::ttk::awthemes::init arc
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

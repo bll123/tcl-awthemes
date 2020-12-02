@@ -90,13 +90,17 @@ namespace eval ::ttk::theme::clearlooks {
   }
 
   proc init { } {
+    set theme clearlooks
+    set version 1.2
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
-      namespace delete ::ttk::theme::clearlooks
-      error "no tksvg package present: cannot load scalable clearlooks theme"
+      namespace delete ::ttk::theme::${theme}
+      error "no tksvg package present: cannot load scalable ${theme} theme"
     }
-    package provide clearlooks 1.1
-    ::ttk::awthemes::init clearlooks
+    package provide ${theme} $version
+    package provide ttk::theme::${theme} $version
+    ::ttk::awthemes::init ${theme}
+    after idle [list ::ttk::awthemes::initOptiondb ${theme}]
   }
 
   init

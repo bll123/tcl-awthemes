@@ -63,6 +63,8 @@ demottk.tcl options:
   -notksvg            Do not load or use tksvg.
   -optiondb           Use the -optiondb method for setMenuColors,
                       setListboxColors and setTextColors.
+  -optiondflt         Let the *TkTheme option db setting determine the theme.
+  -optionnone         Use the internal optiondb settings (9.6.0).
   -sizegrip           Replace the sizegrip with the svg version.
                       True for the aqua theme (requires tksvg).
   -styledemo          A demonstration of changing widget styles (awthemes).
