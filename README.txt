@@ -76,6 +76,14 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.1.0 (2020-12-14) ** Pre-release **
+   - setTextColors: Set text foreground colors appropriately.
+   - Toolbutton: set selected color.
+   - Menus: add support for menu relief (menu.relief).  Default to 'raised'.
+     Always keep the borderwidth set to 1, unscaled.
+   - Menus: change background color for menus to a darker color.
+   - Listbox: change -activestyle to none.
+
 10.0.0 (2020-12-2)
    - option database is always updated.  The text widget colors will
      default to -entry.
