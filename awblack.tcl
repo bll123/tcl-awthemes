@@ -6,6 +6,8 @@
 #     - Scale, progressbar, scrollbar, spinbox button design are different.
 #     - sizegrip design is different.
 #
+# 7.8
+#   - set menu.relief to solid.
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -58,6 +60,7 @@ namespace eval ::ttk::theme::awblack {
     set colors(scrollbar.color.grip) #000000
     set colors(scrollbar.color.arrow) #000000
     set colors(sizegrip.color) #000000
+    set colors(menu.relief) solid
     set colors(menubutton.padding) {5 1}
     set colors(menubutton.relief) raised
     set colors(menubutton.width) -8
@@ -71,7 +74,7 @@ namespace eval ::ttk::theme::awblack {
 
   proc init { } {
     set theme awblack
-    set version 7.7
+    set version 7.8
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
       namespace delete ::ttk::theme::${theme}

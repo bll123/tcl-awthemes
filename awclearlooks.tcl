@@ -5,6 +5,10 @@
 #       matching the overall theme
 #     -
 #
+# 1.3
+#   - fix toolbutton height.
+#   - fix select foreground color.
+#
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -83,15 +87,15 @@ namespace eval ::ttk::theme::awclearlooks {
     set colors(scrollbar.color) $colors(spinbox.color.bg)
     set colors(scrollbar.has.arrows) true
     set colors(select.bg) $colors(focus.color)
-    set colors(selectfg.fg) #000000
+    set colors(select.fg) #000000
     set colors(trough.color) #d7cbbe
-    set colors(toolbutton.image.padding) {4 0}
+    set colors(toolbutton.image.padding) {4 4}
     set colors(toolbutton.use.button.image) true
   }
 
   proc init { } {
     set theme awclearlooks
-    set version 1.2
+    set version 1.3
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
       namespace delete ::ttk::theme::${theme}

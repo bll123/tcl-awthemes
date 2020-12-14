@@ -1,6 +1,9 @@
 #!/usr/bin/tclsh
 #
 #
+#
+# 7.11
+#   - set menu.relief to solid.
 
 set ap [file normalize [file dirname [info script]]]
 if { $ap ni $::auto_path } {
@@ -50,6 +53,7 @@ namespace eval ::ttk::theme::awdark {
     set colors(arrow.color) $colors(fg.fg)
     set colors(scrollbar.color.grip) #000000
     set colors(spinbox.color.bg) $colors(graphics.color)
+    set colors(menu.relief) solid
     set colors(menubutton.padding) {5 2}
     set colors(notebook.tab.focusthickness) 5
     set colors(border.scale) $colors(bg.darkest)
@@ -60,7 +64,7 @@ namespace eval ::ttk::theme::awdark {
 
   proc init { } {
     set theme awdark
-    set version 7.10
+    set version 7.11
     ::ttk::awthemes::init $theme
     package provide $theme $version
     package provide ttk::theme::${theme} $version

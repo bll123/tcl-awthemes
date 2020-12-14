@@ -121,6 +121,13 @@
 #
 # Change History
 #
+# 10.1.0 (2020-12-14) ** Pre-release **
+#   - setTextColors: Set text foreground colors appropriately.
+#   - Toolbutton: set selected color.
+#   - Menus: add support for menu relief (menu.relief).  Default to 'raised'.
+#     Always keep the borderwidth set to 1, unscaled.
+#   - Menus: change background color for menus to a darker color.
+#   - Listbox: change -activestyle to none.
 # 10.0.0 (2020-12-2)
 #   - option database is always updated.  The text widget colors will
 #     default to -entry.
@@ -254,7 +261,7 @@
 #     both entry and button graphics are present (breeze theme).
 #   - menubutton: option to use button graphics for menubuttons.
 #   - toolbutton: option to use button graphics for toolbuttons.
-#   - 'setListBoxColors': remove borderwidth and relief settings.
+#   - setListBoxColors: remove borderwidth and relief settings.
 #   - spinbox: graphics will be set if entry graphics are present.
 #   - internal code cleanup: various theme settings have been renamed.
 #   - added breeze theme (based on Maximilian Lika's breeze theme 0.8).
@@ -416,7 +423,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.0.0
+set ::themeutils::awversion 10.1.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -2767,6 +2774,7 @@ namespace eval ::ttk::awthemes {
       ::ttk::style element create ${pfx}Toolbutton.border image \
           [list $images(empty${sfx}) \
           {pressed !disabled} $images(button-p${sfx}) \
+          {selected !disabled} $images(button-p${sfx}) \
           {active !disabled} $images(button-a${sfx}) \
           disabled $images(empty${sfx})] \
           -sticky news \
@@ -2776,7 +2784,12 @@ namespace eval ::ttk::awthemes {
 
     ::ttk::style configure ${pfx}Toolbutton \
         -width {} \
-        -borderwidth 1
+        -padding 0 \
+        -borderwidth 1 \
+        -relief flat
+    ::ttk::style configure ${pfx}Toolbutton.label \
+        -padding 0 \
+        -relief flat
   }
 
   # Treeview
@@ -3176,7 +3189,11 @@ namespace eval ::ttk::awthemes {
 
       if { ! $colors(toolbutton.use.button.image) } {
         ::ttk::style map ${pfx}Toolbutton \
-            -background [list {hover !disabled} $colors(bg.active)]
+            -background [list \
+                {selected !disabled} $colors(toolbutton.bg) \
+                {hover !selected !disabled} $colors(bg.active) \
+                {disabled} $colors(bg.bg) \
+                ]
       }
 
       # treeview
@@ -3453,6 +3470,7 @@ namespace eval ::ttk::awthemes {
       # this does not work for mac os x standard menus.
       # it is fine for user menus or pop-ups
       for {set i 0} {$i <= $max} {incr i} {
+        # margin must be hidden to hide the normal radio/checkbutton images
         set type [$w type $i]
         if { $type eq "checkbutton" } {
           $w entryconfigure $i \
@@ -3472,12 +3490,15 @@ namespace eval ::ttk::awthemes {
     } ; # not using flexmenu? (has -mode)
 
     if { $w eq "-optiondb" } {
-      option add *Menu.background $colors(bg.bg)
+      option add *Menu.background $colors(menu.bg)
       option add *Menu.foreground $colors(fg.fg)
       option add *Menu.activeBackground $colors(select.bg)
       option add *Menu.activeForeground $colors(select.fg)
       option add *Menu.disabledForeground $colors(fg.disabled)
       option add *Menu.selectColor $colors(fg.fg)
+      option add *Menu.relief $colors(menu.relief)
+      # don't scale the borderwidth here
+      option add *Menu.borderWidth 1
       return
     }
 
@@ -3485,12 +3506,15 @@ namespace eval ::ttk::awthemes {
       dict set vars(cache.menu) $w 1
     }
 
-    $w configure -background $colors(bg.bg)
+    $w configure -background $colors(menu.bg)
     $w configure -foreground $colors(fg.fg)
     $w configure -activebackground $colors(select.bg)
     $w configure -activeforeground $colors(select.fg)
     $w configure -disabledforeground $colors(fg.disabled)
     $w configure -selectcolor $colors(fg.fg)
+    $w configure -relief $colors(menu.relief)
+    # don't scale the borderwidth here
+    $w configure -borderwidth 1
   }
 
   proc setListboxColors { w {isforcombobox 0} {theme {}} } {
@@ -3508,10 +3532,12 @@ namespace eval ::ttk::awthemes {
       option add *Listbox.background $colors(entrybg.bg)
       option add *Listbox.foreground $colors(entryfg.fg)
       option add *Listbox.disabledForeground $colors(fg.disabled)
+      option add *Listbox.selectBorderWidth 0
       option add *Listbox.selectBackground $colors(select.bg)
       option add *Listbox.selectForeground $colors(select.fg)
       option add *Listbox.highlightColor $colors(focus.color)
       option add *Listbox.highlightBackground $colors(bg.bg)
+      option add *Listbox.activeStyle none
       return
     }
 
@@ -3524,17 +3550,20 @@ namespace eval ::ttk::awthemes {
     $w configure -background $colors(entrybg.bg)
     $w configure -foreground $colors(entryfg.fg)
     $w configure -disabledforeground $colors(fg.disabled)
+    $w configure -selectborderwidth 0
     $w configure -selectbackground $colors(select.bg)
     $w configure -selectforeground $colors(select.fg)
     $w configure -highlightcolor $colors(focus.color)
     $w configure -highlightbackground $colors(bg.bg)
+    $w configure -activestyle none
     if { $isforcombobox } {
       # Want a border for the combobox drop-down.
       # The listbox border does not seem to have a method to change
       # its color.
       # -relief solid doesn't look too bad, but seems to only have
       # black as a color, and this doesn't always match the theme.
-      $w configure -borderwidth 1p
+      # don't scale the borderwidth here
+      $w configure -borderwidth 1
       if { $colors(is.dark) } {
         $w configure -relief solid
       }
@@ -3557,23 +3586,28 @@ namespace eval ::ttk::awthemes {
     }
 
     set tbg $colors(bg.bg)
+    set tfg $colors(fg.fg)
     if { $useflag eq "-entry" } {
       set tbg $colors(entrybg.bg)
+      set tfg $colors(entryfg.fg)
     } elseif { $useflag eq "-background" } {
       set tbg $colors(bg.bg)
+      set tfg $colors(fg.fg)
     } elseif { $w ne "-optiondb" } {
       # if the user specifies -optiondb for the window, there is
       # no way to tell what color they want for the text widget
       if { [$w cget -state] eq "normal" } {
         set tbg $colors(entrybg.bg)
+        set tfg $colors(entryfg.fg)
       } else {
         set tbg $colors(bg.bg)
+        set tfg $colors(fg.fg)
       }
     }
 
     if { $w eq "-optiondb" } {
       option add *Text.background $tbg
-      option add *Text.foreground $colors(entryfg.fg)
+      option add *Text.foreground $tfg
       option add *Text.selectForeground $colors(select.fg)
       option add *Text.selectBackground $colors(select.bg)
       option add *Text.inactiveSelectBackground $colors(select.bg.inactive)
@@ -3583,7 +3617,7 @@ namespace eval ::ttk::awthemes {
     }
 
     $w configure -background $tbg
-    $w configure -foreground $colors(entryfg.fg)
+    $w configure -foreground $tfg
     $w configure -selectforeground $colors(select.fg)
     $w configure -selectbackground $colors(select.bg)
     $w configure -inactiveselectbackground $colors(select.bg.inactive)
@@ -3772,11 +3806,13 @@ namespace eval ::themeutils {
       bg        button.active                 button                  color
       bg        button.active.focus           button.active           color
       bg        button.pressed                button                  color
+      bg        menu.bg                       {bg.bg 0.9}             black
       bg        tab.active                    bg.light                color
       bg        tab.box                       bg.bg                   color
       bg        tab.disabled                  bg.darker               color
       bg        tab.inactive                  bg.dark                 color
       bg        tab.selected                  bg.bg                   color
+      bg        toolbutton.bg                 {bg.bg 0.8}             black
       fg        fg.disabled                   {fg.fg 0.65}            disabled
       fg        fg.fg                         -                       base
       entrybg   entrybg.bg                    bg.dark                 color
@@ -3838,6 +3874,7 @@ namespace eval ::themeutils {
       other     entry.image.border            {1 1}                   static
       other     entry.image.padding           {0 0}                   static
       other     entry.padding                 {3 1}                   static
+      other     menu.relief                   raised                  static
       other     menubutton.image.padding      {0 0}                   static
       other     menubutton.padding            {3 0}                   static
       other     menubutton.relief             none                    static

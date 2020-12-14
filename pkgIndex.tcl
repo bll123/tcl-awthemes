@@ -1,4 +1,4 @@
-package ifneeded awthemes 10.0.0 \
+package ifneeded awthemes 10.1.0 \
     [list source [file join $dir awthemes.tcl]]
 package ifneeded colorutils 4.8 \
     [list source [file join $dir colorutils.tcl]]
@@ -6,21 +6,21 @@ package ifneeded awarc 1.5 \
     [list source [file join $dir awarc.tcl]]
 package ifneeded ttk::theme::awarc 1.5 \
     [list source [file join $dir awarc.tcl]]
-package ifneeded awblack 7.7 \
+package ifneeded awblack 7.8 \
     [list source [file join $dir awblack.tcl]]
-package ifneeded ttk::theme::awblack 7.7 \
+package ifneeded ttk::theme::awblack 7.8 \
     [list source [file join $dir awblack.tcl]]
 package ifneeded awbreeze 1.8 \
     [list source [file join $dir awbreeze.tcl]]
 package ifneeded ttk::theme::awbreeze 1.8 \
     [list source [file join $dir awbreeze.tcl]]
-package ifneeded awclearlooks 1.2 \
+package ifneeded awclearlooks 1.3 \
     [list source [file join $dir awclearlooks.tcl]]
-package ifneeded ttk::theme::awclearlooks 1.2 \
+package ifneeded ttk::theme::awclearlooks 1.3 \
     [list source [file join $dir awclearlooks.tcl]]
-package ifneeded awdark 7.10 \
+package ifneeded awdark 7.11 \
     [list source [file join $dir awdark.tcl]]
-package ifneeded ttk::theme::awdark 7.10 \
+package ifneeded ttk::theme::awdark 7.11 \
     [list source [file join $dir awdark.tcl]]
 package ifneeded awlight 7.9 \
     [list source [file join $dir awlight.tcl]]

@@ -347,7 +347,12 @@ proc main { } {
   }
 
   if { ! $vars(optiondflt) } {
-    ::ttk::style theme use $vars(theme)
+    try {
+      ::ttk::style theme use $vars(theme)
+    } on error {err res} {
+      puts $res
+      puts "themes: [::ttk::style theme names]"
+    }
   }
 
   set vars(havecbt) false
@@ -398,16 +403,25 @@ proc main { } {
 
   $vars(mainW) configure -background [::ttk::style lookup TFrame -background]
 
-  $vars(menucmd) $vars(mainW).mb -font MenuFont {*}$vars(topmenuargs) {*}$vars(menuargs)
+  $vars(menucmd) $vars(mainW).mb -font MenuFont \
+      {*}$vars(topmenuargs) {*}$vars(menuargs)
   if { $vars(haveflex) } {
     pack $vars(mainW).mb -in $vars(mainW) -side top -fill x -anchor nw -pady 0 -padx 0 -expand false
   } else {
     $vars(mainW) configure -menu $vars(mainW).mb
   }
 
-  $vars(menucmd) $vars(mainW).mb_example -tearoff 0 -font MenuFont {*}$vars(menuargs)
+  $vars(menucmd) $vars(mainW).mb_cascade -tearoff 0 -font MenuFont
+  $vars(mainW).mb_cascade add command -label Menu-3
+  $vars(mainW).mb_cascade add command -label Menu-4
+
+  $vars(menucmd) $vars(mainW).mb_example -tearoff 0 \
+      -font MenuFont {*}$vars(menuargs)
   $vars(mainW).mb_example add command -label Menu-1
   $vars(mainW).mb_example add command -label Menu-2
+  $vars(mainW).mb_example add cascade -label Cascade \
+      -menu $vars(mainW).mb_cascade
+  $vars(mainW).mb_example add command -label Exit -command exit
   $vars(mainW).mb add cascade -label Example -menu $vars(mainW).mb_example
 
   $vars(menucmd) $vars(mainW).mb_b -tearoff 0 -font MenuFont {*}$vars(menuargs)
@@ -421,7 +435,7 @@ proc main { } {
   $vars(mainW).mb add cascade -label widgets -menu $vars(mainW).mb_widgets
 
   foreach {w} [list $vars(mainW).mb $vars(mainW).mb_example \
-      $vars(mainW).mb_widgets] {
+      $vars(mainW).mb_widgets $vars(mainW).mb_cascade] {
     confMenu $w
   }
 
@@ -438,7 +452,7 @@ proc main { } {
   ::ttk::frame $vars(mainW).four
   $vars(mainW).nb add $vars(mainW).four -text {Treeview}
   ::ttk::frame $vars(mainW).five
-  $vars(mainW).nb add $vars(mainW).five -text {Menubutton}
+  $vars(mainW).nb add $vars(mainW).five -text {Buttons}
   ::ttk::frame $vars(mainW).six
   $vars(mainW).nb add $vars(mainW).six -text {Listbox}
   if { ! $vars(notable) && $vars(havetablelist) } {
@@ -864,14 +878,14 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   $vars(mainW).tv insert $id 1 -text {subitem 2-2} -values {z z z}
   $vars(mainW).tv insert $id 2 -text {subitem 2-3} -values {& & &}
 
-  ::ttk::frame $vars(mainW).menubar -borderwidth 0 -takefocus 0
-  pack $vars(mainW).menubar -in $vars(mainW).five -side top -fill x
+  ::ttk::labelframe $vars(mainW).five.menubar -text { Menu Buttons }
+  grid $vars(mainW).five.menubar -sticky nw -pady 2p -padx 3p
 
-  ::ttk::menubutton $vars(mainW).menubar.file -text File \
+  ::ttk::menubutton $vars(mainW).five.menubar.file -text File \
       -underline 0 -menu $vars(mainW).menubar_file_m
-  ::ttk::menubutton $vars(mainW).menubar.edit -text Edit \
+  ::ttk::menubutton $vars(mainW).five.menubar.edit -text Edit \
       -underline 0 -menu $vars(mainW).menubar_edit_m
-  ::ttk::menubutton $vars(mainW).menubar.dis -text Disabled \
+  ::ttk::menubutton $vars(mainW).five.menubar.dis -text Disabled \
       -underline 0 -menu $vars(mainW).menubar_dis_m -state disabled
 
   $vars(menucmd) $vars(mainW).menubar_file_m -tearoff 0  -font MenuFont {*}$vars(menuargs)
@@ -891,21 +905,28 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   confMenu $vars(mainW).menubar_edit_m
 
   $vars(menucmd) $vars(mainW).menubar_dis_m -tearoff 0 -font MenuFont {*}$vars(menuargs)
-  $vars(mainW).menubar_dis_m add command -label "xyzzy"
-  $vars(mainW).menubar_dis_m add command -label "plugh"
   confMenu $vars(mainW).menubar_dis_m
 
-  ::ttk::button $vars(mainW).menubar.tba -text {Toolbutton A} -style Toolbutton
-  ::ttk::button $vars(mainW).menubar.tbb -text {TB-B} -style Toolbutton
-  ::ttk::button $vars(mainW).menubar.tbc -text {Toolbutton C} -style Toolbutton -state disabled
+  ::ttk::labelframe $vars(mainW).five.tb -text { Toolbuttons }
+  ::ttk::button $vars(mainW).five.tb.tba -text {Toolbutton A} -style Toolbutton
+  ::ttk::button $vars(mainW).five.tb.tbb -text {TB-B} -style Toolbutton
+  ::ttk::button $vars(mainW).five.tb.tbc -text {Toolbutton C} -style Toolbutton -state disabled
 
-  grid $vars(mainW).menubar.file \
-      $vars(mainW).menubar.edit \
-      $vars(mainW).menubar.dis \
-      $vars(mainW).menubar.tba \
-      $vars(mainW).menubar.tbb \
-      $vars(mainW).menubar.tbc \
-      -sticky news
+  grid $vars(mainW).five.menubar.file \
+      $vars(mainW).five.menubar.edit \
+      $vars(mainW).five.menubar.dis \
+      -sticky w -padx 1p -pady 1p
+
+  grid $vars(mainW).five.tb -sticky nw -pady 2p -padx 3p
+  grid $vars(mainW).five.tb.tba \
+      $vars(mainW).five.tb.tbb \
+      $vars(mainW).five.tb.tbc \
+      -sticky w  -padx 1p -pady 1p
+
+  ::ttk::labelframe $vars(mainW).five.cbf -text { Checkbutton with Toolbutton Style }
+  grid $vars(mainW).five.cbf -sticky nw -pady 2p -padx 3p
+  ::ttk::checkbutton $vars(mainW).five.cbf.cbtb -text { Checkbutton as Toolbutton } -style Toolbutton
+  grid $vars(mainW).five.cbf.cbtb -sticky w  -padx 1p -pady 1p
 
   ::ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
   ::ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]
@@ -998,11 +1019,11 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
           -state $s -style HelpButton
 
       grid $vars(mainW).dbib$k $vars(mainW).dbimg$k $vars(mainW).dbrb$k \
-          -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
+          -in $vars(mainW).five -sticky w -padx 3p -pady 3p
       grid $vars(mainW).dbrr$k $vars(mainW).dbdisc$k $vars(mainW).dbg$k \
           $vars(mainW).dbhelp$k \
-          -in $vars(mainW).dbf$k -sticky w -padx 3p -pady 3p
-      grid $vars(mainW).dbf$k -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
+          -in $vars(mainW).five -sticky w -padx 3p -pady 3p
+      grid $vars(mainW).five -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     }
   }
 }
