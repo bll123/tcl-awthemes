@@ -143,6 +143,7 @@ proc main { } {
   set vars(optiondb) false
   set vars(optionnone) false
   set vars(optiondflt) false
+  set vars(testharald) false
   for {set idx 0} {$idx < [llength $::argv]} {incr idx} {
     set a [lindex $::argv $idx]
     switch -exact -- $a {
@@ -208,6 +209,9 @@ proc main { } {
       -styledemo {
         set vars(styledemo) true
       }
+      -testharald {
+        set vars(testharald) true
+      }
       -ttkscale {
         incr idx
         set vars(tkscaling) [lindex $::argv $idx]
@@ -268,6 +272,13 @@ proc main { } {
     }
   }
 
+  if { $vars(testharald) } {
+    ::themeutils::setThemeColors awdark\
+        style.progressbar rounded-line \
+        style.scale circle-rev \
+        style.scrollbar-grip none \
+        scrollbar.has.arrows false
+  }
   if { $vars(havethemeutils) && $vars(gc) ne {} } {
     ::themeutils::setHighlightColor $vars(theme) $vars(gc)
   }

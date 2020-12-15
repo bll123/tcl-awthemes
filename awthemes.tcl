@@ -121,6 +121,11 @@
 #
 # Change History
 #
+# 10.1.1 (2020-12-15) ** Pre-release **
+#   - Menus: add support for menu foreground (menu.fg).
+#   - Option database initialization: Do not initialize the menu colors
+#     on Windows.  Using 'setMenuColors' on Windows leavs the top menubar
+#     a light color, and the menu colors dark with a large border.
 # 10.1.0 (2020-12-14) ** Pre-release **
 #   - setTextColors: Set text foreground colors appropriately.
 #   - Toolbutton: set selected color.
@@ -423,7 +428,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.1.0
+set ::themeutils::awversion 10.1.1
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -727,7 +732,9 @@ namespace eval ::ttk::awthemes {
   proc initOptiondb { theme } {
     # ttk::style theme use has not been run yet, so the
     # theme must be supplied.
-    setMenuColors -optiondb $theme
+    if { $::tcl_platform(platform) ne "windows" } {
+      setMenuColors -optiondb $theme
+    }
     setListboxColors -optiondb 0 $theme
     setTextColors -optiondb -entry $theme
   }
@@ -3491,11 +3498,11 @@ namespace eval ::ttk::awthemes {
 
     if { $w eq "-optiondb" } {
       option add *Menu.background $colors(menu.bg)
-      option add *Menu.foreground $colors(fg.fg)
+      option add *Menu.foreground $colors(menu.fg)
       option add *Menu.activeBackground $colors(select.bg)
       option add *Menu.activeForeground $colors(select.fg)
       option add *Menu.disabledForeground $colors(fg.disabled)
-      option add *Menu.selectColor $colors(fg.fg)
+      option add *Menu.selectColor $colors(menu.fg)
       option add *Menu.relief $colors(menu.relief)
       # don't scale the borderwidth here
       option add *Menu.borderWidth 1
@@ -3507,11 +3514,11 @@ namespace eval ::ttk::awthemes {
     }
 
     $w configure -background $colors(menu.bg)
-    $w configure -foreground $colors(fg.fg)
+    $w configure -foreground $colors(menu.fg)
     $w configure -activebackground $colors(select.bg)
     $w configure -activeforeground $colors(select.fg)
     $w configure -disabledforeground $colors(fg.disabled)
-    $w configure -selectcolor $colors(fg.fg)
+    $w configure -selectcolor $colors(menu.fg)
     $w configure -relief $colors(menu.relief)
     # don't scale the borderwidth here
     $w configure -borderwidth 1
@@ -3815,6 +3822,7 @@ namespace eval ::themeutils {
       bg        toolbutton.bg                 {bg.bg 0.8}             black
       fg        fg.disabled                   {fg.fg 0.65}            disabled
       fg        fg.fg                         -                       base
+      fg        menu.fg                       fg.fg                   color
       entrybg   entrybg.bg                    bg.dark                 color
       entrybg   entrybg.checkbutton           entrybg.bg              color
       entrybg   entrybg.disabled              {entrybg.bg 0.6}        disabled
