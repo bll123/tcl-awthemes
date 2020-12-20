@@ -26,7 +26,8 @@ proc confMenu { w } {
   variable vars
 
   if { [info commands ::ttk::theme::${vars(theme)}::setMenuColors] ne {} } {
-    if { ! $vars(optiondb) && ! $vars(optionnone) } {
+    if { ($vars(haveflex) || $::tcl_platform(platform) ne "windows") &&
+         ! $vars(optiondb) && ! $vars(optionnone) } {
       ::ttk::theme::${vars(theme)}::setMenuColors $w
     }
   } elseif { [tk windowingsystem] ne "aqua" } {
