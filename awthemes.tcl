@@ -121,6 +121,8 @@
 #
 # Change History
 #
+# 10.1.2 (2020-12-20)
+#   - Production Release of 10.1.1 and 10.1.0
 # 10.1.1 (2020-12-15) ** Pre-release **
 #   - Menus: add support for menu foreground (menu.fg).
 #   - Option database initialization: Do not initialize the menu colors
