@@ -126,8 +126,10 @@
 # 10.1.1 (2020-12-15) ** Pre-release **
 #   - Menus: add support for menu foreground (menu.fg).
 #   - Option database initialization: Do not initialize the menu colors
-#     on Windows.  Using 'setMenuColors' on Windows leavs the top menubar
+#     on Windows.  Using 'setMenuColors' on Windows leaves the top menubar
 #     a light color, and the menu colors dark with a large border.
+#     Use: ::ttk::theme::${theme}::setMenuColors -optiondb
+#     to apply anyways.
 # 10.1.0 (2020-12-14) ** Pre-release **
 #   - setTextColors: Set text foreground colors appropriately.
 #   - Toolbutton: set selected color.

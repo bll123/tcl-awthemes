@@ -79,8 +79,10 @@ demottk.tcl options:
 10.1.2 (2020-12-20)
    - Menus: add support for menu foreground (menu.fg).
    - Option database initialization: Do not initialize the menu colors
-     on Windows.  Using 'setMenuColors' on Windows leavs the top menubar
+     on Windows.  Using 'setMenuColors' on Windows leaves the top menubar
      a light color, and the menu colors dark with a large border.
+     Use: ::ttk::theme::${theme}::setMenuColors -optiondb
+     to apply anyways.
    - setTextColors: Set text foreground colors appropriately.
    - Toolbutton: set selected color.
    - Menus: add support for menu relief (menu.relief).  Default to 'raised'.
