@@ -7,7 +7,7 @@
 .\"
 .TH awthemes n7 "2 Dec 2020"
 .SH Name
-awthemes n7 \- disk information
+awthemes n7 \- themes for ttk
 .SH Description
 The awthemes packages provides themes for use with Tcl/Tk.  The \fIawdark\fP
 and \fIawlight\fP themes are available when the \fItksvg\fP package
@@ -37,9 +37,14 @@ TCLLIBPATH=$(pwd) tclsh demottk.tcl \\
 .RE
 .SH API
 .TP
-::ttk::theme::${theme}::setMenuColors \fI.menuwidget
+::ttk::theme::${theme}::setMenuColors {\-optiondb|\fI.menuwidget\fP}
 Sets the menu colors for a widget and also changes any checkbutton and
 radiobutton types to use thematic images.
+.PP
+When \-optiondb is specified, the option database is initialized with the
+menu colors.  Starting with version 10.0.0, this is automatic.  Starting
+with version 10.1.2, this is no longer the case for the Windows operating
+system.  On Windows,
 .TP
 ::ttk::theme::${theme}::setListboxColors \fI.listboxwidget\fP
 Sets the listbox widget colors.
@@ -62,7 +67,7 @@ the normal background color.
 ::ttk::theme::${theme}::scaledStyle \fIprefix\fP \fIdefaultfont\fP \fIlistingfont\fP
 Creates a set of scaled widgets with a new style name.
 .br
-\fIprefix\fP is the prefix for the name of the new style.
+\fIprefix\fP is the prefix prepended to the names of the new styles.
 .br
 \fIdefaultfont\fP \- the standard font name (default font size).
 .br
@@ -107,6 +112,14 @@ graphics.color #007000 \\
 focus.color #007000
 .RE
 package require awdark
+.PP
+package require awthemes
+.br
+::themeutils::setThemeColors awdark \\
+.RS
+scale.factor 1.5
+.RE
+package require awdark
 .RE
 .TP
 ::ttk::theme::${theme}::getColor \fItheme\fP \fIcolorname\fP
@@ -131,7 +144,8 @@ When the \fItksvg\fP package is present, the awthemes package uses the
 .br
 [tk scaling] setting to scale the graphics.
 .PP
-The scaling may also be adjusted by the user:
+The scaling may also be adjusted by the user using the \fIscale.factor\fP
+option.  This scaling factor is applied in addition to [tk scaling].
 .PP
 .RS
 package require awthemes
