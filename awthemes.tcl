@@ -432,7 +432,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.1.1
+set ::themeutils::awversion 10.1.2
 package provide awthemes $::themeutils::awversion
 
 package require Tk
