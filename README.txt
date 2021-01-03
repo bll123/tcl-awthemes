@@ -76,6 +76,10 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.2.0 (2021-01-02)
+   - Add 'getScaleFactor' procedure so that the user can scale
+     their images appropriately.
+
 10.1.2 (2020-12-20)
    - Menus: add support for menu foreground (menu.fg).
    - Option database initialization: Do not initialize the menu colors

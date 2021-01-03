@@ -99,6 +99,22 @@ package require awthemes
 package require awdark
 .RE
 .TP
+::ttk::theme::${theme}::getScaleFactor [\fIscaled-style-prefix\fP]
+Gets the scaling factor.  For a scaled style, specify the prefix name.
+For use by the end user so that other images can be scaled appropriately.
+.PP
+.RS
+set theme [ttk::style theme use]
+.br
+set sf [::ttk::theme::${theme}::getScaleFactor]
+.PP
+::ttk::theme::${theme}::scaledStyle Smaller \\
+.RS
+TkDefaultFont mysmallfont
+.RE
+set sf [::ttk::theme::${theme}::getScaleFactor Smaller]
+.RE
+.TP
 ::themeutils::setThemeColors \fItheme\fP \fIcolorname\fP \fIcolor\fP ...
 A low level routine that allows modification of any color or option.
 .PP

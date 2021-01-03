@@ -85,6 +85,16 @@
 #
 #     Changes the graphics, focus and select background colors.
 #
+#   ::ttk::theme::${theme}::getScaleFactor [scaled-style-prefix]
+#     Gets the scaling factor.  For a scaled style, specify the prefix name.
+#     For use by the end user so that other images can be scaled appropriately.
+#
+#       set theme [ttk::style theme use]
+#       set sf [::ttk::theme::${theme}::getScaleFactor]
+#
+#       ::ttk::theme::${theme}::scaledStyle Smaller TkDefaultFont mysmallfont
+#       set sf [::ttk::theme::${theme}::getScaleFactor Smaller]
+#
 #   ::themeutils::setThemeColors <theme> {<colorname> <color> ...}
 #     A lower level routine that allows modification of any of the colors.
 #
@@ -121,6 +131,9 @@
 #
 # Change History
 #
+# 10.2.0 (2021-01-02)
+#   - Add 'getScaleFactor' procedure so that the user can scale
+#     their images appropriately.
 # 10.1.2 (2020-12-20)
 #   - Production Release of 10.1.1 and 10.1.0
 # 10.1.1 (2020-12-15) ** Pre-release **
@@ -432,7 +445,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.1.2
+set ::themeutils::awversion 10.2.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -485,6 +498,7 @@ namespace eval ::ttk::awthemes {
     interp alias {} ::ttk::theme::${theme}::setTextColors {} ::ttk::awthemes::setTextColors
     interp alias {} ::ttk::theme::${theme}::hasImage {} ::ttk::awthemes::hasImage
     interp alias {} ::ttk::theme::${theme}::getColor {} ::ttk::awthemes::getColor
+    interp alias {} ::ttk::theme::${theme}::getScaleFactor {} ::ttk::awthemes::getScaleFactor
 
     foreach {var} {colors images imgdata vars} {
       namespace upvar ::ttk::theme::${theme} $var $var
@@ -3408,6 +3422,20 @@ namespace eval ::ttk::awthemes {
     return $rc
   }
 
+  proc getScaleFactor { {pfx {}} } {
+    variable currtheme
+    set currtheme [::ttk::style theme use]
+    foreach {var} {colors images imgdata vars} {
+      namespace upvar ::ttk::theme::$currtheme $var $var
+    }
+
+    if { $pfx ne {} } {
+      append pfx .
+    }
+    set sf [expr {$vars(scale.factor)*$colors(${pfx}scale.factor)}]
+    return $sf
+  }
+
   proc setBackground { bcol {currtheme {}} } {
     set hastheme false
     if { $currtheme eq {} } {
@@ -3659,6 +3687,7 @@ namespace eval ::ttk::awthemes {
     }
     set sfx {}
     if { $pfx ne {} } {
+      set colors(${pfx}.scale.factor) $sf
       set sfx -$pfx
       set pfx $pfx.
     }
