@@ -30,7 +30,7 @@ proc confMenu { w } {
          ! $vars(optiondb) && ! $vars(optionnone) } {
       ::ttk::theme::${vars(theme)}::setMenuColors $w
     }
-  } elseif { [tk windowingsystem] ne "aqua" } {
+  } elseif { ! [regexp {^aqua(light|dark)?$} $vars(theme)] } {
     set c [::ttk::style lookup $vars(mainW) -background]
     if { $c ne {} } {
       $w configure -background $c
@@ -228,7 +228,7 @@ proc main { } {
     }
   }
 
-  if { $vars(theme) eq "aqua" } {
+  if { [regexp {^aqua(light|dark)?$} $vars(theme)] } {
     set vars(sizegrip) true
   }
 
@@ -313,7 +313,6 @@ proc main { } {
   }
 
   set loaded false
-
   if { ! $loaded } {
     if { $vars(theme) in [::ttk::style theme names] } {
       # built-in themes
@@ -357,6 +356,7 @@ proc main { } {
       }
     }
   }
+
 
   if { ! $vars(optiondflt) } {
     try {
@@ -423,7 +423,8 @@ proc main { } {
     $vars(mainW) configure -menu $vars(mainW).mb
   }
 
-  $vars(menucmd) $vars(mainW).mb_cascade -tearoff 0 -font MenuFont
+  $vars(menucmd) $vars(mainW).mb_cascade -tearoff 0 \
+      -font MenuFont {*}$vars(menuargs)
   $vars(mainW).mb_cascade add command -label Menu-3
   $vars(mainW).mb_cascade add command -label Menu-4
 
@@ -762,12 +763,12 @@ proc main { } {
 
     set elsizegrip false
     set sgimg {}
-    if { [tk windowingsystem] eq "aqua" &&
+    if { [regexp {^aqua(light|dark)?$} $vars(theme)] &&
         $vars(havetksvg) } {
       catch { package require colorutils }
     }
 
-    if { [tk windowingsystem] eq "aqua" &&
+    if { [regexp {^aqua(light|dark)?$} $vars(theme)] &&
         ! $elsizegrip &&
         ! [catch {package present colorutils}] } {
       # aqua doesn't have a good sizegrip
@@ -801,7 +802,7 @@ proc main { } {
 
   ::ttk::button $vars(mainW).wrap -text Wrap -command twrap
   pack $vars(mainW).wrap -in $vars(mainW).two -side bottom -anchor se
-  if { $vars(theme) eq "aqua" } {
+  if { [regexp {^aqua(light|dark)?$} $vars(theme)] } {
     ::ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview]
     ::ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview]
   } else {
@@ -846,7 +847,7 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   }
   pack $vars(mainW).pw -in $vars(mainW).three -fill both -expand true
   set ftype ::ttk::frame
-  if { $vars(theme) eq "aqua" } {
+  if { [regexp {^aqua(light|dark)?$} $vars(theme)] } {
     set ftype ::ttk::labelframe
   }
   $ftype $vars(mainW).p1
@@ -1035,7 +1036,6 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
       grid $vars(mainW).dbrr$k $vars(mainW).dbdisc$k $vars(mainW).dbg$k \
           $vars(mainW).dbhelp$k \
           -in $vars(mainW).five -sticky w -padx 3p -pady 3p
-      grid $vars(mainW).five -in $vars(mainW).lf$k -sticky ew -padx 3p -pady 3p -columnspan 4
     }
   }
 }

@@ -89,12 +89,6 @@
 #     Gets the scaling factor.  For a scaled style, specify the prefix name.
 #     For use by the end user so that other images can be scaled appropriately.
 #
-#       set theme [ttk::style theme use]
-#       set sf [::ttk::theme::${theme}::getScaleFactor]
-#
-#       ::ttk::theme::${theme}::scaledStyle Smaller TkDefaultFont mysmallfont
-#       set sf [::ttk::theme::${theme}::getScaleFactor Smaller]
-#
 #   ::themeutils::setThemeColors <theme> {<colorname> <color> ...}
 #     A lower level routine that allows modification of any of the colors.
 #
