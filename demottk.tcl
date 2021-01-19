@@ -318,26 +318,28 @@ proc main { } {
       # built-in themes
       puts "built-in theme or theme specified by option db"
       set loaded true
-    } elseif { $::notksvg || ! $vars(havetksvg) } {
-      # try a package require to grab older themes using
-      # the ::ttk::theme namespace.
-      # many themes use this namespace in the 'package require'.
-      try {
-        package require ttk::theme::$vars(theme)
-        puts "loaded via: package require ttk::theme::$vars(theme)"
-        set loaded true
-      } on error { err res } {
-        # do not need this error
-      }
-    } else {
-      # try a package require to grab by theme name w/o leading namespace
-      try {
-        package require $vars(theme)
-        puts "loaded via: package require $vars(theme)"
-        set loaded true
-      } on error {err res} {
-        puts $err
-      }
+    }
+  }
+  if { ! $loaded } {
+    # try a package require to grab older themes using
+    # the ::ttk::theme namespace.
+    # many themes use this namespace in the 'package require'.
+    try {
+      package require ttk::theme::$vars(theme)
+      puts "loaded via: package require ttk::theme::$vars(theme)"
+      set loaded true
+    } on error { err res } {
+      # do not need this error
+    }
+  }
+  if { ! $loaded } {
+    # try a package require to grab by theme name w/o leading namespace
+    try {
+      package require $vars(theme)
+      puts "loaded via: package require $vars(theme)"
+      set loaded true
+    } on error {err res} {
+      puts $err
     }
   }
   if { ! $loaded } {
