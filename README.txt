@@ -76,6 +76,9 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.2.1 (2021-02-11)
+   - Set text area -insertbackground so that the cursor has the proper color.
+
 10.2.0 (2021-01-02)
    - Add 'getScaleFactor' procedure so that the user can scale
      their images appropriately.
