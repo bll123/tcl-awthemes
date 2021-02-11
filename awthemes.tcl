@@ -125,6 +125,8 @@
 #
 # Change History
 #
+# 10.2.1 (2021-02-11)
+#   - Set text area -insertbackground so that the cursor has the proper color.
 # 10.2.0 (2021-01-02)
 #   - Add 'getScaleFactor' procedure so that the user can scale
 #     their images appropriately.
@@ -439,7 +441,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.2.0
+set ::themeutils::awversion 10.2.1
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -3643,6 +3645,7 @@ namespace eval ::ttk::awthemes {
       option add *Text.foreground $tfg
       option add *Text.selectForeground $colors(select.fg)
       option add *Text.selectBackground $colors(select.bg)
+      option add *Text.insertBackground $tfg
       option add *Text.inactiveSelectBackground $colors(select.bg.inactive)
       option add *Text.highlightColor $colors(focus.color)
       option add *Text.highlightBackground $colors(bg.bg)
@@ -3653,6 +3656,7 @@ namespace eval ::ttk::awthemes {
     $w configure -foreground $tfg
     $w configure -selectforeground $colors(select.fg)
     $w configure -selectbackground $colors(select.bg)
+    $w configure -insertbackground $tfg
     $w configure -inactiveselectbackground $colors(select.bg.inactive)
     $w configure -highlightcolor $colors(focus.color)
     $w configure -highlightbackground $colors(bg.bg)

@@ -63,13 +63,15 @@ proc confMenu { w } {
 proc twrap { } {
   variable vars
 
-  set c [$vars(mainW).text cget -wrap]
-  if { $c eq "none" } {
-    set c word
-  } else {
-    set c none
+  foreach {nm} [list textdisabled textenabled] {
+    set c [$vars(mainW).two.${nm} cget -wrap]
+    if { $c eq "none" } {
+      set c word
+    } else {
+      set c none
+    }
+    $vars(mainW).two.${nm} configure -wrap $c
   }
-  $vars(mainW).text configure -wrap $c
 }
 
 proc configureFonts { } {
@@ -802,35 +804,42 @@ proc main { } {
   ::ttk::sizegrip  $vars(mainW).sg
   pack $vars(mainW).sg -in $vars(mainW).one -side right -anchor se
 
-  ::ttk::button $vars(mainW).wrap -text Wrap -command twrap
-  pack $vars(mainW).wrap -in $vars(mainW).two -side bottom -anchor se
-  if { [regexp {^aqua(light|dark)?$} $vars(theme)] } {
-    ::ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview]
-    ::ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview]
-  } else {
-    ::ttk::scrollbar $vars(mainW).sbv -command [list $vars(mainW).text yview] -style Vertical.TScrollbar
-    ::ttk::scrollbar $vars(mainW).sbh -orient horizontal -command [list $vars(mainW).text xview] \
-        -style Horizontal.TScrollbar
-  }
-  pack $vars(mainW).sbv -in $vars(mainW).two -side right -fill y -expand false
-  pack $vars(mainW).sbh -in $vars(mainW).two -side bottom -fill x -expand false
+  set w $vars(mainW).two
+  ::ttk::button $w.wrap -text Wrap -command twrap
+  pack $w.wrap -in $w -side bottom -anchor se
   # change borderwidth to 1 for color testing
-  text $vars(mainW).text \
-      -xscrollcommand [list $vars(mainW).sbh set] \
-      -yscrollcommand [list $vars(mainW).sbv set] \
-      -wrap none \
-      -height 10 \
-      -relief flat \
-      -width 50 \
-      -highlightthickness 1 \
-      -font TextFont
-  if { ! $vars(optiondb) && ! $vars(optionnone) &&
-      [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
-    ::ttk::theme::${vars(theme)}::setTextColors $vars(mainW).text
-  }
-  bind $vars(mainW).text <MouseWheel> {%W yview scroll [expr {int(pow(-%D/240,3))}] units}
-  pack $vars(mainW).text -in $vars(mainW).two -fill both -expand true
-  $vars(mainW).text insert end {
+  foreach {nm} [list textdisabled textenabled] {
+    ::ttk::frame $w.${nm}frame
+    pack $w.${nm}frame -expand 1 -fill both -side top
+    if { [regexp {^aqua(light|dark)?$} $vars(theme)] } {
+      ::ttk::scrollbar $w.${nm}sbv \
+          -command [list $w.${nm} yview]
+      ::ttk::scrollbar $w.${nm}sbh \
+          -orient horizontal \
+          -command [list $w.${nm} xview]
+    } else {
+      ::ttk::scrollbar $w.${nm}sbv \
+          -command [list $w.${nm} yview] \
+          -style Vertical.TScrollbar
+      ::ttk::scrollbar $w.${nm}sbh \
+          -orient horizontal \
+          -command [list $w.${nm} xview] \
+          -style Horizontal.TScrollbar
+    }
+    pack $w.${nm}sbv -in $w.${nm}frame \
+        -side right -fill y -expand false
+    pack $w.${nm}sbh -in $w.${nm}frame \
+        -side bottom -fill x -expand false
+    text $w.$nm \
+        -xscrollcommand [list $w.${nm}sbh set] \
+        -yscrollcommand [list $w.${nm}sbv set] \
+        -wrap none \
+        -height 5 \
+        -relief flat \
+        -width 50 \
+        -highlightthickness 1 \
+        -font TextFont
+    $w.${nm} insert end {
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis non velit aliquam, malesuada nisi blandit, pellentesque ligula. Pellentesque convallis pulvinar justo ac blandit. Praesent scelerisque, risus vitae rhoncus feugiat, metus ante feugiat leo, sit amet iaculis dui urna vitae purus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris mollis libero at ipsum mollis, non aliquet nunc porta. Mauris auctor lobortis neque, at ullamcorper elit porttitor a. Aliquam eu porttitor ante. Sed arcu dolor, pretium non diam in, imperdiet pellentesque ipsum. Quisque sollicitudin nisl ex, sodales scelerisque nunc consequat volutpat. Vestibulum aliquet augue mauris, sit amet commodo urna consectetur interdum. Aenean dignissim tellus eu sollicitudin porta. Aliquam accumsan vel leo non iaculis. Sed pharetra, tortor non malesuada pellentesque, felis magna tempor turpis, nec tincidunt justo erat in justo. Aliquam congue, lectus nec pulvinar euismod, enim lorem venenatis tellus, vitae placerat magna ligula in leo. Praesent nisl lectus, ornare tristique consequat egestas, fermentum a urna. Morbi metus nulla, convallis ac orci a, imperdiet pretium purus.
 
 Aenean tincidunt dui lacinia urna sagittis bibendum. Maecenas eu vestibulum tellus, viverra tincidunt mi. Sed sollicitudin mattis mi, quis pellentesque urna. Ut auctor ligula eu lectus imperdiet, sed tempus massa tristique. Curabitur ac eros euismod, pellentesque sapien eget, pretium justo. Aliquam quis turpis nec tellus vehicula maximus vel ac urna. Proin efficitur purus erat, sed tristique enim faucibus ac. Nullam hendrerit tempor tincidunt. Duis id dolor enim.
@@ -841,6 +850,20 @@ Phasellus non ultricies mi. Aliquam erat volutpat. Ut sed mollis felis, nec impe
 
 Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit amet ligula vel, varius mattis ipsum. Praesent erat nisl, vulputate ut ultricies quis, accumsan sit amet diam. Nulla tempor, nunc in malesuada venenatis, purus erat blandit lectus, sit amet pretium arcu arcu id erat. Donec ante eros, sagittis nec tellus eget, porta faucibus nisl. Integer a ex sed felis varius finibus. In hac habitasse platea dictumst. Proin et nisl orci. Fusce mauris nulla, feugiat sit amet commodo viverra, posuere sit amet augue. Vestibulum congue ligula nec dolor dapibus scelerisque. Proin enim sem, congue et nibh nec, suscipit cursus ligula.
 }
+    if { $nm eq "textdisabled" } {
+      $w.${nm} insert 0.0 "state disabled\n\n"
+      $w.${nm} configure -state disabled
+    } else {
+      $w.${nm} insert 0.0 "state normal\n\n"
+      $w.${nm} configure -state normal
+    }
+    if { ! $vars(optiondb) && ! $vars(optionnone) &&
+        [info commands ::ttk::theme::${vars(theme)}::setTextColors] ne {} } {
+      ::ttk::theme::${vars(theme)}::setTextColors $w.${nm}
+    }
+    bind $w.${nm} <MouseWheel> {%W yview scroll [expr {int(pow(-%D/240,3))}] units}
+    pack $w.${nm} -in $w.${nm}frame -fill both -expand true
+  }
 
   ::ttk::panedwindow $vars(mainW).pw -orient horizontal
   if { [info commands ::ttk::theme::${vars(theme)}::setBackground] eq {} } {
