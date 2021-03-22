@@ -76,6 +76,13 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.3.0  2021-03-22
+   - Add awbreezedark by Bartek Jasicki
+   - Add active.color color for use by some widget themes.
+   - Internal changes to support active color.
+   - Fixed checkbutton width issues.
+   - Cleaned up treeview chevron widget theme.
+
 10.2.1 (2021-02-11)
    - Set text area -insertbackground so that the cursor has the proper color.
 
