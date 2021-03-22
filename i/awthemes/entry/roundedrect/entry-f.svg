@@ -9,27 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="21"
-   height="25"
-   viewBox="0 0 21 25"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="combo-entry-n-base.svg">
+   sodipodi:docname="entry-n-base.svg">
   <defs
-     id="defs2">
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath818">
-      <rect
-         style="opacity:1;fill:#110df9;fill-opacity:0.4545455;stroke:none;stroke-width:1.01184595;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-         id="rect820"
-         width="21.41358"
-         height="25.292702"
-         x="-3.3679047"
-         y="279.2453" />
-    </clipPath>
-  </defs>
+     id="defs2" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -37,24 +25,24 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.200015"
-     inkscape:cx="10.499804"
-     inkscape:cy="12.499992"
+     inkscape:zoom="24.624999"
+     inkscape:cx="11.999997"
+     inkscape:cy="11.999999"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     units="px"
-     inkscape:window-width="1146"
-     inkscape:window-height="769"
-     inkscape:window-x="51"
-     inkscape:window-y="64"
-     inkscape:window-maximized="0"
+     inkscape:pagecheckerboard="true"
      showborder="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:pagecheckerboard="true" />
+     inkscape:window-width="1163"
+     inkscape:window-height="896"
+     inkscape:window-x="210"
+     inkscape:window-y="59"
+     inkscape:window-maximized="0"
+     units="px" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -71,16 +59,14 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(2.7914897,-278.77778)">
+     transform="translate(205.86246,6.3041937)">
     <rect
-       style="fill:_FIELDBG_;fill-opacity:1;stroke:_ACTIVE_;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect814"
-       width="23"
-       height="23"
-       x="-2.3038268"
-       y="280.29053"
-       ry="2.4898877"
-       clip-path="url(#clipPath818)"
-       transform="matrix(1.0077916,0,0,1.0427303,0.0218395,-12.981029)" />
+       style="opacity:1;fill:_FIELDBG_;fill-opacity:1;stroke:_FOCUS_;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       id="rect815"
+       width="23.000004"
+       height="23.000002"
+       x="-205.36246"
+       y="-5.8041949"
+       ry="1.5837563" />
   </g>
 </svg>

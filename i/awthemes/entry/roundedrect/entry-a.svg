@@ -61,7 +61,7 @@
      id="layer1"
      transform="translate(205.86246,6.3041937)">
     <rect
-       style="opacity:1;fill:_FIELDBG_;fill-opacity:1;stroke:_FOCUS_;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:_FIELDBG_;fill-opacity:1;stroke:_ACTIVE_;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect815"
        width="23.000004"
        height="23.000002"
