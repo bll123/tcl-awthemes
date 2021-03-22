@@ -22,7 +22,7 @@ _HERE_
 done
 
 for f in \
-    awarc.tcl awblack.tcl awbreeze.tcl \
+    awarc.tcl awblack.tcl awbreeze.tcl awbreezedark.tcl \
     awclearlooks.tcl awdark.tcl awlight.tcl \
     awtemplate.tcl awwinxpblue.tcl \
     ; do

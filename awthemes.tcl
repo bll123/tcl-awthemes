@@ -125,6 +125,12 @@
 #
 # Change History
 #
+# 10.3.0  2021-03-22
+#   - Add awbreezedark by Bartek Jasicki
+#   - Add active.color color for use by some widget themes.
+#   - Internal changes to support active color.
+#   - Fixed checkbutton width issues.
+#   - Cleaned up treeview chevron widget theme.
 # 10.2.1 (2021-02-11)
 #   - Set text area -insertbackground so that the cursor has the proper color.
 # 10.2.0 (2021-01-02)
@@ -441,7 +447,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.2.1
+set ::themeutils::awversion 10.3.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -552,6 +558,7 @@ namespace eval ::ttk::awthemes {
         combo-arrow-down-d
         combo-arrow-down-n
         combo-button-a
+        combo-button-f
         combo-button-d
         combo-button-n
         combo-entry-a
@@ -593,6 +600,7 @@ namespace eval ::ttk::awthemes {
         sb-trough-vd
         sb-trough-vn
         scale-ha
+        scale-hf
         scale-hd
         scale-hn
         scale-hp
@@ -666,14 +674,16 @@ namespace eval ::ttk::awthemes {
       rb-ud                 rb-un
       rb-un-pad             rb-un
       rb-un-small           rb-un
-      scale-ha              scale-hn
+      scale-hf              scale-hn
+      scale-ha              scale-hf
       scale-hd              scale-hn
       scale-hp              scale-ha
-      # { a scale-va falls back to a scale-vn preferentially }
+      # { a scale-vf falls back to a scale-vn preferentially }
       # { over a scale-ha.   The scale-vn must do its fallback }
-      # { to a scale-hn afterwards so that the scale-va will }
+      # { to a scale-hn afterwards so that the scale-vf will }
       # { pick up the scale-ha image if there is no scale-vn. }
-      scale-va              {scale-vn scale-ha}
+      scale-vf              {scale-vn scale-ha}
+      scale-va              scale-vf
       scale-vn              scale-hn
       scale-vd              scale-vn
       scale-vp              scale-va
@@ -684,14 +694,15 @@ namespace eval ::ttk::awthemes {
       button-a              button-f
       button-af             button-a
       button-p              button-af
-      entry-a               entry-n
-      entry-f               entry-a
+      entry-f               entry-n
+      entry-a               entry-f
       entry-d               entry-n
       combo-entry-n         entry-n
-      combo-entry-a         entry-a
       combo-entry-d         entry-d
       combo-entry-f         entry-f
+      combo-entry-a         entry-a
       combo-button-a        combo-entry-a
+      combo-button-f        combo-entry-f
       combo-button-d        combo-entry-d
       combo-button-n        combo-entry-n
       sb-slider-hn          slider-hn
@@ -1217,8 +1228,8 @@ namespace eval ::ttk::awthemes {
 
       # in some themes the scale has a different color
       foreach {n} {
-          scale-ha scale-hd scale-hn scale-hp
-          scale-va scale-vd scale-vn scale-vp
+          scale-ha scale-hf scale-hd scale-hn scale-hp
+          scale-va scale-vf scale-vd scale-vn scale-vp
           } {
         foreach {oc nc} [list \
             _GC_        $colors(scale.color) \
@@ -1319,6 +1330,7 @@ namespace eval ::ttk::awthemes {
           regsub -all _MAINWIDTH_ $imgdata($n$sfx) $value imgdata($n$sfx)
         }
         foreach {oc nc} [list \
+            _ACTIVE_    $colors(active.color) \
             _ACCENT_    $colors(accent.color) \
             _BG_        $colors(bg.bg) \
             _BORD_      $colors(border) \
@@ -2116,8 +2128,8 @@ namespace eval ::ttk::awthemes {
           [list $images(button-n${sfx}) \
           disabled $images(button-d${sfx}) \
           {active focus !pressed !disabled} $images(button-af${sfx}) \
-          {active !pressed !disabled} $images(button-a${sfx}) \
           {focus !pressed !disabled} $images(button-f${sfx}) \
+          {active !pressed !disabled} $images(button-a${sfx}) \
           {pressed !disabled} $images(button-p${sfx})] \
           -sticky nsew \
           -border $imgbord \
@@ -2224,7 +2236,8 @@ namespace eval ::ttk::awthemes {
           -sticky $sticky \
           -border $imgbord
 
-      if { $vars(have.tksvg) && [info exists images(combo-entry-n)] &&
+      if { $vars(have.tksvg) &&
+          [info exists images(combo-entry-n)] &&
           [info exists images(combo-button-n)] } {
         # if there are entry images and button images, set up the
         # combobox as an entry and a readonly combobox as a button
@@ -2233,13 +2246,13 @@ namespace eval ::ttk::awthemes {
 
         ::ttk::style element create ${pfx}Combobox.field \
             image [list $images(combo-entry-n${sfx}) \
-            {focus readonly !disabled} $images(combo-button-a${sfx}) \
-            {hover readonly !disabled} $images(combo-button-a${sfx}) \
-            {readonly !disabled}  $images(combo-button-n${sfx}) \
             {readonly disabled}  $images(combo-button-d${sfx}) \
             {!readonly disabled} $images(combo-entry-d${sfx}) \
+            {focus readonly !disabled} $images(combo-button-f${sfx}) \
+            {hover readonly !disabled} $images(combo-button-a${sfx}) \
             {focus !readonly !disabled} $images(combo-entry-f${sfx}) \
             {hover !readonly !disabled} $images(combo-entry-a${sfx}) \
+            {readonly !disabled}  $images(combo-button-n${sfx}) \
             ] \
             -border $imgbord \
             -padding $imgpad \
@@ -2288,8 +2301,8 @@ namespace eval ::ttk::awthemes {
       ::ttk::style element create ${pfx}Entry.field image \
           [list $images(entry-n${sfx}) \
           disabled $images(entry-d${sfx}) \
-          {hover !disabled} $images(entry-a${sfx}) \
           {focus !disabled} $images(entry-f${sfx}) \
+          {hover !disabled} $images(entry-a${sfx}) \
           ] \
           -sticky nsew \
           -border $imgbord \
@@ -2761,8 +2774,8 @@ namespace eval ::ttk::awthemes {
       ::ttk::style element create ${pfx}Spinbox.field image \
           [list $images(entry-n${sfx}) \
           disabled $images(entry-d${sfx}) \
-          {hover !disabled} $images(entry-a${sfx}) \
           {focus !disabled} $images(entry-f${sfx}) \
+          {hover !disabled} $images(entry-a${sfx}) \
           ] \
           -sticky nsew \
           -border $imgbord \
@@ -3859,6 +3872,7 @@ namespace eval ::themeutils {
       entrybg   entrybg.disabled              {entrybg.bg 0.6}        disabled
       entryfg   entryfg.disabled              {entryfg.fg 0.6}        disabled
       entryfg   entryfg.fg                    fg.fg                   color
+      focus     active.color                  graphics.color          color
       focus     focus.color.combobox          focus.color             color
       focus     focus.color.entry             focus.color             color
       focus     focus.color                   graphics.color          color

@@ -2,7 +2,7 @@
 #
 #   arc:
 #     - selection colors are all blue.
-#     - button highlight color matches theme better.
+#     - button focus uses blue color rather than focus ring.
 #
 
 set ap [file normalize [file dirname [info script]]]
@@ -59,6 +59,7 @@ namespace eval ::ttk::theme::awarc {
     set colors(tab.inactive) $colors(bg.dark)
     set colors(border.button.active) $colors(bg.darker)
     set colors(button.anchor) {}
+    set colors(button.active) $colors(bg.lightest)
     set colors(notebook.tab.focusthickness) 3
     set colors(notebook.tab.padding) {3 0}
     set colors(button.image.padding) {6 3}
@@ -91,7 +92,7 @@ namespace eval ::ttk::theme::awarc {
 
   proc init { } {
     set theme awarc
-    set version 1.5
+    set version 1.6
     if { ([info exists ::notksvg] && $::notksvg) ||
         [catch {package present tksvg}] } {
       namespace delete ::ttk::theme::${theme}
