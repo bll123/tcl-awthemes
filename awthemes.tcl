@@ -125,6 +125,9 @@
 #
 # Change History
 #
+# 10.3.1  2021-06-10
+#   - Check for Tcl version 8.7
+#   - Update check for svg image support.
 # 10.3.0  2021-03-22
 #   - Add awbreezedark by Bartek Jasicki
 #   - Add active.color color for use by some widget themes.
@@ -447,12 +450,13 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.3.0
+set ::themeutils::awversion 10.3.1
 package provide awthemes $::themeutils::awversion
 
 package require Tk
 # set ::notksvg to true for testing purposes
-if { ! [info exists ::notksvg] || ! $::notksvg } {
+if { (! [info exists ::notksvg] || ! $::notksvg) &&
+    [package vcompare 8.7 [info tclversion]] > 0 } {
   catch { package require tksvg }
 }
 
@@ -526,9 +530,17 @@ namespace eval ::ttk::awthemes {
     set vars(nb.img.width) 20
     set vars(nb.img.height) 3
     set vars(registered.combobox) [dict create]
+
     set vars(have.tksvg) false
-    if { ! [catch {package present tksvg}] } {
+    try {
+      set ti [image create photo -data {<svg></svg>} -format svg]
+      image delete $ti
       set vars(have.tksvg) true
+    } on error {err res} {
+      lassign [dict get $res -errorcode] a b c d
+      if { $c ne "PHOTO_FORMAT" } {
+        set vars(have.tksvg) true
+      }
     }
 
     # The rb/cb pad/small images are not listed here, as they

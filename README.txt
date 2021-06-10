@@ -76,6 +76,10 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.3.1  2021-06-10
+   - Check for Tcl version 8.7
+   - Update check for svg image support.
+
 10.3.0  2021-03-22
    - Add awbreezedark by Bartek Jasicki
    - Add active.color color for use by some widget themes.

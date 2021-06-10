@@ -246,12 +246,21 @@ proc main { } {
     set vars(havethemeutils) true
   }
 
-  if { ! $::notksvg } {
+  if { ! $::notksvg &&
+    [package vcompare 8.7 [info tclversion]] > 0 } {
     catch { package require tksvg }
   }
+
   set vars(havetksvg) false
-  if { ! [catch {package present tksvg}] } {
+  try {
+    set ti [image create photo -data {<svg></svg>} -format svg]
+    image delete $ti
     set vars(havetksvg) true
+  } on error {err res} {
+    lassign [dict get $res -errorcode] a b c d
+    if { $c ne "PHOTO_FORMAT" } {
+      set vars(havetksvg) true
+    }
   }
 
   if { $vars(tkscaling) ne {} && $vars(tkscaling) ne "default" } {
