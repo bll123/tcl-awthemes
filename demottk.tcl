@@ -247,7 +247,7 @@ proc main { } {
   }
 
   if { ! $::notksvg &&
-    [package vcompare 8.7 [info tclversion]] > 0 } {
+      [package vcompare 8.6.99 $::tk_version] > 0 } {
     catch { package require tksvg }
   }
 
@@ -261,6 +261,9 @@ proc main { } {
     if { $c ne "PHOTO_FORMAT" } {
       set vars(havetksvg) true
     }
+  }
+  if { $::notksvg } {
+    set vars(havetksvg) false
   }
 
   if { $vars(tkscaling) ne {} && $vars(tkscaling) ne "default" } {
@@ -369,7 +372,6 @@ proc main { } {
       }
     }
   }
-
 
   if { ! $vars(optiondflt) } {
     try {

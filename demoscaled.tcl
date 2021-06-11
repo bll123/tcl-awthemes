@@ -60,7 +60,7 @@ proc main { } {
   ::themeutils::setThemeColors $theme \
       scale.factor $sf
 
-  if { [package vcompare 8.7 [info tclversion]] > 0 } {
+  if { [package vcompare 8.6.99 $::tk_version] > 0 } {
     catch { package require tksvg }
   }
 

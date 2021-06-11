@@ -76,6 +76,11 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.3.2  2021-06-11
+   - Handle ::notksvg properly for 8.7
+   - Use tk version, not tcl version for 8.7 checks.
+   - Fix package vcompare.
+
 10.3.1  2021-06-10
    - Check for Tcl version 8.7
    - Update check for svg image support.

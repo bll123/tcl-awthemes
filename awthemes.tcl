@@ -125,6 +125,10 @@
 #
 # Change History
 #
+# 10.3.2  2021-06-11
+#   - Handle ::notksvg properly for 8.7
+#   - Use tk version, not tcl version for 8.7 checks.
+#   - Fix package vcompare.
 # 10.3.1  2021-06-10
 #   - Check for Tcl version 8.7
 #   - Update check for svg image support.
@@ -450,13 +454,15 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.3.1
+set ::themeutils::awversion 10.3.2
 package provide awthemes $::themeutils::awversion
 
 package require Tk
 # set ::notksvg to true for testing purposes
+# package vcompare is technically correct, not useful,
+# so use 8.6.99
 if { (! [info exists ::notksvg] || ! $::notksvg) &&
-    [package vcompare 8.7 [info tclversion]] > 0 } {
+    [package vcompare 8.6.99 $::tk_version] > 0 } {
   catch { package require tksvg }
 }
 
@@ -541,6 +547,9 @@ namespace eval ::ttk::awthemes {
       if { $c ne "PHOTO_FORMAT" } {
         set vars(have.tksvg) true
       }
+    }
+    if { [info exists ::notksvg] && $::notksvg } {
+      set vars(have.tksvg) false
     }
 
     # The rb/cb pad/small images are not listed here, as they
