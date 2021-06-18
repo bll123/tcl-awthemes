@@ -76,6 +76,13 @@ demottk.tcl options:
                       off the scrollbar grip and arrows.
   -ttkscale           Set the the [tk scaling] factor.
 
+10.4.0  2021-06-18
+   - awdark/awlight : change to use the solid widget theme for combobox
+       arrows.  This fixes scaling issues when the combobox font is changed.
+   - Added combobox.color.arrow option.
+   - Fix incorrect colors in arrow/solid widget theme.
+   - Fix incorrect combobox/solid-bg settings.tcl.
+
 10.3.2  2021-06-11
    - Handle ::notksvg properly for 8.7
    - Use tk version, not tcl version for 8.7 checks.

@@ -125,6 +125,12 @@
 #
 # Change History
 #
+# 10.4.0  2021-06-18
+#   - awdark/awlight : change to use the solid widget theme for combobox
+#       arrows.  This fixes scaling issues when the combobox font is changed.
+#   - Added combobox.color.arrow option.
+#   - Fix incorrect colors in arrow/solid widget theme.
+#   - Fix incorrect combobox/solid-bg settings.tcl.
 # 10.3.2  2021-06-11
 #   - Handle ::notksvg properly for 8.7
 #   - Use tk version, not tcl version for 8.7 checks.
@@ -454,7 +460,7 @@
 #
 
 namespace eval ::themeutils {}
-set ::themeutils::awversion 10.3.2
+set ::themeutils::awversion 10.4.0
 package provide awthemes $::themeutils::awversion
 
 package require Tk
@@ -1320,19 +1326,32 @@ namespace eval ::ttk::awthemes {
         }
       }
 
-      # all other arrow colors
+      # spinbox/menubutton arrow colors
       # _GCARR_ : the solid-bg arrow theme uses this as the arrow color
       # _GC_ : used by the all other arrow themes.
       foreach {n} {spin-arrow-down-d spin-arrow-down-n
           spin-arrow-up-d spin-arrow-up-n
-          spin-arrow-left-d spin-arrow-left-n
-          spin-arrow-right-d spin-arrow-right-n
           mb-arrow-down-a mb-arrow-down-d mb-arrow-down-n
-          combo-arrow-down-a combo-arrow-down-d combo-arrow-down-n
           } {
         foreach {oc nc} [list \
             _GC_      $colors(spinbox.color.arrow) \
             _GCARR_   $colors(spinbox.color.arrow) \
+            ] {
+          if { [info exists imgdata($n$sfx)] } {
+            set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
+          }
+        }
+      }
+
+      # combobox arrow colors
+      # _GCARR_ : the solid-bg arrow theme uses this as the arrow color
+      # _GC_ : used by the all other arrow themes.
+      foreach {n} {
+          combo-arrow-down-a combo-arrow-down-d combo-arrow-down-n
+          } {
+        foreach {oc nc} [list \
+            _GC_      $colors(combobox.color.arrow) \
+            _GCARR_   $colors(combobox.color.arrow) \
             ] {
           if { [info exists imgdata($n$sfx)] } {
             set c [regsub -all $oc $imgdata($n$sfx) $nc imgdata($n$sfx)]
@@ -3904,6 +3923,7 @@ namespace eval ::themeutils {
       accent    accent.color                  graphics.color          color
       accent    arrow.color.disabled          {arrow.color 0.6}       disabled
       accent    arrow.color                   graphics.color          color
+      accent    combobox.color.arrow          arrow.color             color
       accent    graphics.color                -                       base
       accent    graphics.color.dark           {graphics.color 0.4}    black
       accent    graphics.color.light          {graphics.color 0.4}    white
@@ -3938,8 +3958,8 @@ namespace eval ::themeutils {
       other     checkbutton.focusthickness    2                       static
       other     checkbutton.padding           {5 0 1 2}               static
       other     checkbutton.scale             1.0                     static
-      other     combobox.image.border         {0 0}                   static
       other     combobox.image.sticky         {}                      static
+      other     combobox.image.border         {0 0}                   static
       other     combobox.entry.image.border   entry.image.border      color
       other     combobox.entry.image.padding  entry.image.padding     color
       other     combobox.padding              {3 1}                   static

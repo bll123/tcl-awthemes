@@ -288,7 +288,7 @@ proc main { } {
   }
 
   if { $vars(testharald) } {
-    ::themeutils::setThemeColors awdark\
+    ::themeutils::setThemeColors awdark \
         style.progressbar rounded-line \
         style.scale circle-rev \
         style.scrollbar-grip none \
@@ -480,7 +480,7 @@ proc main { } {
   ::ttk::frame $vars(mainW).four
   $vars(mainW).nb add $vars(mainW).four -text {Treeview}
   ::ttk::frame $vars(mainW).five
-  $vars(mainW).nb add $vars(mainW).five -text {Buttons}
+  $vars(mainW).nb add $vars(mainW).five -text {Buttons/Other}
   ::ttk::frame $vars(mainW).six
   $vars(mainW).nb add $vars(mainW).six -text {Listbox}
   if { ! $vars(notable) && $vars(havetablelist) } {
@@ -495,8 +495,9 @@ proc main { } {
     }
     set ::argv {}
   }
-  ::ttk::frame $vars(mainW).eight
-  $vars(mainW).nb add $vars(mainW).eight -text {Inactive} -state disabled
+
+  ::ttk::frame $vars(mainW).nine
+  $vars(mainW).nb add $vars(mainW).nine -text {Inactive} -state disabled
 
   # configure the labelframe font to match what MacOS does.
   ::ttk::style configure TLabelframe.Label -font TkSmallCaptionFont
@@ -579,6 +580,7 @@ proc main { } {
           -variable vars(val) \
           -length [expr {round(100*$vars(scalefactor))}]
       $vars(mainW).pb$k state $s
+puts "aa: [$vars(mainW).pb$k configure]"
     }
     ::ttk::scale $vars(mainW).scv$k \
         -orient vertical \
@@ -599,6 +601,8 @@ proc main { } {
       grid $vars(mainW).pb$k $vars(mainW).scv$k $vars(mainW).pbv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
       grid configure $vars(mainW).pb$k -columnspan 2
       grid configure $vars(mainW).pbv$k -rowspan 3 -column 3
+puts "bb: [winfo reqheight $vars(mainW).pb$k]"
+$vars(mainW).pb$k configure -height 14
     } else {
       grid $vars(mainW).scv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
     }
@@ -976,6 +980,19 @@ Pellentesque commodo tellus ut semper consectetur. Praesent lacus sem, porta sit
   grid $vars(mainW).five.cbf -sticky nw -pady 2p -padx 3p
   ::ttk::checkbutton $vars(mainW).five.cbf.cbtb -text { Checkbutton as Toolbutton } -style Toolbutton
   grid $vars(mainW).five.cbf.cbtb -sticky w  -padx 1p -pady 1p
+
+  ::ttk::labelframe $vars(mainW).five.cbbig -text { Combobox With Big Font }
+  grid $vars(mainW).five.cbbig -sticky nw -pady 2p -padx 3p
+  font create BigFont
+  font configure BigFont -size [expr {${vars(fontsize)}*2}]
+  ::ttk::combobox $vars(mainW).comboBig \
+      -values \
+      [list $vars(theme) aaa bbb ccc ddd eee fff ggg hhh iii jjj kkk lll mmm nnn ooo ppp] \
+      -textvariable vars(valb) \
+      -width 15 \
+      -height 5 \
+      -font BigFont
+  pack $vars(mainW).comboBig -in $vars(mainW).five.cbbig -padx 3p -pady 3p -side left
 
   ::ttk::scrollbar $vars(mainW).sblbox1 -command [list $vars(mainW).lbox1 yview]
   ::ttk::scrollbar $vars(mainW).sblbox2 -command [list $vars(mainW).lbox2 yview]
