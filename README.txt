@@ -1,4 +1,8 @@
 
+2024-11-18
+bll: I no longer maintain tcl-awthemes.  Apparently it does work with
+tcl/tk 9, but should probably be checked.
+
 The following files are needed:
   awthemes.tcl            - main
   colorutils.tcl          - color utilities
