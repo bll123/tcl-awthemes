@@ -1,0 +1,5 @@
+syntax: regexp
+^copy\.sh$
+^Archive/
+^awthemes-.*\.zip$
+.*~$
