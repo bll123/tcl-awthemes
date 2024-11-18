@@ -580,7 +580,6 @@ proc main { } {
           -variable vars(val) \
           -length [expr {round(100*$vars(scalefactor))}]
       $vars(mainW).pb$k state $s
-puts "aa: [$vars(mainW).pb$k configure]"
     }
     ::ttk::scale $vars(mainW).scv$k \
         -orient vertical \
@@ -601,8 +600,6 @@ puts "aa: [$vars(mainW).pb$k configure]"
       grid $vars(mainW).pb$k $vars(mainW).scv$k $vars(mainW).pbv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
       grid configure $vars(mainW).pb$k -columnspan 2
       grid configure $vars(mainW).pbv$k -rowspan 3 -column 3
-puts "bb: [winfo reqheight $vars(mainW).pb$k]"
-$vars(mainW).pb$k configure -height 14
     } else {
       grid $vars(mainW).scv$k -in $vars(mainW).lf$k -sticky w -padx 3p -pady 3p
     }

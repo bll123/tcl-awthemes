@@ -24,6 +24,7 @@ namespace eval ::ttk::theme::awdark {
     array set colors {
         style.arrow           solid-bg
         style.checkbutton     roundedrect-check
+        style.combobox        solid-bg
         style.menubutton      solid
         style.radiobutton     circle-circle-hlbg
         style.treeview        solid
